@@ -38,7 +38,7 @@ direction, the tuning against the reference and the choice of what to keep
 were done by hand.
 
 ## Setup
-
+**Locally:**
 You need a TeX distribution with **LuaLaTeX** (TeX Live 2023 or later,
 MiKTeX, or TinyTeX) and either **pdftocairo** (from `poppler-utils`) or **Ghostscript** (`gs`, standard in TeX Live and Overleaf). Check with `lualatex --version` and `gs -v` or `pdftocairo -v`. The example also uses
 `lipsum` (`tlmgr install lipsum` on TinyTeX).
@@ -54,8 +54,9 @@ MiKTeX, or TinyTeX) and either **pdftocairo** (from `poppler-utils`) or **Ghosts
    ```
    Or use `latexmk example` (the included `latexmkrc` configures LuaLaTeX with shell-escape automatically).
 
-**Overleaf:** New Project, Upload Project, choose `tikzflora.zip`. The
-`latexmkrc` in the zip configures LuaLaTeX with shell escape automatically.
+**Overleaf:** New Project, Upload Project, choose `tikzflora.zip`. You must manually change the compiler to Lualatex: in the dropdown next to the recompile button choose settings.
+
+Cacheing in Overleaf is super useful to avoid long compile times running up against the limit. Caching with Overleaf requires a small amount of manual effort. To cache a compiled page click 'logs and output files' and then 'other logs and output files'. Find the .png for any page you want to cache and put it in the flora-cache folder.
 
 A minimal document:
 
