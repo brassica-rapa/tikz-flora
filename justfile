@@ -45,7 +45,10 @@ grow name="lorem" seed="1" page="1" fps="20" secs="8":
 # The drop-in package: build/tikzflora.zip with the package, its Lua, the
 # worked example and a latexmkrc that selects LuaLaTeX (also on Overleaf).
 dist:
-    rm -rf build/dist && mkdir -p build/dist/tikzflora/lua
+    rm -rf build/dist && mkdir -p build/dist/tikzflora/lua build/dist/tikzflora/flora-cache
+    touch build/dist/tikzflora/flora-cache/.gitkeep
+    touch build/dist/tikzflora/flora-cache/detail.txt
+    echo "Cacheing in Overleaf is super useful to avoid long compile times running up against the limit. Unfortunately, caching with Overleaf requires a small amount of manual effort. To cache a compiled page click 'logs and output files' and then 'other logs and output files'. Find the .png for any page you want to cache and put it in the flora-cache folder." >> build/dist/tikzflora/flora-cache/detail.txt
     cp tex/tikzflora.sty tex/tikzflora-boot.lua tex/latexmkrc README.md LICENSE build/dist/tikzflora/
     cp tex/lorem.tex build/dist/tikzflora/example.tex
     cp -R lua/flora build/dist/tikzflora/lua/flora

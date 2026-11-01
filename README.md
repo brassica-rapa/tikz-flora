@@ -40,7 +40,7 @@ were done by hand.
 ## Setup
 
 You need a TeX distribution with **LuaLaTeX** (TeX Live 2023 or later,
-MiKTeX, or TinyTeX) and **pdftocairo** (from `poppler-utils`, standard on Linux/macOS/Homebrew). Check with `lualatex --version` and `pdftocairo -v`. The example also uses
+MiKTeX, or TinyTeX) and either **pdftocairo** (from `poppler-utils`) or **Ghostscript** (`gs`, standard in TeX Live and Overleaf). Check with `lualatex --version` and `gs -v` or `pdftocairo -v`. The example also uses
 `lipsum` (`tlmgr install lipsum` on TinyTeX).
 
 1. Download `tikzflora.zip` from releases for this repository. Or build it with `just dist`.

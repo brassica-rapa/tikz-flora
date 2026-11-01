@@ -187,14 +187,31 @@ function M.bake_page(spec, target_png, dpi)
   pdfout.write(tmp_pdf, pt, spec.width, spec.height)
 
   local prefix = target_png:gsub("%.png$", "")
-  local cmd = string.format("pdftocairo -png -transp -singlefile -r %d %q %q", dpi or 150, tmp_pdf, prefix)
-  local res = os.execute(cmd)
+  local res
+
+  if M._has_cairo == nil then
+    local check = os.execute("command -v pdftocairo >/dev/null 2>&1")
+    M._has_cairo = (check == 0 or check == true)
+  end
+
+  -- 1. Try pdftocairo if available
+  if M._has_cairo then
+    local cmd_cairo = string.format("pdftocairo -png -transp -singlefile -r %d %q %q", dpi or 150, tmp_pdf, prefix)
+    res = os.execute(cmd_cairo)
+  end
+
+  -- 2. Fallback to Ghostscript (standard on TeX Live / Overleaf)
+  if not file_exists(target_png) then
+    local cmd_gs = string.format("gs -dSAFER -dBATCH -dNOPAUSE -q -sDEVICE=pngalpha -r%d -sOutputFile=%q %q", dpi or 150, target_png, tmp_pdf)
+    res = os.execute(cmd_gs)
+  end
+
   pcall(os.remove, tmp_pdf)
 
   if file_exists(target_png) then
     return true, target_png
   end
-  return false, "pdftocairo command failed or did not generate image (exit status: " .. tostring(res) .. ")"
+  return false, "rasterization failed: neither 'pdftocairo' nor 'gs' (Ghostscript) produced an image (last exit status: " .. tostring(res) .. ")"
 end
 
 -- Draw the flora for one page as a page-sized pgfpicture whose origin is the
@@ -267,7 +284,7 @@ function M.page(a)
     if ok then
       baked = target_png
     else
-      tex.error(string.format("tikzflora: unable to bake flora for page %d.\nFailed to run 'pdftocairo'. Please ensure 'pdftocairo' (poppler-utils) is installed and in your PATH.\n(%s)", a.page, tostring(err)))
+      tex.error(string.format("tikzflora: unable to bake flora for page %d.\nFailed to rasterize flora. Please ensure 'pdftocairo' (poppler-utils) or 'gs' (Ghostscript) is installed and in your PATH.\n(%s)", a.page, tostring(err)))
       return
     end
   end
