@@ -1,2 +1,3 @@
-# Compile with LuaLaTeX (tikzflora needs it); Overleaf reads this too.
+# Compile with LuaLaTeX and shell escape for automatic flower baking.
 $pdf_mode = 4;
+$lualatex = 'lualatex --shell-escape %O %S';

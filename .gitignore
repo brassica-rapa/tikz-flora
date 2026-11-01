@@ -1,14 +1,60 @@
+# Build artifacts & package outputs
 build/
+
+# Auto-baking image caches
+flora-cache/
+.flora-cache/
+
+# TeX auxiliary & intermediate files
+*.aux
+*.log
+*.toc
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.nav
+*.snm
+*.vrb
+*.lof
+*.lot
+*.xdv
+*.dvi
+*.pdf
+
+# Python bytecode & virtual environments
+__pycache__/
+*/__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# Tuner local overrides & dependencies
 tuner/node_modules/
 tune-local.lua
 tuner/dist/
-__pycache__/
+
+# Site builds & public assets (made by `just site-bake`)
 site/node_modules/
 site/dist/
 site/.wrangler/
-# Made by `just site-bake` from the example document.
 site/public/bake/
 site/public/img/
 site/public/media/
 site/public/tikzflora.zip
+
+# OS & Editor files
 .DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

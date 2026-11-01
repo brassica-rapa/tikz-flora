@@ -2,16 +2,18 @@ set export
 
 PATH := env("HOME") / "Library/TinyTeX/bin/universal-darwin" + ":" + env("PATH")
 TEXINPUTS := "./tex//:"
+export TEXMFCACHE := env("TEXMFCACHE", "/tmp/texmf-cache")
+export TEXMFVAR := env("TEXMFVAR", "/tmp/texmf-cache")
 # Values saved from the tuner override lua/flora/tune.lua when present.
 # An interpreter with numpy and Pillow for tuner/; Homebrew's newest
 # python3 may not have them yet.
-PYTHON := env("FLORA_PYTHON", "python3.14")
+PYTHON := env("FLORA_PYTHON", "python3")
 FLORA_TUNE := if path_exists(justfile_directory() / "tune-local.lua") == "true" { justfile_directory() / "tune-local.lua" } else { "" }
 
 # Compile a document in tex/ to build/<name>.pdf and a PNG preview.
 build name="lorem" seed="1" dpi="200":
     mkdir -p build
-    lualatex -interaction=nonstopmode -halt-on-error -output-directory=build \
+    lualatex --shell-escape -interaction=nonstopmode -halt-on-error -output-directory=build \
         -jobname={{name}} "\def\florseed{ {{seed}} }\input{tex/{{name}}.tex}" > build/{{name}}.out || (tail -30 build/{{name}}.log; exit 1)
     pdftocairo -png -singlefile -r {{dpi}} build/{{name}}.pdf build/{{name}}
     grep -h 'flora:' build/{{name}}.log || true
@@ -20,6 +22,15 @@ build name="lorem" seed="1" dpi="200":
 test:
     for f in tests/test_*.lua; do texlua "$f" || exit 1; done
     {{PYTHON}} -I tests/test_bake.py
+    {{PYTHON}} -I tests/test_baked.py
+
+# Bake procedural flora into lightweight transparent images (tex/baked/).
+bake layout="left" seed="1" dpi="300":
+    {{PYTHON}} tools/bake.py --layout={{layout}} --seed={{seed}} --dpi={{dpi}}
+
+# Bake standard layouts for common seeds into tex/baked/.
+bake-all:
+    {{PYTHON}} tools/bake.py --batch
 
 # The ornament gallery: every ornament kind, labelled, for three seeds
 # (tex/gallery.tex), to build/gallery.pdf and .png.
@@ -38,6 +49,7 @@ dist:
     cp tex/tikzflora.sty tex/tikzflora-boot.lua tex/latexmkrc README.md LICENSE build/dist/tikzflora/
     cp tex/lorem.tex build/dist/tikzflora/example.tex
     cp -R lua/flora build/dist/tikzflora/lua/flora
+    if [ -d tex/baked ]; then cp -R tex/baked build/dist/tikzflora/; fi
     rm -f build/tikzflora.zip
     cd build/dist && zip -qrX ../tikzflora.zip tikzflora
     @echo "dist: build/tikzflora.zip"
@@ -47,9 +59,9 @@ dist:
 test-dist: dist
     rm -rf build/test-dist && mkdir -p build/test-dist
     unzip -q build/tikzflora.zip -d build/test-dist
-    cd build/test-dist/tikzflora && env -u TEXINPUTS -u FLORA_TUNE latexmk -quiet example > latexmk.out 2>&1 || (tail -30 example.log; exit 1)
+    cd build/test-dist/tikzflora && if command -v latexmk >/dev/null 2>&1; then env -u TEXINPUTS -u FLORA_TUNE latexmk -quiet example > latexmk.out 2>&1 || (tail -30 example.log; exit 1); else env -u TEXINPUTS -u FLORA_TUNE lualatex --shell-escape -interaction=nonstopmode example > latexmk.out 2>&1 || (tail -30 example.log; exit 1); fi
     test "$(pdfinfo build/test-dist/tikzflora/example.pdf | awk '/^Pages/ {print $2}')" = 7
-    grep -q 'painted objects' build/test-dist/tikzflora/example.log
+    grep -q -E 'painted objects|\(baked\)' build/test-dist/tikzflora/example.log
     @echo "dist: example compiles from the zip"
 
 # The browser mixer runs the generator under Lua 5.4 (wasmoon); LuaLaTeX
