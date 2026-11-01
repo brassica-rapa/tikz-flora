@@ -62,9 +62,9 @@ A minimal document:
 
 ```latex
 \documentclass{article}
-\usepackage[left=5.5cm,right=2cm]{geometry} % room for the flora
+\usepackage[inner=2cm,outer=2cm,top=2cm,bottom=2cm]{geometry}
 \usepackage{tikzflora}
-\florasetup{seed=7}
+\florasetup{layout=surround, seed=7}
 \begin{document}
 Text.
 \end{document}
