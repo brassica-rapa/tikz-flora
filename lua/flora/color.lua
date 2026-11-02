@@ -73,13 +73,30 @@ for name, r in pairs(Inks.ramps) do
     local c = s[2] * s[2] + s[3] * s[3]
     if c > best then best, bi = c, i end
   end
-  richest[name] = bi
+  richest[name] = Inks.bright[name] and 1 or bi
+end
+
+-- Lightness at which a bright ink (a yellow) is read for a look's lightness
+-- `L`. A look runs from about 0.3 (dense) to 0.99 (paper); the ink only
+-- exists between its densest stop and paper, so the look's range is laid
+-- over the ink's. tune.color.yellow.depth sets how much of the ink's dense
+-- end the deepest tones reach: 0 stays a clean yellow, 1 goes to burnt ochre.
+-- Other inks are read at `L` itself.
+function C.fit(name, L)
+  if not Inks.bright[name] then return L end
+  local r = Inks.ramps[name]
+  local lo, hi = r[1][1], r[#r][1]
+  local depth = Tune.color.yellow and Tune.color.yellow.depth or 0.6
+  lo = hi - (hi - lo) * (0.38 + 0.62 * depth)
+  local u = math.max(0, math.min(1, (L - 0.28) / 0.71))
+  return lo + (hi - lo) * u
 end
 
 -- The ink `name`'s colour where its wash has lightness L, as OKLCH chroma
 -- and hue: its measured ramp interpolated by lightness from its richest
 -- stop to its palest, held at either end beyond that.
 function C.ink_at(name, L)
+  L = C.fit(name, L)
   local all = Inks.ramps[name]
   local r = { table.unpack(all, richest[name]) }
   local lo, hi = r[1], r[#r]
@@ -115,11 +132,11 @@ end
 -- sRGB for ink `name` at lightness L, its chroma scaled by `share`.
 function C.ink_rgb(name, L, share)
   local ch, h = C.ink_at(name, L)
-  return C.oklch(L, ch * (share or 1), h)
+  return C.oklch(C.fit(name, L), ch * (share or 1), h)
 end
 
 -- Which tune.color.palette part a look paints by default.
-local PART = { leaf = "leaves", hero = "hero", vivid = "blooms", fan = "blooms", soft = "blooms", ghost = "ghost" }
+local PART = { leaf = "leaves", hero = "hero", vivid = "blooms", fan = "blooms", soft = "blooms", ghost = "ghost", sun = "blooms" }
 
 function C.part_of(look)
   return PART[look]
@@ -178,7 +195,8 @@ function C.ramp(rng, look, part)
       stops[#stops + 1] = { t, C.ink_rgb(ink, L, grey) }
     end
     local ch, ih = C.ink_at(ink, tip_l)
-    return stops, { h = ih, L = tip_l, share = math.min(1, ch * grey / math.max(1e-6, C.max_chroma(tip_l, ih))), ink = ink }
+    local tl = C.fit(ink, tip_l)
+    return stops, { h = ih, L = tl, share = math.min(1, ch * grey / math.max(1e-6, C.max_chroma(tl, ih))), ink = ink }
   end
   for i = 0, n - 1 do
     local t = i / (n - 1)

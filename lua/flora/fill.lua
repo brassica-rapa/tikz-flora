@@ -47,6 +47,8 @@ function Fill.grow(b, rng, kind, s, tangent, d, x, y, r, scale, lean)
     S.cyme(b, rng, base, a, r * 1.25, rng:chance(0.5) and 1 or -1)
   elseif kind == "umbel" then
     S.umbel(b, rng, base, a, r * 0.85)
+  elseif kind == "raceme" or kind == "corymb" or kind == "panicle" then
+    S.inflorescence(b, rng, base, a, r * 1.6, { kind = kind })
   elseif kind == "bud" then
     for k = -1, 1 do
       local stem = G.curve(base, a + k * 0.45, r * 0.6, rng:jit(0.4), 0, 4)

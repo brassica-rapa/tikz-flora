@@ -11,6 +11,12 @@
 --   palette   what paints each part, e.g. palette={leaves=green,
 --             hero=kon-peki}: look, an ink group, one ink (inks.lua), or
 --             random for one ink picked per page
+--   flower    the bloom style of the hero and the blooms (flower.lua): fan,
+--             round, soft, obovate, wedge, cross (a crucifer) or buttercup
+--   hero      what crowns the main stem: bloom (the default), or a painted
+--             raceme, corymb or panicle of blooms (head.lua)
+--   petals    how many petals every bloom has, 3 to 12; florets of an
+--             inflorescence follow it too
 --   spin      a number that re-picks the random inks; the shapes stay
 --   ornaments weights per ornament kind, e.g. ornaments={moon=2, night=0}
 --             (ornaments.lua registers the kinds; each slot picks one)
@@ -22,6 +28,8 @@ local Tune = require("flora.tune")
 local Inks = require("flora.inks")
 local Mix = require("flora.mix")
 local Orn = require("flora.ornaments")
+local Flower = require("flora.flower")
+local Head = require("flora.head")
 
 -- Key name -> function(value string) returning the parsed value, or nil
 -- and a message.
@@ -101,6 +109,24 @@ M.define("palette", function(v)
     t[part] = ink
   end
   return t
+end)
+
+M.define("flower", function(v)
+  if Flower.styles[v] then return v end
+  return nil, "no flower \"" .. v .. "\" (flowers: " .. known(Flower.styles) .. ")"
+end)
+
+M.define("hero", function(v)
+  for _, k in ipairs(Head.kinds) do
+    if k == v then return v end
+  end
+  return nil, "hero must be one of " .. table.concat(Head.kinds, ", ")
+end)
+
+M.define("petals", function(v)
+  local n = tonumber(v)
+  if n and n == math.floor(n) and n >= 3 and n <= 12 then return n end
+  return nil, "petals must be a whole number from 3 to 12"
 end)
 
 M.define("spin", function(v)

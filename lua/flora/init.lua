@@ -114,6 +114,7 @@ function M.page(a)
     header_y = a.header_y and pt_of(a.header_y),
     seed = M.seed(set.seed or a.seed, a.page),
     lines = lines, layout = set.layout, page = a.page, mix = set.mix, ornaments = set.ornaments, palette = set.palette, spin = set.spin,
+    flower = set.flower, petals = set.petals, head = set.hero,
     doc_seed = tostring(set.seed or a.seed),
   }
   if marks and marks["title-start"] and lines then

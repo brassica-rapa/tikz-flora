@@ -78,15 +78,19 @@ compile with a message naming the key.
 | `visitors` | 0 to 10 | The weight of every visitor at once |
 | `palette` | `{part=ink, ...}` | What paints the `hero`, `blooms`, `leaves`, `leaflets`, `stems`, `sprays`, `ghost`, `cartouche` |
 | `spin` | a whole number | Picks other inks for parts set to `random`; the shapes stay |
+| `flower` | `fan`, `round`, `soft`, `obovate`, `wedge`, `cross`, `buttercup` | The bloom style of the hero and the blooms (below) |
+| `hero` | `bloom`, `raceme`, `corymb`, `panicle` | What crowns the main stem: the hero bloom, or a painted head of blooms (below) |
+| `petals` | 3 to 12 | How many petals every bloom has; inflorescence florets follow it |
 | `ornaments` | `{kind=weight, ...}` | How often each ornament kind is picked for its place; 0 never |
 
 Mix kinds: `bloom`, `soft`, `lily`, `ghost`, `umbel`, `cyme`
 (forget-me-nots), `gyps` (baby's breath), `leaves`, `leaflets`, `sprays`,
 `curls`, `density`, `bee`, `butterfly`, `bird`, `snail`. Visitors are off
-unless you give them weight.
+unless you give them weight, and so are the inflorescences `raceme`,
+`corymb` and `panicle` (below).
 
 Palette values are `look` (the default gradients), an ink group (`blue`,
-`blue-grey`, `teal`, `green`, `violet`, `warm`, `earth`, `gold`) or one ink
+`blue-grey`, `teal`, `green`, `violet`, `warm`, `earth`, `gold`, `yellow`) or one ink
 by name, such as `kon-peki` (all of them are in `lua/flora/inks.lua`).
 `random` paints that part in one ink picked per page. The pick has its own
 random stream, so changing `spin` changes only the colours: every stem,
@@ -126,6 +130,55 @@ holds it to its box.
 ```latex
 \florasetup{layout=split, visitors=0.5, mix={lily=2, umbel=0},
   palette={hero=murasaki-shikibu, blooms=warm, leaves=teal}}
+```
+
+### Yellow flowers, petal counts and inflorescences
+
+The blue-ink pipeline reads every ink at the look's lightness, which is dark:
+at that depth a yellow turns olive. Four yellow inks, `rapeseed`, `buttercup`,
+`gamboge` and `primrose` (the group `yellow` holds the first two), are
+instead read in their own range. Their ramps swing from
+lemon through buttercup to amber as the wash thickens, so shadows go orange,
+not green. `color.yellow.depth` in `lua/flora/tune.lua` sets how far the
+deepest tones go: 0 stays a clean yellow, 1 reaches burnt ochre. A yellow ink
+draws its stems and pen lines in green, and its florets keep a pale eye and a
+green pistil. Name one ink, not a group, for a part whose petals should match:
+a group picks a different ink for each petal.
+
+Two bloom styles are yellow by default: `cross`, a crucifer's four overlapping
+spoon petals round a green pistil and six stamens (rapeseed, wallflower,
+mustard), and `buttercup`, five round glossy petals round a green boss in a
+ring of gold stamens. `flower=cross` makes the hero and the blooms that style
+and paints the sprays in its ink; `palette` still overrides any part, and
+`petals` changes the count of any style (`flower=wedge, petals=6`). Leaves are
+not recoloured: set `palette={leaves=green}` as well.
+
+`mix={raceme=1}`, `corymb` and `panicle` grow inflorescences in the holes:
+a raceme opens from the bottom up with buds crowded at the tip and seed pods
+below, a corymb is a level head on pedicels of graded length, a panicle is a
+raceme with side racemes. The `inflorescence` keys in `lua/flora/tune.lua`
+set how many florets, their size, stalks, spread, sweep and pods.
+
+```latex
+\florasetup{flower=cross, palette={leaves=green, leaflets=green, ghost=primrose},
+  mix={raceme=3, corymb=3, cyme=0, soft=0}}
+```
+
+A painted head can crown the page instead of the single hero bloom:
+`hero=raceme`, `hero=corymb` or `hero=panicle`. It is built from the main
+stem's last stretch, which it carries on to a fine tip, and from full
+watercolour blooms in the florets' style (`flower`, else `cross`). Florets
+are scattered round the axis by the golden angle, so they fill the head
+evenly, and each has a depth: they are painted back to front, the back ones
+smaller, paler and more tilted, the front ones larger and nearly face-on,
+each foreshortened in perspective and shading the ones behind it. Buds crowd
+the tip, pedicels run to every floret, and a raceme has seed pods below.
+The `head` keys in `lua/flora/tune.lua` set how many florets, their size,
+the head's length and width, how many get the full wash (`detail`: more is
+richer and slower), their tilt, shadow and fade.
+
+```latex
+lorasetup{hero=raceme, flower=cross, palette={leaves=green, leaflets=green}}
 ```
 
 ### Layouts

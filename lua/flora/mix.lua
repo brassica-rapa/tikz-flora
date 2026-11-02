@@ -3,7 +3,8 @@
 -- \florasetup{mix={lily=2, umbel=0}, density=0.8, visitors=1}; defaults in
 -- tune.mix. With every weight at 1 a page is exactly the unmixed page.
 --
---   bloom, soft, lily, ghost, umbel, cyme, gyps   motifs in the holes
+--   bloom, soft, lily, ghost, umbel, cyme, gyps,   motifs in the holes
+--   raceme, corymb, panicle                       (the last three are off until weighted)
 --                                                 (grow.lua): weight and cap
 --   leaves, leaflets                              spacing along the stems
 --   sprays, curls                                 the spray cap, curl chance
@@ -15,7 +16,7 @@ local Tune = require("flora.tune")
 
 local M = {}
 
-M.motifs = { "bloom", "soft", "lily", "ghost", "umbel", "cyme", "gyps" }
+M.motifs = { "bloom", "soft", "lily", "ghost", "umbel", "cyme", "gyps", "raceme", "corymb", "panicle" }
 M.visitors = { "bee", "butterfly", "bird", "snail" }
 
 -- The weight of `kind` in `mix` (a table of overrides; nil for defaults).
@@ -99,6 +100,14 @@ function M.resolve(palette, seed, spin)
     end
     out[part] = v
   end
+  return out
+end
+
+-- `palette` with `extra` laid under it (palette's own parts win).
+function M.merge_palette(palette, extra)
+  local out = {}
+  for k, v in pairs(extra) do out[k] = v end
+  for k, v in pairs(palette or {}) do out[k] = v end
   return out
 end
 

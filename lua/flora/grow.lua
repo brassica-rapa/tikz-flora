@@ -265,6 +265,10 @@ local function motifs(mw, cfg, rng, mix)
     { kind = "ghost", w = 1, cap = 1, rmin = 16, rmax = mw * 0.22 * kr, below = 0.4 },
     { kind = "umbel", w = 1.6, cap = 3, rmin = 12, rmax = mw * 0.19 * kr },
     { kind = "cyme", w = 3, rmin = 7, rmax = 22, spray = true },
+    -- Inflorescences are off until the mix weights them (tune.mix).
+    { kind = "raceme", w = 2, cap = 3, rmin = 14, rmax = mw * 0.17 * kr, spray = true },
+    { kind = "corymb", w = 2, cap = 3, rmin = 12, rmax = mw * 0.15 * kr, spray = true },
+    { kind = "panicle", w = 1.5, cap = 2, rmin = 20, rmax = mw * 0.2 * kr, spray = true },
     { kind = "gyps", w = 4, rmin = 5, rmax = 30, spray = true },
   }
   -- Each motif's weight and cap follow the page's mix (mix.lua).
@@ -371,7 +375,7 @@ function Grow.holes(g, rng, ctx)
             end
             if ctx.pos then ctx.pos[ctx.back[#ctx.back]] = { x, y } end
           else
-            local style = pick.kind == "soft" and "soft" or F.pick_style(fr, { "fan", "round" })
+            local style = F.flower.style or (pick.kind == "soft" and "soft" or F.pick_style(fr, { "fan", "round" }))
             ctx.blooms[#ctx.blooms + 1] = function(pt) F.bloom(pt, fr, x, y, r * 0.8, { style = style }) end
             if ctx.pos then ctx.pos[ctx.blooms[#ctx.blooms]] = { x, y } end
           end

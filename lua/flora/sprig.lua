@@ -7,6 +7,7 @@ local F = require("flora.flower")
 local Paint = require("flora.paint")
 local Color = require("flora.color")
 local Dist = require("flora.dist")
+local Inks = require("flora.inks")
 local Tune = require("flora.tune")
 local pal = Paint.palette
 
@@ -39,9 +40,10 @@ function Batch:line(pts, class)
   bucket[#bucket + 1] = G.smooth(pts, false)
 end
 
--- A five-petalled floret; `soft` paints it as baby's breath (F.florets).
-function Batch:floret(x, y, r, rot, tint, soft)
-  self.florets[#self.florets + 1] = { x, y, r, rot, tint, soft }
+-- A floret of `petals` petals (default 5); `soft` paints it as baby's
+-- breath (F.florets).
+function Batch:floret(x, y, r, rot, tint, soft, petals)
+  self.florets[#self.florets + 1] = { x, y, r, rot, tint, soft, petals }
 end
 
 function Batch:bud(x, y, ang, len)
@@ -113,7 +115,12 @@ function Batch:paint(pt, ink)
   end
   -- palette.sprays recolours the sprays' line work, buds and stars.
   local tint = Color.part_ink("sprays")
-  ink = Color.recolor(ink or pal.ink, tint)
+  -- A yellow is too light to draw with: its stems and pen lines are green.
+  if tint and Inks.bright[tint] then
+    ink = Color.ink_rgb("chiku-rin", 0.46)
+  else
+    ink = Color.recolor(ink or pal.ink, tint)
+  end
   if #self.ribbons > 0 then
     pt:fill(self.ribbons, ink, 0.92, { many = true, blend = "multiply" })
   end
@@ -123,7 +130,9 @@ function Batch:paint(pt, ink)
       pt:stroke(self.lines[i], ink, widths[i], 0.85, { many = true, blend = "multiply" })
     end
   end
-  for _, b in ipairs(self.buds) do F.bud(pt, b[1], b[2], b[3], b[4], tint and Color.recolor(pal.deep, tint)) end
+  local bud = tint and Color.recolor(pal.deep, tint)
+  if tint and Inks.bright[tint] then bud = Color.oklch(0.80, 0.15, 118) end
+  for _, b in ipairs(self.buds) do F.bud(pt, b[1], b[2], b[3], b[4], bud) end
   if #self.florets > 0 then F.florets(pt, self.florets) end
   if #self.stars > 0 then
     local paths = {}
@@ -135,7 +144,7 @@ function Batch:paint(pt, ink)
         { "l", x, y - r }, { "l", x - k, y - k }, { "l", x - r, y }, { "l", x - k, y + k }, { "z" },
       }
     end
-    pt:fill(paths, Color.recolor(pal.deep, tint), 0.85, { many = true, blend = "multiply" })
+    pt:fill(paths, bud or Color.recolor(pal.deep, tint), 0.85, { many = true, blend = "multiply" })
   end
 end
 
@@ -250,6 +259,113 @@ function S.gypsophila(b, rng, base, ang, len, depth)
     end
   end
   branch(base, ang, len, depth)
+end
+
+-- An inflorescence: florets carried on an axis, in the three arrangements
+-- crucifers and their kin use. `o` overrides tune.inflorescence.
+--   o.kind      "raceme" (an elongating axis: the oldest florets lowest and
+--               largest, buds crowded at the tip), "corymb" (a flat or domed
+--               head: lower pedicels are longer, so every floret reaches the
+--               same level) or "panicle" (a main raceme with side racemes)
+--   o.flowers   how many florets {min, max}; o.petals their petals
+--   o.bud_share share of the raceme's flowers, from the tip, that are buds
+--   o.floret    floret radius, as a share of the length
+--   o.pedicel   floret stalk length, share of the length
+--   o.spread    how far a corymb's outer florets reach, share of the length
+--   o.bend      sweep of the axis, radians
+--   o.pods      slender seed pods hanging below the lowest florets (raceme)
+-- `len` is the axis length in pt, `ang` its heading from `base`.
+function S.inflorescence(b, rng, base, ang, len, o)
+  local cfg = Tune.inflorescence
+  o = o or {}
+  local function opt(k)
+    if o[k] ~= nil then return o[k] end
+    return cfg[k]
+  end
+  local kind = o.kind or "raceme"
+  local petals = o.petals or F.flower.petals or cfg.petals
+  local fr = opt("flowers")
+  local count = rng:int(fr[1], fr[2])
+  local floret, pedicel = opt("floret"), opt("pedicel")
+
+  local function bloom_at(q, a, r, bud)
+    if bud then
+      b:bud(q[1], q[2], a, r * 1.7)
+    else
+      b:floret(q[1], q[2], r, rng:range(0, 2 * pi), rng:chance(0.35) and 3 or 2, false, petals)
+    end
+  end
+
+  local function raceme(p0, a0, l, n, share)
+    local axis = G.curve(p0, a0, l, opt("bend") + rng:jit(0.12), 0, 16)
+    b:stem(axis, l * 0.009 + 0.45, 0.4)
+    local first = 0.28
+    local nb = math.floor(n * share + 0.5)
+    for i = 1, n do
+      -- Florets open from the bottom: i = 1 is the lowest and oldest.
+      local u = (i - 0.5) / n
+      local t = first + (1 - first) * u
+      local q, qa = G.at(axis, t)
+      local side = (i % 2 == 0) and 1 or -1
+      local bud = i > n - nb
+      local r = l * floret * (1.05 - 0.55 * u) * (bud and 0.55 or 1)
+      local pl = l * pedicel * (1 - 0.45 * u) * (bud and 0.6 or 1)
+      local pa = qa + side * rng:range(0.75, 1.15) * (1 - 0.35 * u)
+      local ped = G.curve(q, pa, pl, -side * 0.35 + rng:jit(0.2), 0, 4)
+      b:line(ped, 3)
+      local e = ped[#ped]
+      bloom_at(e, G.angle(ped[#ped - 1], e), r, bud)
+    end
+    -- The axis ends in a tuft of buds not yet opened.
+    local tip = axis[#axis]
+    local ta = G.angle(axis[#axis - 1], tip)
+    for k = -1, 1 do
+      bloom_at(G.polar(tip, ta + k * 0.5, l * 0.015), ta + k * 0.5, l * floret * 0.5, true)
+    end
+    return axis
+  end
+
+  if kind == "raceme" then
+    local axis = raceme(base, ang, len, count, opt("bud_share"))
+    -- Pods of the florets that have already set seed hang below the lowest.
+    for k = 1, opt("pods") do
+      local q, qa = G.at(axis, rng:range(0.02, 0.2))
+      local side = (k % 2 == 0) and 1 or -1
+      local pod = G.curve(q, qa + side * rng:range(0.35, 0.6), len * rng:range(0.2, 0.3), -side * 0.15, 0, 6)
+      b:stem(pod, len * 0.008 + 0.4, 0.3)
+    end
+  elseif kind == "panicle" then
+    local axis = raceme(base, ang, len, count, opt("bud_share"))
+    for k = 1, rng:int(2, 3) do
+      local q, qa = G.at(axis, 0.18 + 0.2 * k)
+      local side = (k % 2 == 0) and 1 or -1
+      raceme(q, qa + side * rng:range(0.5, 0.75), len * (0.5 - 0.07 * k),
+        math.max(4, math.floor(count * 0.5)), opt("bud_share"))
+    end
+  else
+    -- Corymb: a short axis; each pedicel runs from it to a point on a dome
+    -- above the axis tip, so the head is level (spread small: a tight head;
+    -- large: wide and flat).
+    local axis = G.curve(base, ang, len * 0.55, opt("bend") * 0.5 + rng:jit(0.1), 0, 8)
+    b:stem(axis, len * 0.009 + 0.45, 0.45)
+    local tip = axis[#axis]
+    local ta = G.angle(axis[#axis - 1], tip)
+    local reach = len * opt("spread")
+    for i = 1, count do
+      local u = (i - 0.5) / count
+      local side = (i % 2 == 0) and 1 or -1
+      -- Outer florets sit wider and lower, the crown on top.
+      local w = side * reach * math.sqrt(rng:range(0.02, 1)) * (0.4 + 0.6 * u)
+      local h = len * 0.30 - 0.45 * (w * w) / reach + rng:jit(len * 0.02)
+      local target = G.polar(G.polar(tip, ta, h), ta + pi / 2, w)
+      local from = G.at(axis, 0.45 + 0.55 * rng:next())
+      local ped = G.spline_points({ from, G.mix(from, target, 0.5), target }, 4)
+      b:line(ped, 3)
+      local bud = rng:chance(opt("bud_share") * 0.7) and math.abs(w) < reach * 0.35
+      local r = len * floret * (0.85 + 0.3 * rng:next()) * (bud and 0.55 or 1)
+      bloom_at(target, G.angle(ped[#ped - 1], target), r, bud)
+    end
+  end
 end
 
 -- Paired leaflets along a stem, as items for leaf.leaflets, sized from

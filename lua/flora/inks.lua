@@ -49,6 +49,35 @@ M.ramps = {
   ["fukagawa-nezu"] = { { 0.5041, -0.0145, -0.0254 }, { 0.5697, -0.0210, -0.0221 }, { 0.6412, -0.0234, -0.0184 }, { 0.7079, -0.0227, -0.0151 }, { 0.7696, -0.0205, -0.0120 }, { 0.8296, -0.0164, -0.0108 }, { 0.8895, -0.0127, -0.0091 }, { 0.9515, -0.0109, -0.0057 } },
 }
 
+-- Yellows. A real yellow is light: at the lightness a blue ink thins to
+-- (0.3 to 0.5) it turns olive. These ramps are written the way yellow
+-- pigment behaves, as OKLCH stops from dense to pale: the hue swings from
+-- cool lemon at the pale end through buttercup to amber and burnt ochre as
+-- the wash thickens, so the shadows go orange, not green. They are listed in
+-- M.bright, which tells color.lua to fit a look's lightness into the ink's
+-- own range instead of reading the ink at the look's darker lightness.
+--   hue     shifts every stop's hue, degrees (+ greener, - redder)
+--   chroma  scales every stop's chroma
+local function yellow(hue, chroma)
+  local stops = {
+    { 0.62, 0.130, 66 }, { 0.74, 0.155, 76 }, { 0.83, 0.170, 85 }, { 0.89, 0.175, 92 },
+    { 0.93, 0.168, 97 }, { 0.95, 0.120, 99 }, { 0.97, 0.075, 101 }, { 0.99, 0.030, 102 },
+  }
+  local out = {}
+  for i, s in ipairs(stops) do
+    local c, h = s[2] * chroma, math.rad(s[3] + hue)
+    out[i] = { s[1], c * math.cos(h), c * math.sin(h) }
+  end
+  return out
+end
+
+M.ramps["rapeseed"] = yellow(2, 1.00)    -- canola: a clean, slightly cool yellow
+M.ramps["buttercup"] = yellow(-2, 1.08)  -- glossy, warm, a little deeper
+M.ramps["gamboge"] = yellow(-9, 1.05)    -- gold leaning orange, like alyssum
+M.ramps["primrose"] = yellow(7, 0.92)    -- pale and greenish
+
+M.bright = { ["rapeseed"] = true, ["buttercup"] = true, ["gamboge"] = true, ["primrose"] = true }
+
 M.order = {
   "shimbashi-iro", "ebisu", "ama-iro", "kon-peki", "ajisai", "jurojin",
   "murasaki-shikibu", "asa-gao", "tsuyu-kusa", "shin-kai", "tsuki-yo", "fuyu-syogun",
@@ -58,6 +87,8 @@ M.order = {
   "benzaiten", "fuyu-gaki", "yu-yake", "to-ro", "daikokuten", "hotaru-bi",
   "chiku-rin", "fukurokuju", "syo-ro", "fukagawa-nezu",
 }
+-- The yellows are not in `order`: `random` draws from it, and adding to it
+-- would re-pick the inks of every existing seed.
 
 M.groups = {
   ["blue"] = { "ama-iro", "kon-peki", "ajisai", "jurojin", "asa-gao", "tsuyu-kusa", "shin-kai", "ebisu" },
@@ -68,7 +99,8 @@ M.groups = {
   ["warm"] = { "tsutsuji", "bishamonten", "hana-ikada", "kosumosu", "momiji", "benzaiten", "fuyu-gaki", "yu-yake", "to-ro" },
   ["earth"] = { "yama-guri", "tsukushi", "ina-ho", "syun-gyo", "take-sumi", "hoteison" },
   ["gold"] = { "daikokuten", "hotaru-bi" },
+  ["yellow"] = { "rapeseed", "buttercup" },
 }
-M.group_order = { "blue", "blue-grey", "teal", "green", "violet", "warm", "earth", "gold" }
+M.group_order = { "blue", "blue-grey", "teal", "green", "violet", "warm", "earth", "gold", "yellow" }
 
 return M

@@ -20,6 +20,7 @@ local Plant = require("flora.plant")
 local Brush = require("flora.brush")
 local Frames = require("flora.frames")
 local Mix = require("flora.mix")
+local Head = require("flora.head")
 local Visitor = require("flora.visitor")
 local Clock = require("flora.clock")
 local pal = Paint.palette
@@ -55,6 +56,10 @@ local function plant(spec, pt)
     local _, rh = F.tilt(hero[1], hero[2], R, Tune.hero.tilt)
     g:disc(hero[1], hero[2], rh, 0.85)
     for _, sx in ipairs({ -1, 1 }) do g:disc(hero[1] + sx * R * 0.45, hero[2], R * 0.55, 0.85) end
+    -- A painted head is taller than the bloom: its column is kept clear too.
+    if spec.head and spec.head ~= "bloom" then
+      for _, d in ipairs(Head.footprint(hero, spec.head)) do g:disc(d[1], d[2], d[3], 0.85) end
+    end
   end
 
   local gest = Layout.gesture(rng:fork("gesture"), m, hero)
@@ -280,6 +285,14 @@ local function plant(spec, pt)
   layer("blooms", function()
     for _, f in ipairs(blooms) do draw(f, 0.1, 10) end
     local hf = function(p) F.hero(p, rng:fork("hero"), hero) end
+    if spec.head and spec.head ~= "bloom" then
+      hf = function(p)
+        Head.paint(p, rng:fork("hero"), hero, strands[1], {
+          kind = spec.head, petals = spec.petals,
+          top = spec.height - HERO_TOP - R * Tune.head.floret * 1.2,
+        })
+      end
+    end
     if clock then clock:draw(pt, hf, hero, 0.15) else hf(pt) end
   end)
   if ctx.visitors then
@@ -310,7 +323,15 @@ end
 -- when given, is told each frame before its plant is painted.
 function C.page(spec)
   local palette = Mix.resolve(spec.palette, spec.seed, spec.spin)
-  return Mix.with_palette(palette, function() return C.frames(spec) end)
+  -- A flower style with an ink (cross, buttercup) also paints the sprays in
+  -- it, so its inflorescences match, unless the page's palette says otherwise.
+  local style = spec.flower and F.styles[spec.flower]
+  if style and style.ink and not (palette and palette.sprays) and Tune.color.palette.sprays == "look" then
+    palette = Mix.merge_palette(palette, { sprays = style.ink })
+  end
+  return F.with_flower({ style = spec.flower, petals = spec.petals }, function()
+    return Mix.with_palette(palette, function() return C.frames(spec) end)
+  end)
 end
 
 -- C.page, after the page's palette is in place.
