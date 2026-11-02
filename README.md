@@ -27,6 +27,19 @@ This project would not exist without two others:
   (MIT), whose grown margins, watch-it-grow animation and visitors this
   package follows.
 
+This fork stands on two earlier ones:
+
+- [wn-mitch/tikz-flora](https://github.com/wn-mitch/tikz-flora) (MIT), the
+  generator itself: every petal, wash, leaf and ornament.
+- [samzarr/flora-baked](https://github.com/samzarr/flora-baked) (MIT), whose
+  baking cache (`tools/bake.py`, `tests/test_baked.*` and the baking code in
+  `lua/flora/init.lua`) rasterises each page into a hashed image so PDFs stay
+  small and recompiles fast. It is merged here with its history kept, so the
+  commits remain under their author. The Windows fixes to it are this fork's.
+
+This fork adds the yellow inks, the `cross` and `buttercup` blooms, the
+`flower`, `petals` and `hero` settings, and the inflorescences.
+
 The ink colours are Pilot iroshizuku ramps measured by
 [madoromi](https://madoromi.moonwit.ch/#palettes/colours). The growth follows
 Wong, Zongker and Salesin,
