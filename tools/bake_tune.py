@@ -12,13 +12,21 @@
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TEX_BIN = os.path.expanduser("~/Library/TinyTeX/bin/universal-darwin")
+TEX_BIN = os.environ.get("FLORA_TEX_BIN", os.path.expanduser("~/Library/TinyTeX/bin/universal-darwin"))
 TUNE = os.path.join(ROOT, "lua", "flora", "tune.lua")
+
+
+def get_texlua():
+    found = shutil.which("texlua")
+    if found:
+        return found
+    return os.path.join(TEX_BIN, "texlua")
 
 
 def read_tune(path):
@@ -30,7 +38,7 @@ def read_tune(path):
                 "package.preload['flora.tune'] = function() return dofile(os.getenv('FLORA_TUNE_FILE')) end\n"
                 "dofile('tools/tune_json.lua')\n")
     try:
-        out = subprocess.run([os.path.join(TEX_BIN, "texlua"), f.name], cwd=ROOT, env=env,
+        out = subprocess.run([get_texlua(), f.name], cwd=ROOT, env=env,
                              capture_output=True, text=True, check=True)
     finally:
         os.remove(f.name)

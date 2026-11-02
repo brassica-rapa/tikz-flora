@@ -16,6 +16,8 @@ local O = require("flora.ornament")
 local Gallery = require("flora.gallery")
 local Plant = require("flora.plant")
 local Brush = require("flora.brush")
+local Mix = require("flora.mix")
+local Head = require("flora.head")
 
 local M = {}
 local pi = math.pi
@@ -63,6 +65,53 @@ M.list = {
     id = "wedge", label = "Wedge blooms",
     desc = "The hero's petals: narrow at the eye, opening into broad rounded fans, each separate from the next.",
     paths = { "blooms.wedge", "color.looks.vivid", "color.palette.blooms" }, w = 360, h = 124, draw = bloom_row("wedge"),
+  },
+  {
+    id = "cross", label = "Cross blooms",
+    desc = "A crucifer's flower: four broad spoon petals in a cross round a green pistil and six stamens, in yellow ink.",
+    paths = { "blooms.cross", "color.looks.sun", "color.bright", "color.palette.blooms" }, w = 360, h = 124, draw = bloom_row("cross"),
+  },
+  {
+    id = "buttercup", label = "Buttercup blooms",
+    desc = "Five round, glossy petals round a green boss in a crowd of gold stamens, in yellow ink.",
+    paths = { "blooms.buttercup", "color.looks.sun", "color.bright", "color.palette.blooms" }, w = 360, h = 124, draw = bloom_row("buttercup"),
+  },
+  {
+    id = "head", label = "Hero inflorescence",
+    desc = "The hero as a painted raceme, corymb and panicle of blooms: dense, tilted in perspective, back to front with shadows. Florets follow the cross style unless head.style says otherwise.",
+    paths = { "head", "color.palette.hero", "color.looks.sun", "color.bright", "blooms.cross", "blooms.buttercup" }, w = 540, h = 340,
+    draw = function(pt, rng)
+      for i, kind in ipairs({ "raceme", "corymb", "panicle" }) do
+        local x = 90 + (i - 1) * 180
+        local stem = Plant.stem(G.curve({ x, 0 }, pi / 2 + 0.04, 120, 0.1, 0, 30), 4.5, 3.6)
+        local sr = rng:fork("stem" .. i)
+        Brush.stem(pt, sr, stem.pts, Plant.width_fn(stem), Tune.plant)
+        local cap = stem.pts[#stem.pts]
+        Head.paint(pt, rng:fork(kind), { cap[1], cap[2] + 12, 66 }, stem, { kind = kind, top = 332 })
+      end
+    end,
+  },
+  {
+    id = "inflorescence", label = "Inflorescences",
+    desc = "Raceme, corymb and panicle: florets on an axis, how many, how large, how far they open. Painted in the sprays' ink (yellow when that is left on look).",
+    paths = { "inflorescence", "mix.raceme", "mix.corymb", "mix.panicle", "color.palette.sprays" }, w = 440, h = 190,
+    draw = function(pt, rng)
+      local function paint()
+        local b = S.batch()
+        for i, k in ipairs({ "raceme", "corymb", "panicle" }) do
+          for j = 1, 2 do
+            S.inflorescence(b, rng:fork(k .. j), { 60 + (i - 1) * 140, 10 + (j - 1) * 5 },
+              pi / 2 + (j == 1 and -0.1 or 0.15), 150, { kind = k })
+          end
+        end
+        b:paint(pt)
+      end
+      if Tune.color.palette.sprays == "look" then
+        Mix.with_palette({ sprays = "daikokuten+bright" }, paint)
+      else
+        paint()
+      end
+    end,
   },
   {
     id = "lily", label = "Lily and ghost bloom",

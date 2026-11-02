@@ -49,6 +49,10 @@ M.ramps = {
   ["fukagawa-nezu"] = { { 0.5041, -0.0145, -0.0254 }, { 0.5697, -0.0210, -0.0221 }, { 0.6412, -0.0234, -0.0184 }, { 0.7079, -0.0227, -0.0151 }, { 0.7696, -0.0205, -0.0120 }, { 0.8296, -0.0164, -0.0108 }, { 0.8895, -0.0127, -0.0091 }, { 0.9515, -0.0109, -0.0057 } },
 }
 
+-- Inks marked bright (see M.split below) are read in their own lighter
+-- range. This table is filled by name on demand, never by hand.
+M.bright = {}
+
 M.order = {
   "shimbashi-iro", "ebisu", "ama-iro", "kon-peki", "ajisai", "jurojin",
   "murasaki-shikibu", "asa-gao", "tsuyu-kusa", "shin-kai", "tsuki-yo", "fuyu-syogun",
@@ -69,6 +73,35 @@ M.groups = {
   ["earth"] = { "yama-guri", "tsukushi", "ina-ho", "syun-gyo", "take-sumi", "hoteison" },
   ["gold"] = { "daikokuten", "hotaru-bi" },
 }
+-- "+bright" after any ink or ink group (`gold+bright`, `ama-iro+bright`) reads
+-- it in a lighter, truer range: the look's lightness is laid over the ink's
+-- own (color.lua, fit) instead of the look's darker one. A bright ink is the
+-- same ramp under another name, so every lookup by name keeps working.
+M.SUFFIX = "+bright"
+
+-- `choice` split into its ink or group name and whether it is bright.
+function M.split(choice)
+  local base = type(choice) == "string" and choice:match("^(.*)%+bright$")
+  if base then return base, true end
+  return choice, false
+end
+
+setmetatable(M.ramps, { __index = function(t, k)
+  local base = M.split(k)
+  if base ~= k then return rawget(t, base) end
+end })
+setmetatable(M.bright, { __index = function(_, k)
+  local base, bright = M.split(k)
+  return bright and rawget(M.ramps, base) ~= nil or nil
+end })
+
+-- Is `choice` something a palette part may be set to?
+function M.valid(choice)
+  if choice == "look" then return true end
+  local base = M.split(choice)
+  return base == "random" or M.groups[base] ~= nil or rawget(M.ramps, base) ~= nil
+end
+
 M.group_order = { "blue", "blue-grey", "teal", "green", "violet", "warm", "earth", "gold" }
 
 return M

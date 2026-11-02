@@ -76,12 +76,30 @@ for name, r in pairs(Inks.ramps) do
   richest[name] = bi
 end
 
+-- Lightness at which a bright ink (`name+bright`, inks.lua) is read for a
+-- look's lightness `L`. A look runs from about 0.3 (dense) to 0.99 (paper);
+-- the ink only exists between its densest stop and paper, so the look's range
+-- is laid over the ink's, and the ink keeps its own hue and chroma there.
+-- tune.color.bright.depth sets how much of the ink's dense end the deepest
+-- tones reach: 0 stays a clean light tone, 1 goes all the way to the densest
+-- stroke. Other inks are read at `L` itself.
+function C.fit(name, L)
+  if not Inks.bright[name] then return L end
+  local r = Inks.ramps[name]
+  local lo, hi = r[1][1], r[#r][1]
+  local depth = Tune.color.bright and Tune.color.bright.depth or 0.1
+  lo = hi - (hi - lo) * (0.38 + 0.62 * depth)
+  local u = math.max(0, math.min(1, (L - 0.28) / 0.71))
+  return lo + (hi - lo) * u
+end
+
 -- The ink `name`'s colour where its wash has lightness L, as OKLCH chroma
 -- and hue: its measured ramp interpolated by lightness from its richest
 -- stop to its palest, held at either end beyond that.
 function C.ink_at(name, L)
+  L = C.fit(name, L)
   local all = Inks.ramps[name]
-  local r = { table.unpack(all, richest[name]) }
+  local r = { table.unpack(all, Inks.bright[name] and 1 or richest[name]) }
   local lo, hi = r[1], r[#r]
   local a, b
   if L <= lo[1] then
@@ -101,13 +119,24 @@ function C.ink_at(name, L)
   return math.sqrt(a * a + b * b), math.deg(math.atan(b, a)) % 360
 end
 
+-- Is `name` a bright ink whose light end is yellow (hue 80 to 135 degrees)?
+-- Yellow is too light to draw with, so its stems, pen lines and buds are
+-- green (sprig.lua, flower.lua, head.lua).
+function C.is_yellow(name)
+  if not (name and Inks.bright[name]) then return false end
+  local _, h = C.ink_at(name, 0.9)
+  return h >= 80 and h <= 135
+end
+
 -- The ink a shape is painted with, for palette `choice` (a value of
 -- tune.color.palette): nil for "look" (the look's own gradient), an ink
 -- group's member picked with `rng`, or the named ink.
 function C.ink_for(rng, choice)
   if not choice or choice == "look" then return nil end
-  local g = Inks.groups[choice]
-  if g then return g[rng:int(1, #g)] end
+  local base, bright = Inks.split(choice)
+  local tail = bright and Inks.SUFFIX or ""
+  local g = Inks.groups[base]
+  if g then return g[rng:int(1, #g)] .. tail end
   if Inks.ramps[choice] then return choice end
   return nil
 end
@@ -115,11 +144,11 @@ end
 -- sRGB for ink `name` at lightness L, its chroma scaled by `share`.
 function C.ink_rgb(name, L, share)
   local ch, h = C.ink_at(name, L)
-  return C.oklch(L, ch * (share or 1), h)
+  return C.oklch(C.fit(name, L), ch * (share or 1), h)
 end
 
 -- Which tune.color.palette part a look paints by default.
-local PART = { leaf = "leaves", hero = "hero", vivid = "blooms", fan = "blooms", soft = "blooms", ghost = "ghost" }
+local PART = { leaf = "leaves", hero = "hero", vivid = "blooms", fan = "blooms", soft = "blooms", ghost = "ghost", sun = "blooms" }
 
 function C.part_of(look)
   return PART[look]
@@ -133,8 +162,9 @@ function C.part_ink(part)
   local choice = part and Tune.color.palette and Tune.color.palette[part]
   if not choice or choice == "look" or choice == "blue" then return nil end
   if Inks.ramps[choice] then return choice end
-  local g = Inks.groups[choice]
-  return g and g[1] or nil
+  local base, bright = Inks.split(choice)
+  local g = Inks.groups[base]
+  return g and (g[1] .. (bright and Inks.SUFFIX or "")) or nil
 end
 
 local BLUE = {}
@@ -178,7 +208,8 @@ function C.ramp(rng, look, part)
       stops[#stops + 1] = { t, C.ink_rgb(ink, L, grey) }
     end
     local ch, ih = C.ink_at(ink, tip_l)
-    return stops, { h = ih, L = tip_l, share = math.min(1, ch * grey / math.max(1e-6, C.max_chroma(tip_l, ih))), ink = ink }
+    local tl = C.fit(ink, tip_l)
+    return stops, { h = ih, L = tl, share = math.min(1, ch * grey / math.max(1e-6, C.max_chroma(tl, ih))), ink = ink }
   end
   for i = 0, n - 1 do
     local t = i / (n - 1)

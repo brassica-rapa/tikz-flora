@@ -55,6 +55,15 @@ local T = {
     wedge = { weight = 3.2, petals = { 5, 5 }, width = { 0.35, 0.44 }, ragged = 0.15, spacing = 0.09,
       rim = 0.12, rays = { 30, 44 }, ray_reach = { 0.25, 0.6 }, ray_contrast = { 0.4, 0.6 }, veins = { 12, 18 },
       gap = 0.08, eye_fade = 0.28, backruns = 0.8 },
+    -- Yellow styles, off by default (weight 0): pick one with
+    -- \florasetup{flower=cross} or tune.hero.style. No `gap`: their petals
+    -- overlap, as a crucifer's and a buttercup's do.
+    cross = { weight = 0, petals = { 4, 4 }, width = { 0.42, 0.50 }, ragged = 0.06, spacing = 0.07,
+      rim = 0.07, rays = { 0, 0 }, ray_reach = { 0.30, 0.80 }, ray_contrast = { 0.45, 0.80 }, veins = { 5, 9 },
+      eye_fade = 0, backruns = 0.5 },
+    buttercup = { weight = 0, petals = { 5, 5 }, width = { 0.58, 0.68 }, ragged = 0.06, spacing = 0.06,
+      rim = 0.04, rays = { 0, 0 }, ray_reach = { 0.30, 0.80 }, ray_contrast = { 0.45, 0.80 }, veins = { 0, 4 },
+      eye_fade = 0, backruns = 0.4, stamens = 30 },
   },
   compose = {
     hero = 0.5,            -- hero bloom radius, fraction of margin width
@@ -71,10 +80,44 @@ local T = {
     leaflet_spacing = { 40, 72 }, -- pt between small leaflets along the stems, picked per gap
     leaflet_size = 17.5,    -- length of those leaflets, pt
   },
+  -- The hero as an inflorescence (head.lua), chosen with
+  -- \florasetup{hero=raceme} (or corymb, panicle). Lengths are in hero radii.
+  head = {
+    style = "cross",        -- the florets' bloom style when \florasetup{flower=...} is not set
+    flowers = { 48, 62 },   -- florets and buds in all, picked per head
+    detail = 16,            -- nearest florets that get the full wash; the rest use the simple one
+    floret = 0.23,          -- floret radius at full size, in hero radii
+    length = 2.5,           -- head length, from the lowest stretch of stem it uses to the tip
+    width = 0.50,           -- cluster radius where it is widest
+    bare = 0.34,            -- share of the head's length below the first floret (pods hang there)
+    bud_share = 0.22,       -- share of florets, from the tip, still in bud
+    tilt = { 12, 68 },      -- degrees a floret leans: face-on at the front, edge-on at the sides
+    shade = 0.11,           -- opacity of the shadow a front floret casts on those behind
+    fade = 0.35,            -- how much paler the back florets are
+    relax = 6,              -- passes that push overlapping florets of one depth apart
+    cup = 0.7,              -- concavity: how far each floret's outward petal is brought back toward the viewer, 0 (flat) to 1 (face-on)
+    cup_focus = 2,          -- how tightly that is confined to the outward petal (higher: only one; lower: its neighbours lift too)
+    pods = 3,               -- seed pods hanging below the florets (raceme and panicle)
+    sway = 0.15,            -- lean of the continued axis, radians
+  },
+  -- Inflorescences (sprig.lua): racemes, corymbs and panicles of florets.
+  -- They grow in the holes only when the mix gives them weight
+  -- (\florasetup{mix={raceme=1}}).
+  inflorescence = {
+    petals = 4,             -- petals per floret: 4 for a crucifer (\florasetup{petals=...} wins)
+    flowers = { 9, 15 },    -- florets (and buds) on each
+    bud_share = 0.3,        -- share of a raceme's florets, from the tip, still in bud
+    floret = 0.05,          -- floret radius, share of the inflorescence's length
+    pedicel = 0.15,         -- floret stalk length, share of the length
+    spread = 0.36,          -- how far a corymb's outer florets reach, share of the length
+    bend = 0.30,            -- sweep of the axis, radians
+    pods = 3,               -- seed pods hanging below a raceme's lowest florets
+  },
   -- How much of each kind of growth a page gets (mix.lua): 1 is the usual
   -- amount, 0 none. \florasetup{mix={...}} overrides these per document.
   mix = {
     bloom = 1, soft = 1, lily = 1, ghost = 1, umbel = 1, cyme = 1, gyps = 1,
+    raceme = 0, corymb = 0, panicle = 0,
     leaves = 1, leaflets = 1, sprays = 1, curls = 1, density = 1,
     bee = 0, butterfly = 0, bird = 0, snail = 0,
   },
@@ -111,12 +154,18 @@ local T = {
     -- by name (lua/flora/inks.lua). Inks keep the look's lightness.
     palette = { hero = "look", blooms = "look", leaves = "blue", leaflets = "blue", stems = "chiku-rin",
       sprays = "look", ghost = "look", cartouche = "look" },
+    -- An ink with +bright after it (gold+bright) is read in its own lighter
+    -- range, not at the look's darker lightness, so a yellow stays yellow.
+    -- depth: how far the deepest tones go, 0 (a clean light tone) to 1 (the
+    -- ink's densest stroke).
+    bright = { depth = 0.1 },
     looks = {
       vivid = { base_l = { 0.80, 0.90 }, tip_l = { 0.2, 0.32 }, chroma = { 0.65, 1.00 }, curve = { 0.4, 1.3 } },
       hero  = { base_l = { 0.74, 1 }, tip_l = { 0.36, 0.48 }, chroma = { 0.81, 1 }, curve = { 0.35, 0.75 } },
       fan   = { base_l = { 0.68, 0.80 }, tip_l = { 0.36, 0.50 }, chroma = { 0.80, 1.00 }, curve = { 0.35, 0.80 } },
       soft  = { base_l = { 0.95, 0.99 }, tip_l = { 0.48, 0.68 }, chroma = { 0.40, 0.85 }, curve = { 0.8, 1.8 } },
       ghost = { base_l = { 0.97, 0.99 }, tip_l = { 0.83, 0.88 }, chroma = { 0.25, 0.3 }, curve = { 1, 1.2 } },
+      sun   = { base_l = { 0.70, 0.80 }, tip_l = { 0.36, 0.46 }, chroma = { 0.85, 1.00 }, curve = { 0.6, 1.2 } },
       leaf  = { base_l = { 0.66, 0.8 }, tip_l = { 0.32, 0.65 }, chroma = { 0.65, 1 }, curve = { 0.4, 2.2 } },
     },
   },
@@ -185,6 +234,8 @@ T._doc = {
   ["blooms.round"] = { "Round", "Rounded vivid petals that pale toward the eye." },
   ["blooms.soft"] = { "Soft", "Pale, wide, rounded petals." },
   ["blooms.obovate"] = { "Obovate", "Narrower petals widest past the middle; the earlier hero." },
+  ["blooms.cross"] = { "Cross", "A crucifer's flower: four broad spoon-shaped petals in a cross round a green pistil and six stamens. Yellow by default." },
+  ["blooms.buttercup"] = { "Buttercup", "Five round, glossy petals round a green boss in a crowd of gold stamens. Yellow by default." },
   ["blooms.wedge"] = { "Wedge", "The hero's petals: narrow at the eye, opening into broad rounded fans with wavy ends, each separate from the next." },
   weight = { "Weight", "How often a bloom picks this style relative to the others. 0 never." },
   petals = { "Petals", "Number of petals, picked per bloom." },
@@ -199,7 +250,7 @@ T._doc = {
   gap = { "Petal gap", "Least gap between neighbouring petals, as a share of each petal's sector around the eye." },
   eye_fade = { "Fade at the eye", "Keeps the white fade of lost edges near the eye: 1 pales only toward the centre, 0 fades along every lost edge." },
   backruns = { "Back-runs", "Scales the pale back-run patches in this style's petals (0 = none)." },
-  ["hero.style"] = { "Style", "The hero's bloom style: fan, round, soft, obovate or wedge." },
+  ["hero.style"] = { "Style", "The hero's bloom style: fan, round, soft, obovate, wedge, cross or buttercup." },
   ["color.looks.fan"] = { "Fan blooms", "Gradients for fan-style blooms: solid blue nearly to the eye." },
   compose = { "Composition", "How much grows, and how large: blooms, leaves, sprays and curls." },
   ["compose.hero"] = { "Hero size", "Radius of the large flower at the top, as a share of the margin width." },
@@ -222,6 +273,36 @@ T._doc = {
   ["mix.lily"] = { "Lilies", "Lilies seen from the side." },
   ["mix.ghost"] = { "Ghost blooms", "Faint blooms behind the stems." },
   ["mix.umbel"] = { "Umbels", "Domed clusters of florets on fine rays." },
+  ["mix.raceme"] = { "Racemes", "Elongating spikes of florets, buds crowded at the tip, as in rapeseed. Off unless weighted." },
+  ["mix.corymb"] = { "Corymbs", "Flat-topped heads of florets on pedicels of graded length, as in alyssum and mustard. Off unless weighted." },
+  ["mix.panicle"] = { "Panicles", "A raceme with side racemes. Off unless weighted." },
+  head = { "Hero inflorescence", "The hero as a painted raceme, corymb or panicle of blooms, dense and a little dimensional, in place of the single hero bloom. Chosen with the hero setting." },
+  ["head.style"] = { "Floret style", "The bloom style of each floret when the flower setting is not set." },
+  ["head.flowers"] = { "Florets", "Florets and buds in all, picked per head." },
+  ["head.detail"] = { "Detailed florets", "How many of the nearest florets get the full watercolour wash; the rest use the simple one. More is richer and slower." },
+  ["head.floret"] = { "Floret size", "Floret radius at full size, in hero radii." },
+  ["head.length"] = { "Head length", "Length of the head in hero radii, from the stretch of main stem it uses to its tip." },
+  ["head.width"] = { "Head width", "Radius of the cluster where it is widest, in hero radii." },
+  ["head.bare"] = { "Bare stalk", "Share of the head's length below the first floret, where pods hang." },
+  ["head.bud_share"] = { "Buds", "Share of the florets, from the tip, that are still in bud." },
+  ["head.tilt"] = { "Floret tilt", "How far florets lean, in degrees: the first number face-on at the front, the second edge-on at the sides." },
+  ["head.shade"] = { "Shadows", "Opacity of the shadow each front floret casts on those behind it." },
+  ["head.fade"] = { "Back fade", "How much paler the florets at the back are." },
+  ["head.relax"] = { "Spacing passes", "Passes that push overlapping florets of the same depth apart, so the head is dense but not clotted." },
+  ["head.cup"] = { "Floret cupping", "How concave each floret is: the petal pointing out from the axis is tilted back toward the viewer by this share of the floret's tilt, so it opens like a shallow cup. 0 leaves florets flat." },
+  ["head.cup_focus"] = { "Cup focus", "How tightly the cupping is confined to the single outward petal. Higher leaves only that petal lifted; lower lets its neighbours lift a little too, for a deeper cup." },
+  ["head.pods"] = { "Seed pods", "Slender pods hanging below the lowest florets." },
+  ["head.sway"] = { "Axis lean", "How far the continued axis leans toward the vertical, in radians." },
+  stamens = { "Stamens", "How many stamens ring the eye." },
+  inflorescence = { "Inflorescences", "Racemes, corymbs and panicles of florets: how many florets, how large, how far they open." },
+  ["inflorescence.petals"] = { "Floret petals", "Petals per floret: 4 for a crucifer, 5 otherwise." },
+  ["inflorescence.flowers"] = { "Florets", "Florets and buds on each inflorescence, picked per inflorescence." },
+  ["inflorescence.bud_share"] = { "Buds", "Share of a raceme's florets, from the tip, that are still buds." },
+  ["inflorescence.floret"] = { "Floret size", "Floret radius as a share of the inflorescence's length." },
+  ["inflorescence.pedicel"] = { "Floret stalks", "Length of each floret's stalk as a share of the inflorescence's length." },
+  ["inflorescence.spread"] = { "Corymb spread", "How far a corymb's outer florets reach, as a share of its length: small is a tight head, large wide and flat." },
+  ["inflorescence.bend"] = { "Axis sweep", "How far the axis arcs, in radians." },
+  ["inflorescence.pods"] = { "Seed pods", "Slender pods hanging below a raceme's lowest florets." },
   ["mix.cyme"] = { "Forget-me-nots", "Curled sprays of small florets." },
   ["mix.gyps"] = { "Baby's breath", "Clouds of tiny florets on hairline stems." },
   ["mix.leaves"] = { "Leaves", "Large leaves along the stems." },
@@ -255,10 +336,13 @@ T._doc = {
   ["color.palette.sprays"] = { "Sprays", "Palette for the forget-me-nots, baby's breath and umbel florets, and the sprays' line work." },
   ["color.palette.ghost"] = { "Ghost bloom", "Palette for the pale ghost bloom." },
   ["color.palette.cartouche"] = { "Cartouche", "Palette for the sky inside the star cartouche; its gilt stays gold." },
+  ["color.bright"] = { "Bright inks", "How inks marked +bright (gold+bright, ama-iro+bright) are read: in their own lighter range, so a yellow stays yellow and a blue becomes a lighter blue instead of a darker, muddier one." },
+  ["color.bright.depth"] = { "Bright depth", "How far the deepest tones of a +bright ink go: 0 stays a clean light tone, 1 reaches the ink's densest stroke." },
   ["color.looks"] = { "Looks", "Gradient ranges for each kind of shape: vivid blooms, soft blooms, ghost blooms and leaves." },
   ["color.looks.hero"] = { "Hero bloom", "The hero bloom's own gradients, separate from other vivid blooms." },
   ["color.looks.vivid"] = { "Vivid blooms", "The hero bloom, the lily and most small flowers." },
   ["color.looks.soft"] = { "Soft blooms", "Paler blooms and soft leaves." },
+  ["color.looks.sun"] = { "Yellow blooms", "Gradients for the cross and buttercup styles: saturated nearly to the eye, a little deeper at the rim." },
   ["color.looks.ghost"] = { "Ghost blooms", "The faint flower behind the stems." },
   ["color.looks.leaf"] = { "Leaves", "Every leaf except soft ones." },
   base_l = { "Base lightness", "Lightness where the shape joins its stem or the flower's eye (1 = paper white)." },

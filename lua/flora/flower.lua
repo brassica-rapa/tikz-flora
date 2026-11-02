@@ -5,6 +5,8 @@ local W = require("flora.wash")
 local Paint = require("flora.paint")
 local Color = require("flora.color")
 local Tune = require("flora.tune")
+local Mix = require("flora.mix")
+local Inks = require("flora.inks")
 local pal = Paint.palette
 
 local F = {}
@@ -26,6 +28,11 @@ F.kinds = {
   -- rim (the reference's hero petals).
   wedge   = { wedge = true, shoulder = 0.74, base = 0.06, rise = 1.3, notch = 0.03, wave = 0.12,
               scallop = 0.035, freq = 6 },
+  -- A crucifer's petal: a slim claw opening into a broad, rounded blade
+  -- (obovate, widest about three quarters out), its rim barely waved.
+  spoon   = { k = 0.60, e = 0.52, claw = 0.52, notch = 0.03, wave = 0.06, freq = 4 },
+  -- A buttercup's petal: short claw, nearly round, glossy and smooth.
+  cupped  = { k = 0.88, e = 0.46, claw = 0.22, notch = 0.00, wave = 0.025, freq = 3 },
 }
 
 -- Half-width at fraction t of the length, as a fraction of the petal's
@@ -162,12 +169,107 @@ function F.eye(pt, rng, cx, cy, R, o)
   pt:fill({ { "o", cx - R * 0.009, cy + R * 0.009, R * 0.010 } }, pal.white, 0.35)
 end
 
+-- Overrides from \florasetup{flower=..., petals=...} (see with_flower).
+F.flower = {}
+
+-- Run fn() with every bloom drawn in bloom style `o.style` and/or with
+-- `o.petals` petals, restoring the previous overrides afterwards.
+function F.with_flower(o, fn)
+  if not o or (not o.style and not o.petals) then return fn() end
+  local cur = F.flower
+  F.flower = { style = o.style or cur.style, petals = o.petals or cur.petals }
+  local ok, res = pcall(fn)
+  F.flower = cur
+  if not ok then error(res, 0) end
+  return res
+end
+
+-- Warm stamen and pistil colours for yellow flowers, as sRGB.
+local function warm(L, C, h) return Color.oklch(L, C, h) end
+
+-- The eye of a crucifer (rapeseed, wallflower, mustard): a green pistil
+-- among six stamens, four long and two short, and a warm shade where the
+-- four claws meet. No white glow: the petals stay yellow to the centre.
+--   o.stamens  the long stamens' number is fixed at 4; this scales their reach
+function F.eye_cross(pt, rng, cx, cy, R, o)
+  o = o or {}
+  local c = { cx, cy }
+  for k = 1, 4 do
+    local r = R * (0.21 - 0.04 * k)
+    pt:fill(G.smooth(G.deform(circle(c, r, 16), rng, r * 0.2), true), warm(0.76, 0.15, 74), 0.10, { blend = "multiply" })
+  end
+  local a0 = rng:range(0, 2 * pi)
+  local fil, anthers = {}, {}
+  local function stamen(a, len)
+    local p0 = G.polar(c, a, R * 0.05)
+    local line = G.curve(p0, a, len, rng:jit(0.5), 0, 6)
+    fil[#fil + 1] = line
+    local tip, ta = line[#line], G.angle(line[#line - 1], line[#line])
+    local ar = R * rng:range(0.014, 0.018)
+    anthers[#anthers + 1] = G.smooth(G.transform(circle({ 0, 0 }, 1, 10), tip[1], tip[2], ta, ar * 1.9, ar), true)
+  end
+  local reach = o.stamens or 1
+  for _, d in ipairs({ -0.42, 0.42, pi - 0.42, pi + 0.42 }) do
+    stamen(a0 + d + rng:jit(0.12), R * rng:range(0.17, 0.21) * reach)
+  end
+  for _, d in ipairs({ pi / 2, 3 * pi / 2 }) do
+    stamen(a0 + d + rng:jit(0.12), R * rng:range(0.09, 0.12) * reach)
+  end
+  W.hairlines(pt, fil, warm(0.80, 0.11, 105), math.max(0.16, R * 0.006), 0.85, { head = 0.3 })
+  pt:fill(anthers, warm(0.73, 0.16, 70), 0.92, { many = true })
+  local disc = G.smooth(G.deform(circle(c, R * 0.05, 12), rng, R * 0.006), true)
+  pt:fill(disc, warm(0.70, 0.14, 128), 0.95)
+  pt:stroke(disc, warm(0.50, 0.10, 135), math.max(0.12, R * 0.004), 0.5)
+  pt:fill({ { "o", cx - R * 0.012, cy + R * 0.012, R * 0.012 } }, pal.white, 0.45)
+end
+
+-- The eye of a buttercup: a green boss of carpels ringed by a crowd of
+-- gold stamens, with a soft satin gleam on the petals around it.
+--   o.stamens  how many stamens
+function F.eye_buttercup(pt, rng, cx, cy, R, o)
+  o = o or {}
+  local c = { cx, cy }
+  for k = 1, 5 do
+    local r = R * 0.34 * (1 - (k - 1) / 6)
+    pt:fill(G.smooth(G.deform(circle(G.polar(c, rng:range(0, 2 * pi), R * 0.012), r, 18), rng, r * 0.14), true),
+      pal.white, 0.10)
+  end
+  local m = o.stamens or 30
+  local fil, tones = {}, { {}, {} }
+  local a0 = rng:range(0, 2 * pi)
+  for i = 1, m do
+    local a = a0 + (i - 1 + rng:jit(0.4)) * 2 * pi / m
+    local p0 = G.polar(c, a, R * rng:range(0.07, 0.09))
+    local line = G.curve(p0, a, R * rng:range(0.08, 0.15), rng:jit(0.5), 0, 5)
+    fil[#fil + 1] = line
+    local tip, ta = line[#line], G.angle(line[#line - 1], line[#line])
+    local ar = R * rng:range(0.010, 0.014)
+    local bucket = tones[rng:chance(0.65) and 1 or 2]
+    bucket[#bucket + 1] = G.smooth(G.transform(circle({ 0, 0 }, 1, 8), tip[1], tip[2], ta, ar * 1.7, ar), true)
+  end
+  W.hairlines(pt, fil, warm(0.78, 0.12, 95), math.max(0.14, R * 0.005), 0.7, { head = 0.3 })
+  pt:fill(tones[1], warm(0.78, 0.165, 82), 0.92, { many = true })
+  pt:fill(tones[2], warm(0.66, 0.14, 66), 0.9, { many = true })
+  local boss = G.smooth(G.deform(circle(c, R * 0.062, 14), rng, R * 0.006), true)
+  pt:fill(boss, warm(0.68, 0.14, 128), 0.97)
+  local knobs = {}
+  for _ = 1, 12 do
+    local q = G.polar(c, rng:range(0, 2 * pi), R * 0.062 * math.sqrt(rng:range(0.05, 0.85)))
+    knobs[#knobs + 1] = { { "o", q[1], q[2], R * rng:range(0.006, 0.01) } }
+  end
+  pt:fill(knobs, warm(0.52, 0.11, 135), 0.7, { many = true })
+  pt:stroke(boss, warm(0.48, 0.10, 135), math.max(0.12, R * 0.004), 0.5)
+end
+
 -- Wash settings by look. `strength` scales pigment load.
 local LOOKS = {
   vivid = { ramp = "vivid", pigment = pal.blue, pool = pal.deep, strength = 1.15, rings = 12, lift = 0.05, streaks = 40, dark = 22, grain = 0.9, outline = 0.55 },
   fan   = { ramp = "fan", pigment = pal.blue, pool = pal.deep, strength = 1.15, rings = 12, lift = 0.05, streaks = 40, dark = 16, grain = 2.0, outline = 0.5 },
   hero  = { ramp = "hero", pigment = pal.blue, pool = pal.deep, strength = 1.15, rings = 12, lift = 0.05, streaks = 40, dark = 22, grain = 2.0, outline = 0.55 },
   soft  = { ramp = "soft", pigment = pal.sky, pool = pal.deep, strength = 0.95, rings = 10, lift = 0.07, streaks = 22, dark = 12, grain = 0.6, outline = 0.70 },
+  -- Yellow blooms: saturated to the eye, a touch deeper at the rim. The
+  -- ramp runs through a +bright ink (color.fit), so it never goes dull.
+  sun   = { ramp = "sun", pigment = pal.blue, pool = pal.deep, strength = 1.0, rings = 12, lift = 0.04, streaks = 14, dark = 8, grain = 1.1, outline = 0.5 },
   ghost = { ramp = "ghost", pigment = pal.mist, pool = pal.sky, strength = 0.45, rings = 8, lift = 0.12, streaks = 8, dark = 3, grain = 0.15, outline = 0.45, knockout = 0.35 },
 }
 
@@ -186,13 +288,13 @@ local function wash_petal(pt, rng, poly, L, light, look, lost, extra)
   W.wash(pt, poly, {
     ramp = look.ramp, axis = { light, tip_of(poly, light) },
     rng = rng, size = L, light = light,
-    pigment = look.pigment, pool = look.pool, strength = look.strength,
+    pigment = look.pigment, pool = look.pool, strength = look.strength * (extra.strength or 1),
     rings = look.rings, lift = look.lift, bleed = math.min(L * 0.02, 1.6),
     streaks = math.floor(look.streaks * G.clamp(L / 40, 0.35, 1.4)),
     dark_streaks = extra.veins or look.dark, grain = look.grain, rays = extra.rays,
     outline = look.outline, outline_w = math.max(0.25, L * 0.009),
     knockout = look.knockout, lost = lost,
-    eye_fade = extra.eye_fade, lifts = extra.lifts,
+    eye_fade = extra.eye_fade, lifts = extra.lifts, part = extra.part, simple = extra.simple,
   })
 end
 
@@ -204,11 +306,17 @@ local STYLE = {
   soft = { kind = "round", look = "soft" },
   obovate = { kind = "obovate", look = "vivid" },
   wedge = { kind = "wedge", look = "vivid" },
+  -- Yellow styles. `ink` paints them when their palette part is "look".
+  -- cross: a crucifer, four spoon petals in a cross (rapeseed, mustard).
+  cross = { kind = "spoon", look = "sun", eye = "cross", ink = "daikokuten+bright", lost = 0.10, bend = 0.03 },
+  -- buttercup: five round, glossy petals round a green boss in gold stamens.
+  buttercup = { kind = "cupped", look = "sun", eye = "buttercup", ink = "daikokuten+bright", lost = 0.08, bend = 0.04 },
 }
 F.styles = STYLE
 
 -- One of `names` (bloom styles), picked by their tune.blooms weights.
 function F.pick_style(rng, names)
+  if F.flower.style then return F.flower.style end
   local w = {}
   for _, n in ipairs(names) do w[n] = math.max(0, Tune.blooms[n].weight) end
   local total = 0
@@ -228,6 +336,8 @@ end
 -- A frontal bloom of radius R centred at (cx, cy).
 --   o.style     a bloom style (tune.blooms); sets the petal kind, look,
 --               count, width, rim, rays and veins, each drawn per bloom
+--   o.simple (the wash's simple form, for small blooms), o.strength (scales
+--   the pigment load: below 1 is paler), o.part (the palette part),
 --   o.kind (petal kind), o.petals, o.rot, o.look ("vivid"|"soft"|"ghost"),
 --   o.width (petal width as a fraction of R) override the style; o.lost
 --   (share of each petal's outline lost; default tune.wash.lost_edges)
@@ -235,15 +345,22 @@ function F.bloom(pt, rng, cx, cy, R, o)
   o = o or {}
   local st = o.style and Tune.blooms[o.style]
   local base = o.style and STYLE[o.style] or {}
+  -- A style with an ink paints in it unless the page's palette chose one.
+  local ink = base.ink
+  local part = o.part or Color.part_of(base.look or o.look or "vivid")
+  local chosen = Tune.color.palette and Tune.color.palette[part]
+  if ink and (not chosen or chosen == "look") then
+    return Mix.with_palette({ [part] = ink }, function() return F.bloom(pt, rng, cx, cy, R, o) end)
+  end
   local function pick(range) return rng:range(range[1], range[2]) end
-  local n = o.petals or (st and rng:int(st.petals[1], st.petals[2])) or 5
+  local n = o.petals or F.flower.petals or (st and rng:int(st.petals[1], st.petals[2])) or 5
   local width = o.width or (st and pick(st.width)) or 0.34
   local kind = o.kind or base.kind or "obovate"
   local look_name = o.look or base.look or "vivid"
   local look = LOOKS[look_name]
   local ragged = st and st.ragged or 0.08
   local spacing = st and st.spacing or 0.12
-  local extra = {}
+  local extra = { part = o.part, simple = o.simple, strength = o.strength }
   if st then
     extra.eye_fade, extra.lifts = st.eye_fade, st.backruns
     extra.veins = math.floor(pick(st.veins) + 0.5)
@@ -260,6 +377,9 @@ function F.bloom(pt, rng, cx, cy, R, o)
     local r = rng:fork("petal" .. i)
     petals[i] = { r = r, a = a0 + (i - 1) * 2 * pi / n + r:jit(spacing) }
   end
+  -- The projection the caller set for the whole bloom; o.petal_project(a)
+  -- may give one petal its own (a cupped bloom: see head.lua).
+  local whole = pt.projection
   -- A tilted bloom paints its far (upper) petals first, so the near ones
   -- overlap them.
   if o.far_first then
@@ -269,9 +389,16 @@ function F.bloom(pt, rng, cx, cy, R, o)
     local r, a = pe.r, pe.a
     local L = R * r:range(1 - ragged * 1.5, 1 + ragged * 0.5)
     local Wd = R * width * r:range(0.92, 1.08)
-    local local_pts = F.petal(r, kind, L, Wd, r:jit(slot and 0.04 or 0.10), st and st.rim, slot)
+    local local_pts = F.petal(r, kind, L, Wd, r:jit(slot and 0.04 or base.bend or 0.10), st and st.rim, slot)
     local poly = G.transform(local_pts, cx, cy, a - pi / 2)
-    wash_petal(pt, r, poly, L, { cx, cy }, look, o.lost, extra)
+    if o.petal_project then pt:project(o.petal_project(a) or whole) end
+    wash_petal(pt, r, poly, L, { cx, cy }, look, o.lost or base.lost, extra)
+  end
+  if o.petal_project then pt:project(whole) end
+  if base.eye == "cross" then
+    return F.eye_cross(pt, rng:fork("eye"), cx, cy, R)
+  elseif base.eye == "buttercup" then
+    return F.eye_buttercup(pt, rng:fork("eye"), cx, cy, R, { stamens = st and st.stamens })
   end
   -- Fan blooms keep a small white eye; their rays carry the light out.
   local halo = look_name == "ghost" and 0.25 or ((kind == "fan" or kind == "wedge") and 0.2 or 0.36)
@@ -355,9 +482,12 @@ function F.florets(pt, items)
     local x, y, r, rot = f[1], f[2], f[3], f[4] or 0
     local bucket = (f[6] and soft or tints)[f[5] or 2]
     if f[6] then halos[#halos + 1] = { { "o", x, y, 1.05 * r } } end
-    for i = 0, 4 do
-      local a = rot + i * 2 * pi / 5
-      local petal = { { "o", x + 0.55 * r * cos(a), y + 0.55 * r * sin(a), 0.47 * r } }
+    local np = f[7] or 5
+    local off, pr = 0.55, 0.47
+    if np < 5 then off, pr = 0.62, 0.52 end
+    for i = 0, np - 1 do
+      local a = rot + i * 2 * pi / np
+      local petal = { { "o", x + off * r * cos(a), y + off * r * sin(a), pr * r } }
       bucket[#bucket + 1] = petal
       if r > 1.1 and not f[6] then rims[#rims + 1] = petal end
     end
@@ -372,6 +502,10 @@ function F.florets(pt, items)
   local tint = Color.part_ink("sprays")
   local deep, blue, sky = Color.recolor(pal.deep, tint), Color.recolor(pal.blue, tint), Color.recolor(pal.sky, tint)
   local cols = { deep, blue, sky }
+  -- A yellow ink's florets keep a pale eye and a green speck of pistil.
+  local bright = Color.is_yellow(tint)
+  local eye_rgb, speck_rgb = pal.white, pal.copper
+  if bright then eye_rgb, speck_rgb = Color.ink_rgb(tint, 0.98), Color.oklch(0.68, 0.13, 128) end
   if #halos > 0 then pt:fill(halos, sky, 0.14, { many = true, blend = "multiply" }) end
   for i = 1, 3 do
     if #tints[i] > 0 then
@@ -382,9 +516,9 @@ function F.florets(pt, items)
     end
   end
   if #soft_eyes > 0 then pt:fill(soft_eyes, pal.white, 0.6, { many = true }) end
-  if #rims > 0 then pt:stroke(rims, Paint.mix(Color.recolor(pal.ink, tint), blue, 0.5), 0.14, 0.45, { many = true, blend = "multiply" }) end
-  if #eyes > 0 then pt:fill(eyes, pal.white, 0.85, { many = true }) end
-  if #specks > 0 then pt:fill(specks, pal.copper, 0.85, { many = true }) end
+  if #rims > 0 then pt:stroke(rims, bright and Color.oklch(0.70, 0.14, 72) or Paint.mix(Color.recolor(pal.ink, tint), blue, 0.5), 0.14, 0.45, { many = true, blend = "multiply" }) end
+  if #eyes > 0 then pt:fill(eyes, eye_rgb, bright and 0.5 or 0.85, { many = true }) end
+  if #specks > 0 then pt:fill(specks, speck_rgb, 0.85, { many = true }) end
 end
 
 -- A closed teardrop bud pointing along `ang`.
@@ -437,9 +571,15 @@ function F.hero(pt, rng, hero)
   -- At tilt 0 the bloom is painted as is, with no projection at all.
   local fn = hc.tilt > 0 and F.tilt(hero[1], hero[2], hero[3], hc.tilt) or nil
   pt:project(fn)
+  local style = F.flower.style or hc.style
+  local sun = STYLE[style] and STYLE[style].look == "sun"
+  -- A style with its own petal count (or a page-wide override) is not held to the hero's.
+  local petals = F.flower.petals
+  if not petals and not F.flower.style and not (STYLE[style] and STYLE[style].ink) then petals = hc.petals end
   F.bloom(pt, rng, hero[1], hero[2], hero[3], {
-    style = hc.style, look = "hero", petals = hc.petals, width = hc.petal_width,
-    rot = hc.rotation >= 0 and math.rad(hc.rotation) or nil, lost = hc.lost_edges,
+    style = style, look = sun and "sun" or "hero", part = "hero",
+    petals = petals, width = (not F.flower.style and not (STYLE[style] and STYLE[style].ink)) and hc.petal_width or nil,
+    rot = hc.rotation >= 0 and math.rad(hc.rotation) or nil, lost = (not sun) and hc.lost_edges or nil,
     far_first = hc.tilt > 0,
   })
   pt:project(nil)

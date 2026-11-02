@@ -1,11 +1,19 @@
-# tikz-flora
+# tikz-flora (Baked Edition)
 
-Watercolour flora grown in the margins of LuaLaTeX documents. Every page
-grows its own plant around the text it holds: stems, leaves, blooms, sprays,
-gilt, and if you like, bees, butterflies, birds and snails. Everything is
-computed in Lua and drawn through PGF, with no images.
+> **A high-performance fork of [tikz-flora](https://github.com/wn-mitch/tikz-flora) that automatically bakes procedural watercolor flora into optimized transparent images which can be cached, keeping output PDFs compact, easy to render, and quick to recompile.**
 
-Site, live mixer and full guide: **https://flora.alpacasoft.dev**
+Watercolour flora grown in the margins of LuaLaTeX documents. Every page grows its own plant around the text it holds: stems, leaves, blooms, sprays, gilt, and if you like, bees, butterflies, birds and snails.
+
+---
+
+## Why This Fork Exists
+
+The original `tikz-flora` prioritizes high quality by individually storing every petal, wash, blotch, vein, and speckle which PDF readers render with vector commands. This leads to massive file sizes and laggy PDF readers
+
+### What This Fork Solves
+
+* **Small, Lightweight PDFs**: Floral artwork is computed procedurally in Lua and rasterized on-demand into crisp, high-resolution transparent PNGs via `pdftocairo`. Output PDFs drop from tens of megabytes to ~1 MB per page with standard FlateDecode compression.
+* **Deterministic Layout & Clearance Hashing**: Unchanged pages hit the cache instantly, slashing multi-page compilation times from 20+ seconds down to under 5 seconds. The cache key in `flora-cache/` is derived from an exact cryptographic hash of the page's geometry, seed, palette, DPI, and the precise bounding boxes of your text. When you edit text, margins, or seeds, new matching flora is baked automatically.
 
 ## Origins
 
@@ -19,6 +27,19 @@ This project would not exist without two others:
   (MIT), whose grown margins, watch-it-grow animation and visitors this
   package follows.
 
+This fork stands on two earlier ones:
+
+- [wn-mitch/tikz-flora](https://github.com/wn-mitch/tikz-flora) (MIT), the
+  generator itself: every petal, wash, leaf and ornament.
+- [samzarr/flora-baked](https://github.com/samzarr/flora-baked) (MIT), whose
+  baking cache (`tools/bake.py`, `tests/test_baked.*` and the baking code in
+  `lua/flora/init.lua`) rasterises each page into a hashed image so PDFs stay
+  small and recompiles fast. It is merged here with its history kept, so the
+  commits remain under their author. The Windows fixes to it are this fork's.
+
+This fork adds the `+bright` ink modifier, the `cross` and `buttercup` blooms, the
+`flower`, `petals` and `hero` settings, and the inflorescences.
+
 The ink colours are Pilot iroshizuku ramps measured by
 [madoromi](https://madoromi.moonwit.ch/#palettes/colours). The growth follows
 Wong, Zongker and Salesin,
@@ -30,34 +51,33 @@ direction, the tuning against the reference and the choice of what to keep
 were done by hand.
 
 ## Setup
-
+**Locally:**
 You need a TeX distribution with **LuaLaTeX** (TeX Live 2023 or later,
-MiKTeX, or TinyTeX). Check with `lualatex --version`. The example also uses
+MiKTeX, or TinyTeX) and either **pdftocairo** (from `poppler-utils`) or **Ghostscript** (`gs`, standard in TeX Live and Overleaf). Check with `lualatex --version` and `gs -v` or `pdftocairo -v`. The example also uses
 `lipsum` (`tlmgr install lipsum` on TinyTeX).
 
-1. Download `tikzflora.zip` from the site, or build it with `just dist`.
+1. Download `tikzflora.zip` from releases for this repository. Or build it with `just dist`.
 2. Unzip it. It holds `tikzflora.sty`, `tikzflora-boot.lua`, the generator
-   in `lua/flora/`, and `example.tex`.
+   in `lua/flora/`, `latexmkrc`, and `example.tex`.
 3. Put your document next to `tikzflora.sty` (or copy the `.sty`, the boot
    file and `lua/` next to your document).
-4. Compile with LuaLaTeX: `latexmk example` (the included `latexmkrc`
-   selects LuaLaTeX), or `lualatex example` twice.
+4. Compile with LuaLaTeX and shell-escape:
+   ```bash
+   lualatex --shell-escape example.tex
+   ```
+   Or use `latexmk example` (the included `latexmkrc` configures LuaLaTeX with shell-escape automatically).
 
-To install it for every document instead, copy the three items into
-`TEXMFHOME/tex/lualatex/tikzflora/` (`kpsewhich -var-value TEXMFHOME` prints
-the path).
+**Overleaf:** New Project, Upload Project, choose `tikzflora.zip`. You must manually change the compiler to Lualatex: in the dropdown next to the recompile button choose settings.
 
-**Overleaf:** New Project, Upload Project, choose `tikzflora.zip`. The
-`latexmkrc` in the zip sets the compiler to LuaLaTeX; otherwise choose it
-under Menu, Compiler.
+Cacheing in Overleaf is super useful to avoid long compile times running up against the limit. Caching with Overleaf requires a small amount of manual effort. To cache a compiled page click 'logs and output files' and then 'other logs and output files'. Find the .png for any page you want to cache and put it in the flora-cache folder.
 
 A minimal document:
 
 ```latex
 \documentclass{article}
-\usepackage[left=5.5cm,right=2cm]{geometry} % room for the flora
+\usepackage[inner=2cm,outer=2cm,top=2cm,bottom=2cm]{geometry}
 \usepackage{tikzflora}
-\florasetup{seed=7}
+\florasetup{layout=surround, seed=7}
 \begin{document}
 Text.
 \end{document}
@@ -77,13 +97,20 @@ compile with a message naming the key.
 | `density` | 0 to 10 | Fuller (above 1) or airier (below 1) |
 | `visitors` | 0 to 10 | The weight of every visitor at once |
 | `palette` | `{part=ink, ...}` | What paints the `hero`, `blooms`, `leaves`, `leaflets`, `stems`, `sprays`, `ghost`, `cartouche` |
+| `colourway` | preset name | Preset palette: `rose`, `ember`, `plum`, `spring`, `summer`, `fall`, `winter`, `original` |
 | `spin` | a whole number | Picks other inks for parts set to `random`; the shapes stay |
+| `flower` | `fan`, `round`, `soft`, `obovate`, `wedge`, `cross`, `buttercup` | The bloom style of the hero and the blooms (below) |
+| `hero` | `bloom`, `raceme`, `corymb`, `panicle` | What crowns the main stem: the hero bloom, or a painted head of blooms (below) |
+| `petals` | 3 to 12 | How many petals every bloom has; inflorescence florets follow it |
 | `ornaments` | `{kind=weight, ...}` | How often each ornament kind is picked for its place; 0 never |
+| `baked` | `true`, `false` | Bake procedural flowers to transparent images (default `true`; `false` forces raw vector output) |
+| `dpi` | number (50–1200) | Resolution of baked images in DPI (default `150`) |
 
 Mix kinds: `bloom`, `soft`, `lily`, `ghost`, `umbel`, `cyme`
 (forget-me-nots), `gyps` (baby's breath), `leaves`, `leaflets`, `sprays`,
 `curls`, `density`, `bee`, `butterfly`, `bird`, `snail`. Visitors are off
-unless you give them weight.
+unless you give them weight, and so are the inflorescences `raceme`,
+`corymb` and `panicle` (below).
 
 Palette values are `look` (the default gradients), an ink group (`blue`,
 `blue-grey`, `teal`, `green`, `violet`, `warm`, `earth`, `gold`) or one ink
@@ -128,6 +155,62 @@ holds it to its box.
   palette={hero=murasaki-shikibu, blooms=warm, leaves=teal}}
 ```
 
+### Yellow flowers, petal counts and inflorescences
+
+The blue-ink pipeline reads every ink at the look's lightness, which is dark:
+at that depth a yellow turns olive. Put `+bright` after any ink or ink group
+(`gold+bright`, `daikokuten+bright`, `ama-iro+bright`) and it is read in its
+own lighter range instead: the look's lightness is laid over the ink's
+measured ramp, so the ink keeps its hue and chroma and only its darkness
+changes. `gold+bright` is the clean yellows of the original `gold` inks,
+`ama-iro+bright` a luminous sky blue where `ama-iro` is dark navy, and
+`murasaki-shikibu+bright` a lilac. `color.bright.depth` in
+`lua/flora/tune.lua` sets how far the deepest tones go: 0 stays a clean light
+tone, 1 reaches the ink's densest stroke. A bright yellow draws its stems and
+pen lines in green, and its florets keep a pale eye and a green pistil.
+`random+bright` picks a random ink, lightened. Name one ink, not a group, for
+a part whose petals should match: a group picks a different ink for each
+petal, so `gold+bright` mixes the lemon of `daikokuten` with the lime of
+`hotaru-bi`.
+
+Two bloom styles are yellow by default: `cross`, a crucifer's four overlapping
+spoon petals round a green pistil and six stamens (rapeseed, wallflower,
+mustard), and `buttercup`, five round glossy petals round a green boss in a
+ring of gold stamens, both in `daikokuten+bright`. `flower=cross` makes the hero and the blooms that style
+and paints the sprays in its ink; `palette` still overrides any part, and
+`petals` changes the count of any style (`flower=wedge, petals=6`). Leaves are
+not recoloured: set `palette={leaves=green}` as well.
+
+`mix={raceme=1}`, `corymb` and `panicle` grow inflorescences in the holes:
+a raceme opens from the bottom up with buds crowded at the tip and seed pods
+below, a corymb is a level head on pedicels of graded length, a panicle is a
+raceme with side racemes. The `inflorescence` keys in `lua/flora/tune.lua`
+set how many florets, their size, stalks, spread, sweep and pods.
+
+```latex
+\florasetup{flower=cross, palette={leaves=green, leaflets=green, ghost=daikokuten+bright},
+  mix={raceme=3, corymb=3, cyme=0, soft=0}}
+```
+
+A painted head can crown the page instead of the single hero bloom:
+`hero=raceme`, `hero=corymb` or `hero=panicle`. It is built from the main
+stem's last stretch, which it carries on to a fine tip, and from full
+watercolour blooms in the florets' style (`flower`, else `cross`). Florets
+are scattered round the axis by the golden angle, so they fill the head
+evenly, and each has a depth: they are painted back to front, the back ones
+smaller, paler and more tilted, the front ones larger and nearly face-on,
+each foreshortened in perspective and shading the ones behind it. Buds crowd
+the tip, pedicels run to every floret, and a raceme has seed pods below.
+The `head` keys in `lua/flora/tune.lua` set how many florets, their size,
+the head's length and width, how many get the full wash (`detail`: more is
+richer and slower), their tilt, shadow and fade, and `cup`, how concave each
+floret is: its outward petal is tilted back toward the viewer, so the flower
+opens like a shallow cup (0 is flat, the default is 0.7).
+
+```latex
+lorasetup{hero=raceme, flower=cross, palette={leaves=green, leaflets=green}}
+```
+
 ### Layouts
 
 - `left`: the left margin (the default).
@@ -167,6 +250,8 @@ add the TinyTeX binaries to `PATH`:
   `build/gallery.pdf` (`tex/gallery.tex`).
 - `just dist`: build `build/tikzflora.zip`. `just test-dist` compiles the
   example from the unpacked zip alone.
+- `just bake [LAYOUT] [SEED]` and `just bake-all`: bake procedural flora
+  into 300 DPI transparent images in `tex/baked/` (`tools/bake.py`).
 - `just test`: run the Lua and Python unit tests. `just test-tex` and
   `just test-preview` check against real compiles.
 - `just site-bake`, `just site-dev`, `just test-site`, `just site-deploy`:
