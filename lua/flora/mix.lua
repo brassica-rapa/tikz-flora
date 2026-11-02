@@ -91,12 +91,14 @@ end
 function M.resolve(palette, seed, spin)
   if not palette then return nil end
   local Rng = require("flora.rng")
-  local order = require("flora.inks").order
+  local Inks = require("flora.inks")
+  local order = Inks.order
   local out = {}
   for part, v in pairs(palette) do
-    if v == "random" then
+    local base, bright = Inks.split(v)
+    if base == "random" then
       local r = Rng.new((tonumber(seed) or 1) + (tonumber(spin) or 0) * 104723):fork("ink " .. part)
-      v = order[r:int(1, #order)]
+      v = order[r:int(1, #order)] .. (bright and Inks.SUFFIX or "")
     end
     out[part] = v
   end

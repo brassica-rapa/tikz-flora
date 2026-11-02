@@ -37,7 +37,7 @@ This fork stands on two earlier ones:
   small and recompiles fast. It is merged here with its history kept, so the
   commits remain under their author. The Windows fixes to it are this fork's.
 
-This fork adds the yellow inks, the `cross` and `buttercup` blooms, the
+This fork adds the `+bright` ink modifier, the `cross` and `buttercup` blooms, the
 `flower`, `petals` and `hero` settings, and the inflorescences.
 
 The ink colours are Pilot iroshizuku ramps measured by
@@ -113,7 +113,7 @@ unless you give them weight, and so are the inflorescences `raceme`,
 `corymb` and `panicle` (below).
 
 Palette values are `look` (the default gradients), an ink group (`blue`,
-`blue-grey`, `teal`, `green`, `violet`, `warm`, `earth`, `gold`, `yellow`) or one ink
+`blue-grey`, `teal`, `green`, `violet`, `warm`, `earth`, `gold`) or one ink
 by name, such as `kon-peki` (all of them are in `lua/flora/inks.lua`).
 `random` paints that part in one ink picked per page. The pick has its own
 random stream, so changing `spin` changes only the colours: every stem,
@@ -158,20 +158,25 @@ holds it to its box.
 ### Yellow flowers, petal counts and inflorescences
 
 The blue-ink pipeline reads every ink at the look's lightness, which is dark:
-at that depth a yellow turns olive. Four yellow inks, `rapeseed`, `buttercup`,
-`gamboge` and `primrose` (the group `yellow` holds the first two), are
-instead read in their own range. Their ramps swing from
-lemon through buttercup to amber as the wash thickens, so shadows go orange,
-not green. `color.yellow.depth` in `lua/flora/tune.lua` sets how far the
-deepest tones go: 0 stays a clean yellow, 1 reaches burnt ochre. A yellow ink
-draws its stems and pen lines in green, and its florets keep a pale eye and a
-green pistil. Name one ink, not a group, for a part whose petals should match:
-a group picks a different ink for each petal.
+at that depth a yellow turns olive. Put `+bright` after any ink or ink group
+(`gold+bright`, `daikokuten+bright`, `ama-iro+bright`) and it is read in its
+own lighter range instead: the look's lightness is laid over the ink's
+measured ramp, so the ink keeps its hue and chroma and only its darkness
+changes. `gold+bright` is the clean yellows of the original `gold` inks,
+`ama-iro+bright` a luminous sky blue where `ama-iro` is dark navy, and
+`murasaki-shikibu+bright` a lilac. `color.bright.depth` in
+`lua/flora/tune.lua` sets how far the deepest tones go: 0 stays a clean light
+tone, 1 reaches the ink's densest stroke. A bright yellow draws its stems and
+pen lines in green, and its florets keep a pale eye and a green pistil.
+`random+bright` picks a random ink, lightened. Name one ink, not a group, for
+a part whose petals should match: a group picks a different ink for each
+petal, so `gold+bright` mixes the lemon of `daikokuten` with the lime of
+`hotaru-bi`.
 
 Two bloom styles are yellow by default: `cross`, a crucifer's four overlapping
 spoon petals round a green pistil and six stamens (rapeseed, wallflower,
 mustard), and `buttercup`, five round glossy petals round a green boss in a
-ring of gold stamens. `flower=cross` makes the hero and the blooms that style
+ring of gold stamens, both in `daikokuten+bright`. `flower=cross` makes the hero and the blooms that style
 and paints the sprays in its ink; `palette` still overrides any part, and
 `petals` changes the count of any style (`flower=wedge, petals=6`). Leaves are
 not recoloured: set `palette={leaves=green}` as well.
@@ -183,7 +188,7 @@ raceme with side racemes. The `inflorescence` keys in `lua/flora/tune.lua`
 set how many florets, their size, stalks, spread, sweep and pods.
 
 ```latex
-\florasetup{flower=cross, palette={leaves=green, leaflets=green, ghost=primrose},
+\florasetup{flower=cross, palette={leaves=green, leaflets=green, ghost=daikokuten+bright},
   mix={raceme=3, corymb=3, cyme=0, soft=0}}
 ```
 

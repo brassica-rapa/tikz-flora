@@ -116,10 +116,12 @@ function Batch:paint(pt, ink)
   -- palette.sprays recolours the sprays' line work, buds and stars.
   local tint = Color.part_ink("sprays")
   -- A yellow is too light to draw with: its stems and pen lines are green.
-  if tint and Inks.bright[tint] then
+  -- Another bright ink draws its lines in the ink's own dense tone.
+  local yellow = Color.is_yellow(tint)
+  if yellow then
     ink = Color.ink_rgb("chiku-rin", 0.46)
   else
-    ink = Color.recolor(ink or pal.ink, tint)
+    ink = Color.recolor(ink or pal.ink, tint and (Inks.split(tint)))
   end
   if #self.ribbons > 0 then
     pt:fill(self.ribbons, ink, 0.92, { many = true, blend = "multiply" })
@@ -131,7 +133,7 @@ function Batch:paint(pt, ink)
     end
   end
   local bud = tint and Color.recolor(pal.deep, tint)
-  if tint and Inks.bright[tint] then bud = Color.oklch(0.80, 0.15, 118) end
+  if yellow then bud = Color.oklch(0.80, 0.15, 118) end
   for _, b in ipairs(self.buds) do F.bud(pt, b[1], b[2], b[3], b[4], bud) end
   if #self.florets > 0 then F.florets(pt, self.florets) end
   if #self.stars > 0 then

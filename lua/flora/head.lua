@@ -173,7 +173,7 @@ end
 -- The bud colour for the hero's ink: a green-yellow for the yellows, a
 -- pale wash of the ink otherwise.
 local function bud_color(tint)
-  if tint and Inks.bright[tint] then return Color.oklch(0.80, 0.15, 114) end
+  if Color.is_yellow(tint) then return Color.oklch(0.80, 0.15, 114) end
   return Paint.mix(Color.recolor(pal.sky, tint), pal.white, 0.25)
 end
 

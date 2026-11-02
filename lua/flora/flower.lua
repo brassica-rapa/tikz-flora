@@ -268,7 +268,7 @@ local LOOKS = {
   hero  = { ramp = "hero", pigment = pal.blue, pool = pal.deep, strength = 1.15, rings = 12, lift = 0.05, streaks = 40, dark = 22, grain = 2.0, outline = 0.55 },
   soft  = { ramp = "soft", pigment = pal.sky, pool = pal.deep, strength = 0.95, rings = 10, lift = 0.07, streaks = 22, dark = 12, grain = 0.6, outline = 0.70 },
   -- Yellow blooms: saturated to the eye, a touch deeper at the rim. The
-  -- ramp runs through a yellow ink (color.fit), so it never goes dull.
+  -- ramp runs through a +bright ink (color.fit), so it never goes dull.
   sun   = { ramp = "sun", pigment = pal.blue, pool = pal.deep, strength = 1.0, rings = 12, lift = 0.04, streaks = 14, dark = 8, grain = 1.1, outline = 0.5 },
   ghost = { ramp = "ghost", pigment = pal.mist, pool = pal.sky, strength = 0.45, rings = 8, lift = 0.12, streaks = 8, dark = 3, grain = 0.15, outline = 0.45, knockout = 0.35 },
 }
@@ -308,9 +308,9 @@ local STYLE = {
   wedge = { kind = "wedge", look = "vivid" },
   -- Yellow styles. `ink` paints them when their palette part is "look".
   -- cross: a crucifer, four spoon petals in a cross (rapeseed, mustard).
-  cross = { kind = "spoon", look = "sun", eye = "cross", ink = "rapeseed", lost = 0.10, bend = 0.03 },
+  cross = { kind = "spoon", look = "sun", eye = "cross", ink = "daikokuten+bright", lost = 0.10, bend = 0.03 },
   -- buttercup: five round, glossy petals round a green boss in gold stamens.
-  buttercup = { kind = "cupped", look = "sun", eye = "buttercup", ink = "buttercup", lost = 0.08, bend = 0.04 },
+  buttercup = { kind = "cupped", look = "sun", eye = "buttercup", ink = "daikokuten+bright", lost = 0.08, bend = 0.04 },
 }
 F.styles = STYLE
 
@@ -498,7 +498,7 @@ function F.florets(pt, items)
   local deep, blue, sky = Color.recolor(pal.deep, tint), Color.recolor(pal.blue, tint), Color.recolor(pal.sky, tint)
   local cols = { deep, blue, sky }
   -- A yellow ink's florets keep a pale eye and a green speck of pistil.
-  local bright = tint and Inks.bright[tint]
+  local bright = Color.is_yellow(tint)
   local eye_rgb, speck_rgb = pal.white, pal.copper
   if bright then eye_rgb, speck_rgb = Color.ink_rgb(tint, 0.98), Color.oklch(0.68, 0.13, 128) end
   if #halos > 0 then pt:fill(halos, sky, 0.14, { many = true, blend = "multiply" }) end

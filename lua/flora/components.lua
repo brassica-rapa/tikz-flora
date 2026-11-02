@@ -69,17 +69,17 @@ M.list = {
   {
     id = "cross", label = "Cross blooms",
     desc = "A crucifer's flower: four broad spoon petals in a cross round a green pistil and six stamens, in yellow ink.",
-    paths = { "blooms.cross", "color.looks.sun", "color.yellow", "color.palette.blooms" }, w = 360, h = 124, draw = bloom_row("cross"),
+    paths = { "blooms.cross", "color.looks.sun", "color.bright", "color.palette.blooms" }, w = 360, h = 124, draw = bloom_row("cross"),
   },
   {
     id = "buttercup", label = "Buttercup blooms",
     desc = "Five round, glossy petals round a green boss in a crowd of gold stamens, in yellow ink.",
-    paths = { "blooms.buttercup", "color.looks.sun", "color.yellow", "color.palette.blooms" }, w = 360, h = 124, draw = bloom_row("buttercup"),
+    paths = { "blooms.buttercup", "color.looks.sun", "color.bright", "color.palette.blooms" }, w = 360, h = 124, draw = bloom_row("buttercup"),
   },
   {
     id = "head", label = "Hero inflorescence",
     desc = "The hero as a painted raceme, corymb and panicle of blooms: dense, tilted in perspective, back to front with shadows. Florets follow the cross style unless head.style says otherwise.",
-    paths = { "head", "color.palette.hero", "color.looks.sun", "color.yellow", "blooms.cross", "blooms.buttercup" }, w = 540, h = 340,
+    paths = { "head", "color.palette.hero", "color.looks.sun", "color.bright", "blooms.cross", "blooms.buttercup" }, w = 540, h = 340,
     draw = function(pt, rng)
       for i, kind in ipairs({ "raceme", "corymb", "panicle" }) do
         local x = 90 + (i - 1) * 180
@@ -107,7 +107,7 @@ M.list = {
         b:paint(pt)
       end
       if Tune.color.palette.sprays == "look" then
-        Mix.with_palette({ sprays = "rapeseed" }, paint)
+        Mix.with_palette({ sprays = "daikokuten+bright" }, paint)
       else
         paint()
       end

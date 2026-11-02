@@ -152,10 +152,11 @@ local T = {
     -- by name (lua/flora/inks.lua). Inks keep the look's lightness.
     palette = { hero = "look", blooms = "look", leaves = "blue", leaflets = "blue", stems = "chiku-rin",
       sprays = "look", ghost = "look", cartouche = "look" },
-    -- The yellow inks (rapeseed, buttercup, gamboge, primrose) are read at
-    -- their own lightness, not the look's darker one, so they stay yellow.
-    -- depth: how far the deepest tones go, 0 (clean yellow) to 1 (burnt ochre).
-    yellow = { depth = 0.1 },
+    -- An ink with +bright after it (gold+bright) is read in its own lighter
+    -- range, not at the look's darker lightness, so a yellow stays yellow.
+    -- depth: how far the deepest tones go, 0 (a clean light tone) to 1 (the
+    -- ink's densest stroke).
+    bright = { depth = 0.1 },
     looks = {
       vivid = { base_l = { 0.80, 0.90 }, tip_l = { 0.2, 0.32 }, chroma = { 0.65, 1.00 }, curve = { 0.4, 1.3 } },
       hero  = { base_l = { 0.74, 1 }, tip_l = { 0.36, 0.48 }, chroma = { 0.81, 1 }, curve = { 0.35, 0.75 } },
@@ -331,8 +332,8 @@ T._doc = {
   ["color.palette.sprays"] = { "Sprays", "Palette for the forget-me-nots, baby's breath and umbel florets, and the sprays' line work." },
   ["color.palette.ghost"] = { "Ghost bloom", "Palette for the pale ghost bloom." },
   ["color.palette.cartouche"] = { "Cartouche", "Palette for the sky inside the star cartouche; its gilt stays gold." },
-  ["color.yellow"] = { "Yellow inks", "How the yellow inks (rapeseed, buttercup, gamboge, primrose) deepen: their own lightness range, shadows turning amber and ochre rather than olive." },
-  ["color.yellow.depth"] = { "Yellow depth", "How far the deepest yellow tones go: 0 stays a clean yellow, 1 reaches burnt ochre." },
+  ["color.bright"] = { "Bright inks", "How inks marked +bright (gold+bright, ama-iro+bright) are read: in their own lighter range, so a yellow stays yellow and a blue becomes a lighter blue instead of a darker, muddier one." },
+  ["color.bright.depth"] = { "Bright depth", "How far the deepest tones of a +bright ink go: 0 stays a clean light tone, 1 reaches the ink's densest stroke." },
   ["color.looks"] = { "Looks", "Gradient ranges for each kind of shape: vivid blooms, soft blooms, ghost blooms and leaves." },
   ["color.looks.hero"] = { "Hero bloom", "The hero bloom's own gradients, separate from other vivid blooms." },
   ["color.looks.vivid"] = { "Vivid blooms", "The hero bloom, the lily and most small flowers." },

@@ -104,8 +104,8 @@ M.define("palette", function(v)
     if Tune.color.palette[part] == nil then
       return nil, "no part \"" .. part .. "\" (parts: " .. known(Tune.color.palette) .. ")"
     end
-    if not (ink == "look" or ink == "random" or Inks.groups[ink] or Inks.ramps[ink]) then
-      return nil, "\"" .. tostring(ink) .. "\" is not look, random, an ink group or an ink name"
+    if not Inks.valid(ink) then
+      return nil, "\"" .. tostring(ink) .. "\" is not look, random, an ink group or an ink name (add +bright to an ink or group for a lighter version)"
     end
     t[part] = ink
   end
