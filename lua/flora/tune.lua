@@ -95,6 +95,8 @@ local T = {
     shade = 0.11,           -- opacity of the shadow a front floret casts on those behind
     fade = 0.35,            -- how much paler the back florets are
     relax = 6,              -- passes that push overlapping florets of one depth apart
+    cup = 0.7,              -- concavity: how far each floret's outward petal is brought back toward the viewer, 0 (flat) to 1 (face-on)
+    cup_focus = 2,          -- how tightly that is confined to the outward petal (higher: only one; lower: its neighbours lift too)
     pods = 3,               -- seed pods hanging below the florets (raceme and panicle)
     sway = 0.15,            -- lean of the continued axis, radians
   },
@@ -287,6 +289,8 @@ T._doc = {
   ["head.shade"] = { "Shadows", "Opacity of the shadow each front floret casts on those behind it." },
   ["head.fade"] = { "Back fade", "How much paler the florets at the back are." },
   ["head.relax"] = { "Spacing passes", "Passes that push overlapping florets of the same depth apart, so the head is dense but not clotted." },
+  ["head.cup"] = { "Floret cupping", "How concave each floret is: the petal pointing out from the axis is tilted back toward the viewer by this share of the floret's tilt, so it opens like a shallow cup. 0 leaves florets flat." },
+  ["head.cup_focus"] = { "Cup focus", "How tightly the cupping is confined to the single outward petal. Higher leaves only that petal lifted; lower lets its neighbours lift a little too, for a deeper cup." },
   ["head.pods"] = { "Seed pods", "Slender pods hanging below the lowest florets." },
   ["head.sway"] = { "Axis lean", "How far the continued axis leans toward the vertical, in radians." },
   stamens = { "Stamens", "How many stamens ring the eye." },

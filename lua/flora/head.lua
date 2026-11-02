@@ -285,6 +285,15 @@ function H.paint(pt, rng, hero, st, o)
         end
         local deg = G.clamp(cfg.tilt[1] + (cfg.tilt[2] - cfg.tilt[1]) * it.side ^ 1.2 + (it.z < 0 and -it.z * 10 or 0), 0, 75)
         pt:project(projector(it.x, it.y, it.r, deg, it.phi))
+        -- A concave (cupped) floret: the petal that points out, away from the axis,
+        -- is brought back toward the viewer (less tilted, so rounder and
+        -- larger); the others keep the full tilt. cup is how far.
+        local cup = cfg.cup
+        local function petal_project(a)
+          local w = math.max(0, cos(a - it.phi)) ^ cfg.cup_focus
+          if w <= 0 or cup <= 0 then return nil end
+          return projector(it.x, it.y, it.r, deg * (1 - cup * w), it.phi)
+        end
         -- Foreshortened with its floret, so it never shows past the petals.
         if behind then
           local sr = fr:fork("shadow" .. i)
@@ -293,6 +302,7 @@ function H.paint(pt, rng, hero, st, o)
         F.bloom(pt, fr:fork("f" .. i), it.x, it.y, it.r, {
           style = style, petals = o.petals, part = "hero", look = sun and "sun" or "hero",
           simple = not full[i], strength = 1 - cfg.fade * (1 - zn),
+          petal_project = petal_project,
         })
         pt:project(nil)
       end

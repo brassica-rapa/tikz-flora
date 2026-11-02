@@ -203,7 +203,9 @@ each foreshortened in perspective and shading the ones behind it. Buds crowd
 the tip, pedicels run to every floret, and a raceme has seed pods below.
 The `head` keys in `lua/flora/tune.lua` set how many florets, their size,
 the head's length and width, how many get the full wash (`detail`: more is
-richer and slower), their tilt, shadow and fade.
+richer and slower), their tilt, shadow and fade, and `cup`, how concave each
+floret is: its outward petal is tilted back toward the viewer, so the flower
+opens like a shallow cup (0 is flat, the default is 0.7).
 
 ```latex
 lorasetup{hero=raceme, flower=cross, palette={leaves=green, leaflets=green}}

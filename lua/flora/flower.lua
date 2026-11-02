@@ -377,6 +377,9 @@ function F.bloom(pt, rng, cx, cy, R, o)
     local r = rng:fork("petal" .. i)
     petals[i] = { r = r, a = a0 + (i - 1) * 2 * pi / n + r:jit(spacing) }
   end
+  -- The projection the caller set for the whole bloom; o.petal_project(a)
+  -- may give one petal its own (a cupped bloom: see head.lua).
+  local whole = pt.projection
   -- A tilted bloom paints its far (upper) petals first, so the near ones
   -- overlap them.
   if o.far_first then
@@ -388,8 +391,10 @@ function F.bloom(pt, rng, cx, cy, R, o)
     local Wd = R * width * r:range(0.92, 1.08)
     local local_pts = F.petal(r, kind, L, Wd, r:jit(slot and 0.04 or base.bend or 0.10), st and st.rim, slot)
     local poly = G.transform(local_pts, cx, cy, a - pi / 2)
+    if o.petal_project then pt:project(o.petal_project(a) or whole) end
     wash_petal(pt, r, poly, L, { cx, cy }, look, o.lost or base.lost, extra)
   end
+  if o.petal_project then pt:project(whole) end
   if base.eye == "cross" then
     return F.eye_cross(pt, rng:fork("eye"), cx, cy, R)
   elseif base.eye == "buttercup" then
