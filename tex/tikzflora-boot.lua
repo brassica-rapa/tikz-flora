@@ -12,7 +12,10 @@ local roots = {}
 if os.getenv("FLORA_LUA") then roots[#roots + 1] = os.getenv("FLORA_LUA") end
 roots[#roots + 1] = "./lua"
 local sty = dir_of(kpse.find_file("tikzflora.sty", "tex"))
-if sty then roots[#roots + 1] = sty .. "/lua" end
+if sty then
+  roots[#roots + 1] = sty .. "/lua"
+  roots[#roots + 1] = sty .. "/../lua"
+end
 
 table.insert(package.searchers, 2, function(name)
   local tried = {}

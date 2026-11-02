@@ -17,6 +17,7 @@
 --             raceme, corymb or panicle of blooms (head.lua)
 --   petals    how many petals every bloom has, 3 to 12; florets of an
 --             inflorescence follow it too
+--   colourway a preset palette: rose, ember, or plum (or colorway)
 --   spin      a number that re-picks the random inks; the shapes stay
 --   ornaments weights per ornament kind, e.g. ornaments={moon=2, night=0}
 --             (ornaments.lua registers the kinds; each slot picks one)
@@ -128,11 +129,123 @@ M.define("petals", function(v)
   if n and n == math.floor(n) and n >= 3 and n <= 12 then return n end
   return nil, "petals must be a whole number from 3 to 12"
 end)
+local colourways = {
+  rose = {
+    hero = "tsutsuji",
+    blooms = "hana-ikada",
+    leaves = "blue-grey",
+    leaflets = "fukagawa-nezu",
+    stems = "take-sumi",
+    sprays = "kosumosu",
+    ghost = "hana-ikada",
+    cartouche = "tsuki-yo",
+  },
+  ember = {
+    hero = "yu-yake",
+    blooms = "momiji",
+    leaves = "green",
+    leaflets = "hotaru-bi",
+    stems = "yama-guri",
+    sprays = "to-ro",
+    ghost = "benzaiten",
+    cartouche = "fuyu-gaki",
+  },
+  plum = {
+    hero = "murasaki-shikibu",
+    blooms = "yama-budo",
+    leaves = "teal",
+    leaflets = "chiku-rin",
+    stems = "yama-guri",
+    sprays = "edo-murasaki",
+    ghost = "rikka",
+    cartouche = "ku-jaku",
+  },
+  spring = {
+    hero = "tsutsuji",
+    blooms = "hana-ikada",
+    leaves = "chiku-rin",
+    leaflets = "hotaru-bi",
+    stems = "tsukushi",
+    sprays = "syun-gyo",
+    ghost = "hana-ikada",
+    cartouche = "sui-gyoku",
+  },
+  summer = {
+    hero = "asa-gao",
+    blooms = "ajisai",
+    leaves = "shin-ryoku",
+    leaflets = "chiku-rin",
+    stems = "yama-guri",
+    sprays = "hotaru-bi",
+    ghost = "ama-iro",
+    cartouche = "ku-jaku",
+  },
+  fall = {
+    hero = "momiji",
+    blooms = "yama-budo",
+    leaves = "ina-ho",
+    leaflets = "to-ro",
+    stems = "yama-guri",
+    sprays = "yu-yake",
+    ghost = "fuyu-gaki",
+    cartouche = "take-sumi",
+  },
+  winter = {
+    hero = "fuyu-syogun",
+    blooms = "kiri-same",
+    leaves = "blue-grey",
+    leaflets = "fukagawa-nezu",
+    stems = "take-sumi",
+    sprays = "syo-ro",
+    ghost = "rikka",
+    cartouche = "tsuki-yo",
+  },
+  original = {
+    hero = "look",
+    blooms = "look",
+    leaves = "blue",
+    leaflets = "blue",
+    stems = "chiku-rin",
+    sprays = "look",
+    ghost = "look",
+    cartouche = "look",
+  },
+}
+colourways.autumn = colourways.fall
+colourways.default = colourways.original
+colourways.blue = colourways.original
+M.colourways = colourways
+
+local function parse_colourway(v)
+  local norm = v:lower():gsub("%s+", "")
+  local pal = colourways[norm]
+  if pal then
+    local copy = {}
+    for k, ink in pairs(pal) do copy[k] = ink end
+    return copy
+  end
+  return nil, "must be one of rose, ember, plum, spring, summer, fall, winter, original"
+end
+
+M.define("colourway", parse_colourway)
+M.define("colorway", parse_colourway)
 
 M.define("spin", function(v)
   local n = tonumber(v)
   if n and n == math.floor(n) and n >= 0 then return n end
   return nil, "spin must be a whole number"
+end)
+
+M.define("baked", function(v)
+  if v == "true" or v == "1" or v == "yes" then return true end
+  if v == "false" or v == "0" or v == "no" then return false end
+  return nil, "baked must be true or false"
+end)
+
+M.define("dpi", function(v)
+  local n = tonumber(v)
+  if n and n >= 50 and n <= 1200 then return n end
+  return nil, "dpi must be a number between 50 and 1200"
 end)
 
 local function trim(s)
@@ -191,6 +304,8 @@ function M.parse(s)
       local m = {}
       for _, name in ipairs(Mix.visitors) do m[name] = val end
       t.mix = M.merge({ mix = t.mix }, { mix = m }).mix
+    elseif k == "colourway" or k == "colorway" then
+      t.palette = M.merge({ palette = t.palette }, { palette = val }).palette
     else
       t[k] = M.merge({ [k] = t[k] }, { [k] = val })[k]
     end
