@@ -1,11 +1,10 @@
 % A worked example of tikzflora: a short multipage document that uses every
-% layout. Compile with LuaLaTeX, twice so the table of contents fills in:
-%
-%   lualatex lorem && lualatex lorem      (or: latexmk lorem)
+% layout. Compile it with latexmk, which runs LuaLaTeX (latexmkrc) as
+% often as the table of contents needs, or run lualatex on it twice.
 %
 % Every \florasetup and \florathispage below is commented with what it
 % does; the full list of keys is in README.md and on
-% https://flora.alpacasoft.dev/#guide.
+% https://flora.alpacasoft.dev/guide/.
 %
 % The text is in the public domain: Vitruvius, The Ten Books on
 % Architecture, tr. Morris Hicky Morgan (1914), book IV, chapter 1; and
@@ -35,14 +34,14 @@
 \begin{document}
 
 % --- Title page -----------------------------------------------------------
-% A narrower, centred text block leaves room around the title. The title
-% layout crowns the lines inside the floratitle environment, with a crest
-% where the crowns meet, a flourish under the title, a tailpiece and two
-% corner pieces. ornaments weighs which kind each place picks: here the
-% sun crest and the cul-de-lampe tailpiece weigh three times their usual.
+% A narrower, centred text block leaves room around the title. The flank
+% layout grows a plant up each side of the page, their roots meeting at
+% the foot round a crest. ornaments weighs which kind each place picks:
+% here the sun crest weighs three times its usual, and the cul-de-lampe
+% tailpiece too, for a layout that sets one (layout=title does).
 \newgeometry{left=3.2cm,right=3.2cm,top=5cm,bottom=4cm}
 \thispagestyle{empty}
-\florathispage{layout=title, ornaments={sun_crest=6, cul_de_lampe=3}}
+\florathispage{layout=flank, ornaments={sun_crest=6, cul_de_lampe=3}}
 \begin{floratitle}
 \centering
 {\Huge\scshape Florilegium\par}

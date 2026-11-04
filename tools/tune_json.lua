@@ -33,4 +33,11 @@ for k, v in pairs(Tune) do out[k] = v end
 -- tune.lua lists every kind); a bare table read by bake_tune.py has none.
 if Tune.ornaments then require("flora.ornaments") end
 out._choices = { ["color.palette"] = palette }
+-- Slider bounds for the gilt looks' keys, from their checked ranges.
+out._bounds = {}
+for name, look in pairs(Tune.gilt_looks or {}) do
+  for k, r in pairs(require("flora.gilt_look").keys) do
+    if look[k] ~= nil then out._bounds["gilt_looks." .. name .. "." .. k] = { r[1], r[2], r[3] } end
+  end
+end
 io.write(encode(out), "\n")

@@ -76,13 +76,18 @@ function M.pick(rng, slot, weights)
   return name and M.kinds[name]
 end
 
--- Draw kind `name` (or kind table) into box with `o`.
+-- Draw kind `name` (or kind table) into box with `o`. Its gold and copper
+-- are painted as gilt (paint.lua).
 function M.draw(kind, pt, rng, box, o)
   if type(kind) == "string" then kind = assert(M.kinds[kind], "no ornament " .. kind) end
+  local was = pt.gilding
+  pt.gilding = true
   kind.draw(pt, rng, box, o or {})
+  if pt.gilt_pending then require("flora.orn_raster").flush(pt) end
+  pt.gilding = was
 end
 
-local MODULES = { "flora.orn_classic", "flora.orn_celestial", "flora.orn_scroll", "flora.orn_roundel", "flora.orn_pieces", "flora.orn_gilt" }
+local MODULES = { "flora.orn_classic", "flora.orn_celestial", "flora.orn_scroll", "flora.orn_roundel", "flora.orn_pieces", "flora.orn_flourish", "flora.orn_acanthus", "flora.orn_corner", "flora.orn_gilt" }
 for _, m in ipairs(MODULES) do require(m) end
 
 -- Each kind labels its own weight in tune.lua's docs, for the tuner.

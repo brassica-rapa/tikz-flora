@@ -5,6 +5,7 @@ local Settings = require("flora.settings")
 local Orn = require("flora.ornaments")
 local Gallery = require("flora.gallery")
 local Rng = require("flora.rng")
+local G = require("flora.geom")
 
 -- Every kind paints something, and nothing past its box by more than its
 -- reach, for several seeds (the gallery's cells; pendants without a cord,
@@ -179,6 +180,119 @@ do
   spec.probe = function(_, _, _, tag) if tag == "title" then n = n + 1 end end
   page(1, nil, spec)
   H.check(n == 0, "title furniture painted on a page half grown")
+end
+
+-- The title page's two corner pieces are one design mirrored: every point
+-- painted in the left corner has its mirror image in the right one, for
+-- every corner kind (a kind drawing from two streams breaks this). Gilt is
+-- painted flat here: its light falls from the page's upper left, which
+-- rightly differs between the corners.
+do
+  local Title = require("flora.orn_title")
+  local W = 600
+  for _, k in ipairs(Orn.of("corner")) do
+    for seed = 1, 3 do
+      local left, right = {}, {}
+      Paint.reset_resources()
+      local pt = Paint.new({ backend = "pdf" })
+      pt.flat_gilt = true
+      pt.probe = function(x, y)
+        local into = x < W / 2 and left or right
+        into[#into + 1] = { x < W / 2 and x or W - x, y }
+      end
+      local plan = {
+        { slot = "corner", kind = k, box = { 16, 16, 88, 88 }, o = { flip = { 1, 1 } } },
+        { slot = "corner", kind = k, box = { W - 88, 16, W - 16, 88 }, o = { flip = { -1, 1 } } },
+      }
+      Title.paint(pt, { seed = seed, width = W }, plan)
+      -- Each point has a mirror within 0.4pt (float noise can add a
+      -- resample point to a curve, never move a feature), both ways.
+      local function unmatched(from, to)
+        local grid = {}
+        for _, q in ipairs(to) do
+          local key = math.floor(q[1]) .. "," .. math.floor(q[2])
+          grid[key] = grid[key] or {}
+          table.insert(grid[key], q)
+        end
+        local n = 0
+        for _, q in ipairs(from) do
+          local hit = false
+          for gx = math.floor(q[1]) - 1, math.floor(q[1]) + 1 do
+            for gy = math.floor(q[2]) - 1, math.floor(q[2]) + 1 do
+              for _, r in ipairs(grid[gx .. "," .. gy] or {}) do
+                if math.abs(r[1] - q[1]) < 0.4 and math.abs(r[2] - q[2]) < 0.4 then hit = true end
+              end
+            end
+          end
+          if not hit then n = n + 1 end
+        end
+        return n
+      end
+      local missing = unmatched(left, right) + unmatched(right, left)
+      H.check(#left > 0 and missing == 0, string.format("%s (seed %d): %d left-corner points have no mirror on the right", k.name, seed, missing))
+    end
+  end
+end
+
+-- Gilt is lit from the page's upper left whatever frame it is drawn in,
+-- in a plain frame and a mirrored one: the vector metal ramp's lit end
+-- lies up and to the left of its dark end, and raster gold is brighter
+-- on its upper-left half.
+do
+  local Gild = require("flora.orn_gild")
+  for _, fx in ipairs({ 1, -1 }) do
+    Paint.reset_resources()
+    local pt = Paint.new({ backend = "pdf", gilt = "vector" })
+    pt:frame(function(x, y) return 300 + fx * (x - 300), y end)
+    Gild.fill(pt, { G.polyline({ { 100, 100 }, { 140, 100 }, { 140, 140 }, { 100, 140 } }, true) })
+    local pats = Paint.resources().patterns
+    local c = pats[#pats].coords
+    H.check(c[1] < c[3] and c[2] > c[4], string.format("flip %d: gilt lit from (%.0f, %.0f) toward (%.0f, %.0f)", fx, c[1], c[2], c[3], c[4]))
+    Paint.reset_resources()
+    pt = Paint.new({ backend = "pdf", gilt = "raster" })
+    pt.gilt_dpi = 150
+    pt:frame(function(x, y) return 300 + fx * (x - 300), y end)
+    pt.gilding = true
+    Gild.fill(pt, { { { "o", 120, 120, 20 } } })
+    pt.gilding = false
+    local im = require("flora.orn_raster").render(pt.gilt_pending, 150)
+    local lit, far = 0, 0
+    for row = 1, im.h do
+      for col = 1, im.w do
+        local k = (row - 1) * im.w + col
+        if im.alpha:byte(k) == 255 then
+          local l = im.rgb:byte(3 * k - 2) + im.rgb:byte(3 * k - 1) + im.rgb:byte(3 * k)
+          if col + row < (im.w + im.h) / 2 - 2 then lit = lit + l elseif col + row > (im.w + im.h) / 2 + 2 then far = far + l end
+        end
+      end
+    end
+    H.check(lit > far * 1.1, string.format("flip %d: raster gilt is not lit from the upper left", fx))
+  end
+end
+
+-- Gold paints as gilt (vector: a shaded ramp; raster, the default: an
+-- image) inside an ornament and flat outside one, and drawing an ornament
+-- leaves the painter as it found it.
+do
+  local square = G.polyline({ { 0, 0 }, { 10, 0 }, { 10, 10 }, { 0, 10 } }, true)
+  Paint.reset_resources()
+  local ras = Paint.new({ backend = "pdf" })
+  ras.gilt_dpi = 100
+  ras:fill(square, Paint.palette.gold, 0.9)
+  H.check(not ras:body():find(" Do "), "gold outside an ornament was raster gilt")
+  Orn.draw("swelled_rule", ras, Rng.new(1), { 0, 0, 280, 46 })
+  H.check(ras:body():find(" Do ") and not ras.gilt_pending, "a gilt ornament placed no raster gold by default")
+  Paint.reset_resources()
+  local pt = Paint.new({ backend = "pdf", gilt = "vector" })
+  pt:fill(square, Paint.palette.gold, 0.9)
+  H.check(not pt:body():find("Pattern"), "gold outside an ornament was gilt")
+  Orn.draw("swelled_rule", pt, Rng.new(1), { 0, 0, 280, 46 })
+  H.check(pt:body():find("/Pattern cs"), "a gilt ornament painted no metal ramp")
+  H.check(not pt.gilding, "the painter is left gilding after an ornament")
+  pt.out = {}
+  pt:fill(square, Paint.palette.gold, 0.4)
+  pt:fill(square, Paint.palette.copper, 0.9, { blend = "multiply" })
+  H.check(not pt:body():find("Pattern"), "a gold wash or copper ink was gilt")
 end
 
 H.done("ornaments")

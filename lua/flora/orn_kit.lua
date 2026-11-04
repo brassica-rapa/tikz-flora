@@ -204,4 +204,19 @@ function K.armillary(pt, x, y, r, tilt, floor)
   pt:fill(G.smooth(K.ellipse(x, foot, r * 0.42, r * 0.09, 0, 20), true), pal.gold, 0.9)
 end
 
+-- Run draw(x0, y0, s) for the lower-left corner of box b, mirrored into
+-- another corner by o.flip = {fx, fy} (each 1 or -1).
+function K.corner(pt, b, o, draw)
+  local cx, cy, _, _, s = K.measure(b)
+  local fx, fy = (o.flip or {})[1] or 1, (o.flip or {})[2] or 1
+  local base = pt.frame_fn
+  pt:frame(function(x, y)
+    x, y = cx + fx * (x - cx), cy + fy * (y - cy)
+    if base then return base(x, y) end
+    return x, y
+  end)
+  draw(cx - s / 2, cy - s / 2, s)
+  pt:frame(base)
+end
+
 return K

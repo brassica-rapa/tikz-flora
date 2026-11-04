@@ -28,38 +28,24 @@ Some text.
 \clearpage
 \restoregeometry`;
 
+  const letters = String.raw`{\fontsize{46}{52}\selectfont\floraletters{FLORA'S}\par}
+{\fontsize{30}{36}\selectfont
+  \floraletters[style=engraved, arch=24]{DICTIONARY}\par}`;
+
   const texmf = String.raw`kpsewhich -var-value TEXMFHOME
 # then copy tikzflora.sty, tikzflora-boot.lua and lua/ into
 #   <TEXMFHOME>/tex/lualatex/tikzflora/`;
 
-  const keys = [
-    ["layout", "left, right, centered, split, title, surround", "Where the flora grows."],
-    ["seed", "a number, or random", "Which garden. Each page varies it, so pages differ."],
-    ["mix", "{kind=weight, …}", "How much of each kind: 1 the usual amount, 0 none, 2 about twice as much."],
-    ["density", "0 to 10", "Fuller above 1, airier below."],
-    ["visitors", "0 to 10", "The weight of every visitor at once: bees, butterflies, birds and snails."],
-    ["palette", "{part=ink, …}", "What paints each part: hero (the main flower), blooms, leaves, leaflets, stems, sprays, ghost (the pale bloom) and cartouche."],
-    ["spin", "a whole number", "Picks the random inks again. The shapes stay where they are."],
-    ["ornaments", "{kind=weight, …}", "How often each ornament kind is picked for its place on the page: the cartouche, header mark, pendant, gilt, and on title pages the crest, flourish, tailpiece and corners. 0 never. The gallery shows every kind with its name."],
-  ];
-  const kinds = "bloom, soft, lily, ghost, umbel, cyme (forget-me-nots), gyps (baby's breath), leaves, leaflets, sprays, curls, density, bee, butterfly, bird, snail";
-  const layouts = [
-    ["left", "The left margin. The default."],
-    ["right", "The right margin."],
-    ["centered", "Both side margins, with a different plant on each side."],
-    ["split", "The outer margin of a two-sided document: on the right of odd pages and the left of even ones."],
-    ["title", "A crown over a title. Wrap the title in the floratitle environment; without it the first block of lines on the page is crowned."],
-    ["surround", "A wreath round the text block, for title pages and contents."],
-  ];
+  // Every setting, layout and value, from the package's own Lua
+  // (lua/flora/catalog.lua, baked to /bake/catalog.json by just site-bake).
+  import { onMount } from "svelte";
+  let cat = $state(null);
+  onMount(async () => {
+    try { cat = await fetch("/bake/catalog.json").then((r) => r.json()); } catch { cat = null; }
+  });
+  const ARCH = (a) => `${a[0]} to ${a[1]} degrees`;
 </script>
 
-<h2>Guide</h2>
-<div class="col">
-  <p class="toc">
-    <a href="#g-install">Install</a> · <a href="#g-first">A first page</a> ·
-    <a href="#g-overleaf">Overleaf</a> · <a href="#g-settings">Settings</a> ·
-    <a href="#g-layouts">Layouts</a> · <a href="#g-trouble">Troubleshooting</a>
-  </p>
   <h3 id="g-install">1. Get LuaLaTeX</h3>
   <p>
     tikz-flora needs LuaLaTeX, which comes with every full TeX
@@ -74,7 +60,7 @@ Some text.
   <h3>2. Get the package</h3>
   <p>
     <a href="/tikzflora.zip" download>Download tikzflora.zip</a> and unzip
-    it. It holds <code>tikzflora.sty</code>, <code>tikzflora-boot.lua</code>,
+    it into a folder of its own. It holds <code>tikzflora.sty</code>, <code>tikzflora-boot.lua</code>,
     the generator in <code>lua/flora/</code>, a worked example
     <code>example.tex</code>, and a <code>latexmkrc</code> that selects
     LuaLaTeX.
@@ -99,7 +85,9 @@ Some text.
   <ol>
     <li>Choose New Project, then Upload Project, and pick <code>tikzflora.zip</code>.</li>
     <li>The <code>latexmkrc</code> in the zip selects LuaLaTeX. If your project lacks it, open Menu and set Compiler to LuaLaTeX.</li>
+    <li>The zip holds two documents. If Overleaf opens <code>titles.tex</code>, set Menu, Main document to <code>example.tex</code>.</li>
     <li>Recompile. <code>example.tex</code> shows every setting with a comment at each.</li>
+    <li>To add flora to a project you already have, upload <code>tikzflora.sty</code>, <code>tikzflora-boot.lua</code> and the <code>lua</code> folder to its top level, beside the main document.</li>
   </ol>
 
   <h3 id="g-settings">4. Settings</h3>
@@ -114,11 +102,12 @@ Some text.
     <table>
       <thead><tr><th>Key</th><th>Values</th><th>Effect</th></tr></thead>
       <tbody>
-        {#each keys as [k, v, e]}<tr><td><code>{k}</code></td><td>{v}</td><td>{e}</td></tr>{/each}
+        {#each cat?.settings ?? [] as st}<tr><td><code>{st.key}</code></td><td>{st.values}</td><td>{st.about}</td></tr>{/each}
       </tbody>
     </table>
   </div>
-  <p>Mix kinds: {kinds}. Visitors are off unless you give them weight.</p>
+  <p>Visitors are off unless you give them weight. <a href="#g-reference">Every option</a>
+    below lists each mix kind, ornament, ink and gilt key.</p>
   <p>
     Palette values are <code>look</code> (the original blue gradients), an
     ink group (warm, violet, gold, earth, green, teal, blue-grey, blue), one
@@ -127,18 +116,95 @@ Some text.
     page. A non-blue ink also repaints that part's rims, grain and contours,
     so with every part set only a few pen lines stay navy. With
     <code>random</code>, <code>spin=N</code> picks again and changes only
-    the colours. The <a href="#mixer">mixer</a> shows every ink as a
+    the colours. The <a href="/mixer/">mixer</a> shows every ink as a
     swatch.
   </p>
 
   <h3 id="g-layouts">5. Layouts</h3>
   <dl>
-    {#each layouts as [k, e]}<dt><code>{k}</code></dt><dd>{e}</dd>{/each}
+    {#each cat?.layouts ?? [] as l}<dt><code>{l.name}</code></dt><dd>{l.about}</dd>{/each}
   </dl>
   <p>A title page:</p>
   <pre><code>{title}</code></pre>
 
-  <h3>Watch it grow</h3>
+  <p>
+    The last four are for title pages, after engraved and hand-coloured
+    flower books. Each frames the lines in <code>floratitle</code>. The
+    oval of <code>wreath</code> and <code>scrollwork</code> spans the
+    page and keeps to the room between the title and the nearest lines
+    above and below it. <code>titles.tex</code> in the zip has a page in
+    each.
+  </p>
+
+  <h3 id="g-letters">6. Lettering</h3>
+  <p>
+    <code>\floraletters</code> draws a line of display capitals as an
+    engraver lettered them, from the font's own outlines, in the font and
+    size in force:
+  </p>
+  <pre><code>{letters}</code></pre>
+  <dl>
+    <dt><code>style</code></dt><dd><code>outline</code>, the letter drawn round; <code>shaded</code>, outlined with a hatched shadow (the default); or <code>engraved</code>, the face ruled with fine lines over a solid shadow.</dd>
+    <dt><code>arch</code></dt><dd>The degrees the baseline bends through: positive arches the middle up, negative sags it.</dd>
+    <dt><code>ink</code></dt><dd>An iroshizuku ink by name for the line work, or <code>black</code> (the default).</dd>
+  </dl>
+  <p>
+    It needs an OpenType or TrueType font, as LuaLaTeX's default and any
+    <code>fontspec</code> font are. The flora keeps clear of it as it does
+    of text.
+  </p>
+
+  <h3 id="g-reference">7. Every option</h3>
+  <p>
+    Read from the package itself, so it lists exactly what it accepts. The
+    <a href="/mixer/">mixer</a> has a control for each.
+  </p>
+  {#if cat}
+    <h4>Mix: <code>mix=&#123;kind=weight, …&#125;</code></h4>
+    {#each cat.mix as g}
+      <p class="sub">{g.group}</p>
+      <dl class="ref">
+        {#each g.kinds as k}<dt><code>{k.key}</code> <span class="muted">{k.label}, default {k.default}</span></dt><dd>{k.about}</dd>{/each}
+      </dl>
+    {/each}
+    <h4>Ornaments: <code>ornaments=&#123;kind=weight, …&#125;</code></h4>
+    {#each cat.ornaments as o}
+      <p class="sub">{o.label}</p>
+      <p class="list">{o.about} {#each o.kinds as k, i}<code>{k.key}</code> ({k.label}, {k.default}){i < o.kinds.length - 1 ? ", " : "."} {/each}</p>
+    {/each}
+    <h4>Palette: <code>palette=&#123;part=ink, …&#125;</code></h4>
+    <p class="list">Parts, with their defaults: {#each cat.parts as p, i}<code>{p.key}</code> ({p.default}){i < cat.parts.length - 1 ? ", " : "."} {/each}</p>
+    <p class="list">Each takes <code>look</code>, <code>random</code>, an ink group or one ink:</p>
+    <dl class="ref">
+      {#each cat.ink_groups as g}<dt><code>{g.name}</code></dt><dd>{g.inks.join(", ")}</dd>{/each}
+    </dl>
+    <h4>Colourways: <code>colourway=…</code></h4>
+    <dl class="ref">
+      {#each cat.colourways as c}<dt><code>{c.name}</code></dt><dd>{Object.keys(c.inks).length ? Object.entries(c.inks).map(([p, ink]) => `${p} ${ink}`).join(", ") : "the package's own blue look"}</dd>{/each}
+    </dl>
+    <h4>Gilt: <code>gilt</code>, <code>giltdpi</code>, <code>giltenv</code>, <code>giltlook=&#123;key=value, …&#125;</code></h4>
+    <p class="list"><code>gilt</code>: {cat.gilt.modes.join(" or ")} (default {cat.gilt.default}). <code>giltdpi</code>: {cat.gilt.dpi[0]} to {cat.gilt.dpi[1]} (default {cat.gilt.dpi[2]}). <code>giltenv</code>:
+      {#each cat.gilt.looks as lk, i}<code>{lk.name}</code> ({lk.about}){i < cat.gilt.looks.length - 1 ? "; " : "."} {/each}</p>
+    <div class="table">
+      <table>
+        <thead><tr><th>giltlook key</th><th>Range</th><th>Default</th><th>Effect</th></tr></thead>
+        <tbody>
+          {#each cat.gilt.keys as k}<tr><td><code>{k.key}</code></td><td>{k.min} to {k.max}</td>
+            <td>{k.look ? `${k.defaults[k.look]} (${k.look} only)` : `${k.defaults.studio} studio, ${k.defaults.mirror} mirror`}</td><td>{k.about}</td></tr>{/each}
+        </tbody>
+      </table>
+    </div>
+    <h4>Lettering: <code>\floraletters[style=…, arch=…, ink=…]</code></h4>
+    <dl class="ref">
+      {#each cat.letters.styles as st}<dt><code>style={st.name}</code></dt><dd>{st.about}</dd>{/each}
+      <dt><code>arch</code></dt><dd>{ARCH(cat.letters.arch)}: positive arches the middle up, negative sags it; 0 (the default) keeps it straight.</dd>
+      <dt><code>ink</code></dt><dd><code>black</code> (the default) or any ink above.</dd>
+    </dl>
+  {:else}
+    <p class="muted">Loading the list…</p>
+  {/if}
+
+  <h3 id="g-grow">Watch it grow</h3>
   <p>
     The repository's <code>just grow NAME SEED PAGE</code> renders a page
     of any document in <code>tex/</code> as it grows and writes an MP4 and
@@ -154,21 +220,26 @@ Some text.
     <dd>TeX found <code>tikzflora.sty</code> but not the <code>lua/</code> folder. Keep <code>lua/</code> beside the <code>.sty</code>, or set <code>FLORA_LUA</code> to its path.</dd>
     <dt>The contents page is empty</dt>
     <dd>Compile twice, or use <code>latexmk</code>.</dd>
+    <dt>A long document is slow to compile</dt>
+    <dd>Growing a page's flora takes a few seconds, so the first compile is slow. Each page's flora is then kept in a folder <code>&lt;jobname&gt;-flora</code> beside the PDF, and later compiles reuse every page whose text did not move, so LaTeX's second and third runs cost almost nothing. <code>\florasetup&#123;cache=false&#125;</code> keeps nothing. While you write, turn the flora off with <code>\floraoff</code> and back on with <code>\floraon</code>; put <code>\floraoff</code> in the preamble to draft without any.</dd>
     <dt>The flora is cramped</dt>
     <dd>It fills the margins it is given. Widen them with <code>geometry</code> (about 5 cm for a side margin, or 3 cm all round for <code>surround</code>), or lower <code>density</code>.</dd>
   </dl>
-</div>
 
 <style>
   .table { overflow-x: auto; }
-  table { border-collapse: collapse; width: 100%; font-size: .95rem; margin: .6rem 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 1.02rem; line-height: 1.4; margin: .6rem 0 1.2rem; }
   th, td { text-align: left; padding: .4rem .6rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
-  th { font-weight: 400; color: var(--muted); }
+  th { font-weight: 400; color: var(--rubric); font-variant-caps: all-small-caps; letter-spacing: .07em; }
   dt { margin-top: .6rem; }
   dd { margin: .1rem 0 0 1.2rem; color: var(--muted); }
   ol { padding-left: 1.3rem; }
-  h3 { font-size: 1.4rem; margin: 2.5rem 0 .65rem; }
-  .toc { color: var(--muted); }
+  h3 { font-size: 1.6rem; margin: 3rem 0 .7rem; }
+  h3:first-child { margin-top: 0; }
+  h4 { font-family: var(--body); font-size: 1.15rem; margin: 2rem 0 .4rem; }
+  .sub { font-variant-caps: all-small-caps; letter-spacing: .06em; color: var(--rubric); margin: 1rem 0 .2rem; }
+  .list { line-height: 1.6; }
+  .muted { color: var(--muted); }
   /* Phones: each setting stacks as key, values, effect. */
   @media (max-width: 600px) {
     thead { display: none; }

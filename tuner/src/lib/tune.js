@@ -55,8 +55,12 @@ const BOUNDS = {
   ray_contrast: [0, 1, 0.01], veins: [0, 40, 1],
 };
 
+// Bounds sent with the tune tree (tools/tune_json.lua), by path.
+let sent = {};
+export function setBounds(b) { sent = b || {}; }
+
 function bounds(path, v) {
-  return BOUNDS[path] || BOUNDS[path.split(".").pop()] ||
+  return sent[path] || BOUNDS[path] || BOUNDS[path.split(".").pop()] ||
     (Math.abs(v) <= 1 ? [0, 1, 0.01] : [0, Math.ceil(Math.abs(v) * 2), 0.1]);
 }
 
@@ -67,6 +71,7 @@ export function setChoices(c) { lists = c || {}; }
 // Choices for settings that name something.
 export function choices(tune, path) {
   if (path === "hero.style") return Object.keys(tune.blooms);
+  if (path === "gilt_env") return Object.keys(tune.gilt_looks);
   const parent = path.split(".").slice(0, -1).join(".");
   return lists[parent] || null;
 }

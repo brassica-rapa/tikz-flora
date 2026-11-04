@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Renderer bench · tikz-flora</title>
+<meta name="robots" content="noindex">
+<style>
+  :root { --paper: #f5f2eb; --ink: #2b2620; --mute: #786f63; --rule: #d9d2c4; --bad: #c0392b; }
+  body { margin: 0; padding: 16px; background: var(--paper); color: var(--ink); font: 14px/1.45 ui-sans-serif, system-ui, sans-serif; }
+  h1 { font-size: 18px; margin: 0 0 12px; }
+  form { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: end; margin-bottom: 12px; }
+  label { display: flex; flex-direction: column; font-size: 12px; color: var(--mute); }
+  input, select, button { font: inherit; padding: 3px 6px; }
+  input[type=number] { width: 6em; }
+  input[name=settings] { width: 16em; }
+  table { border-collapse: collapse; margin: 8px 0 16px; font-variant-numeric: tabular-nums; }
+  td, th { padding: 2px 12px 2px 0; text-align: left; border-bottom: 1px solid var(--rule); }
+  td.n { text-align: right; }
+  #status { color: var(--mute); margin: 4px 0; }
+  #status.bad { color: var(--bad); }
+  .pics { display: grid; gap: 12px; }
+  figure { margin: 0; }
+  figcaption { font-size: 12px; color: var(--mute); margin-bottom: 4px; }
+  canvas { display: block; max-width: 100%; height: auto; outline: 1px solid var(--rule); }
+</style>
+</head>
+<body>
+<h1>Renderer bench</h1>
+<form id="opts">
+  <label>Mode <select name="mode"><option>margins</option><option>band</option></select></label>
+  <label>Width (CSS px) <input name="width" type="number" min="200" max="4000" value="1440"></label>
+  <label>Height <input name="height" type="number" min="100" max="4000" value="900"></label>
+  <label>Column x0 <input name="x0" type="number" min="0" value="360"></label>
+  <label>Column x1 <input name="x1" type="number" min="0" value="1080"></label>
+  <label>DPR <input name="dpr" type="number" min="1" max="3" step="0.5" value="2"></label>
+  <label>Grow <input name="grow" type="number" min="0" max="1" step="0.05" value="1"></label>
+  <label>Seed <input name="seed" type="number" min="1" value="20261102"></label>
+  <label>Settings <input name="settings" value="colourway=ember" placeholder="backdrop=dark, colourway=…"></label>
+  <label>Runs <input name="runs" type="number" min="1" max="50" value="5"></label>
+  <button name="grow-btn" type="submit">Grow</button>
+  <button name="redraw" type="button">Redraw</button>
+</form>
+<div id="status">Starting…</div>
+<table id="results"></table>
+<div class="pics">
+  <figure><figcaption>WebGL2</figcaption><canvas id="webgl"></canvas></figure>
+  <figure><figcaption>2D canvas</figcaption><canvas id="c2d"></canvas></figure>
+  <figure><figcaption>Difference: red where a 3 × 3 sample differs by more than 48 in a channel</figcaption><canvas id="diff"></canvas></figure>
+</div>
+<script type="module" src="./renderers.js"></script>
+</body>
+</html>

@@ -37,6 +37,67 @@ do
   H.check(math.abs(G.length(G.resample(line, 11)) - 50) < 1e-6, "resample changed length")
 end
 
+-- Resampling gives exactly the points G.at does, bit for bit, so pages
+-- drawn before and after it measured segments once are identical; also
+-- over a repeated point (a zero-length segment) and very short lines.
+do
+  local r = Rng.new(3)
+  local wiggle = {}
+  for i = 1, 40 do wiggle[i] = { i * r:range(0.5, 3), r:range(-9, 9) } end
+  wiggle[20] = { wiggle[19][1], wiggle[19][2] }
+  for _, pts in ipairs({ wiggle, { { 1, 2 } }, { { 0, 0 }, { 3, 4 } }, { { 0, 0 }, { 0, 0 }, { 5, 0 } } }) do
+    for _, n in ipairs({ 2, 7, 64 }) do
+      local got = G.resample(pts, n)
+      for i = 0, n - 1 do
+        local want = G.at(pts, i / (n - 1))
+        H.check(got[i + 1][1] == want[1] and got[i + 1][2] == want[2],
+          string.format("resample point %d of %d differs from G.at on a %d-point line", i, n, #pts))
+      end
+    end
+  end
+end
+
+-- Circles: under 2 pt in radius, two Bezier halves; from 2 pt, four
+-- quarters. Either way every point of the outline lies within 1.4% of
+-- the radius of the true circle, and a frame moves the circle whole.
+do
+  local function curves(body)
+    local out, cur = {}, nil
+    for x, y in body:gmatch("(%-?[%d.]+) (%-?[%d.]+) m") do cur = { tonumber(x), tonumber(y) } break end
+    for a, b, c, d, e, f in body:gmatch("(%-?[%d.]+) (%-?[%d.]+) (%-?[%d.]+) (%-?[%d.]+) (%-?[%d.]+) (%-?[%d.]+) c") do
+      out[#out + 1] = { cur[1], cur[2], tonumber(a), tonumber(b), tonumber(c), tonumber(d), tonumber(e), tonumber(f) }
+      cur = { tonumber(e), tonumber(f) }
+    end
+    return out
+  end
+  local BP = 72 / 72.27
+  for _, case in ipairs({ { 0.5, 2 }, { 1.99, 2 }, { 2, 4 }, { 40, 4 } }) do
+    local r, want = case[1], case[2]
+    for _, framed in ipairs({ false, true }) do
+      local pt = Paint.new()
+      if framed then pt:frame(function(x, y) return x + 100, y - 50 end) end
+      pt:fill({ { "o", 300, 200, r } }, Paint.palette.blue, 1)
+      local cs = curves(pt:body())
+      H.check(#cs == want, string.format("circle of radius %g drawn with %d curves, not %d", r, #cs, want))
+      local cx, cy = (framed and 400 or 300) * BP, (framed and 150 or 200) * BP
+      local worst = 0
+      for _, q in ipairs(cs) do
+        for k = 0, 20 do
+          local t = k / 20
+          local u = 1 - t
+          local a, b, c, d = u * u * u, 3 * u * u * t, 3 * u * t * t, t * t * t
+          local x = a * q[1] + b * q[3] + c * q[5] + d * q[7]
+          local y = a * q[2] + b * q[4] + c * q[6] + d * q[8]
+          worst = math.max(worst, math.abs(math.sqrt((x - cx) ^ 2 + (y - cy) ^ 2) - r * BP))
+        end
+      end
+      -- The written coordinates are rounded to 0.01 bp.
+      H.check(worst <= 0.014 * r * BP + 0.008,
+        string.format("circle of radius %g strays %.4f bp from round", r, worst))
+    end
+  end
+end
+
 -- Brush marks: a broken stroke leaves real gaps along its line, an
 -- unbroken one covers nearly all of it, and no piece strays further from
 -- the line than its width allows.

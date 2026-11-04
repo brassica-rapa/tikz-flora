@@ -40,7 +40,7 @@ class TestBakedFlora(unittest.TestCase):
                 self.assertGreater(height, 500)
 
     def test_compile_auto_bakes_and_caches_exact_open_space(self):
-        """Verify that lualatex --shell-escape computes flowers for the exact page open space,
+        """With baked=true, verify that lualatex --shell-escape computes flowers for the exact page open space,
         bakes them to flora-cache/, embeds the PNG, and reuses it on pass 2."""
         texlua = shutil.which("texlua")
         lualatex = shutil.which("lualatex")
@@ -53,7 +53,7 @@ class TestBakedFlora(unittest.TestCase):
             with open(doc_tex, "w") as f:
                 f.write(r"""\documentclass{article}
 \usepackage{tikzflora}
-\florasetup{layout=left, seed=42}
+\florasetup{layout=left, seed=42, baked=true}
 \begin{document}
 This is a test of procedural flower generation with exact open space.
 \end{document}

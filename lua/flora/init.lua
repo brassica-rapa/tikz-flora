@@ -53,6 +53,39 @@ function M.mark(name)
   require("flora.measure").mark(name)
 end
 
+-- \floraletters: the lettering of box register `reg` (letters.lua),
+-- typeset in its place as a picture of the box's width, its height and
+-- depth grown to hold the shadow and any arch.
+function M.letters(reg, opts)
+  local Letters = require("flora.letters")
+  local o, err = Letters.options(opts)
+  if not o then
+    report("floraletters: " .. err)
+    o = Letters.options("")
+  end
+  local box = tex.box[reg]
+  local pt = require("flora.paint").new({ backend = os.getenv("FLORA_BACKEND") })
+  local ext = box and Letters.paint(pt, box, o)
+  if not ext then
+    texio.write_nl("term and log", "tikzflora: \\floraletters needs an OpenType or TrueType font; the text is set as usual")
+    tex.sprint(string.format("\\box%d", reg))
+    return
+  end
+  local SP = 65536
+  local w = box.width / SP
+  local h, d = math.max(box.height / SP, ext[4]), math.max(box.depth / SP, -ext[2])
+  -- The mark makes the measurer (measure.lua) take the box as ink, so
+  -- the flora keeps clear of the lettering as it does of text.
+  tex.sprint(string.format("\\hbox to %.3fpt{\\directlua{flora.mark('ink')}\\begin{pgfpicture}\\pgfsetbaseline{0pt}"
+    .. "\\pgfpathrectangle{\\pgfqpoint{0pt}{%.3fpt}}{\\pgfqpoint{%.3fpt}{%.3fpt}}\\pgfusepath{use as bounding box}",
+    w, -d, w, h + d))
+  -- FLORA_LETTERS=hide keeps the box and leaves it blank: the site's bake
+  -- (just site-bake) takes the page's text and its lettering apart so the
+  -- mixer can colour the lettering.
+  if os.getenv("FLORA_LETTERS") ~= "hide" then M.typeset(pt) end
+  tex.sprint("\\end{pgfpicture}\\hss}")
+end
+
 function M.specimens(seed)
   local spec = require("flora.specimen")
   tex.sprint(string.format(
@@ -62,9 +95,21 @@ function M.specimens(seed)
 end
 
 -- The ornament gallery (gallery.lua): every kind for `seeds` seeds, each
--- labelled with its name and the key that weighs it.
+-- labelled with its name and the key that weighs it. FLORA_GALLERY (slot
+-- and kind names, comma-separated) limits the kinds and FLORA_GALLERY_SEEDS
+-- overrides `seeds`.
 function M.gallery(seeds)
-  local pt, cells, w, h = require("flora.gallery").sheet(nil, tonumber(seeds) or 3)
+  local only
+  for name in (os.getenv("FLORA_GALLERY") or ""):gmatch("[%w_]+") do
+    only = only or {}
+    only[name] = true
+  end
+  seeds = tonumber(os.getenv("FLORA_GALLERY_SEEDS")) or tonumber(seeds) or 3
+  local pt = require("flora.paint").new({ backend = os.getenv("FLORA_BACKEND"), gilt = M.settings.gilt,
+    backdrop = require("flora.color").backdrop(M.settings.backdrop) })
+  pt.gilt_dpi, pt.gilt_env, pt.gilt_look = M.settings.giltdpi, M.settings.giltenv, M.settings.giltlook
+  local cells, w, h
+  pt, cells, w, h = require("flora.gallery").sheet(pt, seeds, nil, nil, only)
   tex.sprint(string.format(
     "\\pgfpathrectangle{\\pgfpointorigin}{\\pgfqpoint{%.2fpt}{%.2fpt}}\\pgfusepath{use as bounding box}", w, h))
   M.typeset(pt)
@@ -148,7 +193,7 @@ end
 -- seed, layout, and exact open space (lines) matches. Never fall back to
 -- unhashed or mismatched images.
 function M.find_baked(spec, set)
-  if set and set.baked == false then return nil end
+  if not (set and set.baked == true) then return nil end
 
   local hash = M.spec_hash(spec)
   local layout = spec.layout or "left"
@@ -246,6 +291,8 @@ function M.page(a)
     header_y = a.header_y and pt_of(a.header_y),
     seed = M.seed(set.seed or a.seed, a.page),
     lines = lines, layout = set.layout, page = a.page, mix = set.mix, ornaments = set.ornaments, palette = set.palette, spin = set.spin,
+    gilt = set.gilt, gilt_dpi = set.giltdpi, gilt_env = set.giltenv, gilt_look = set.giltlook,
+    backdrop = set.backdrop,
     flower = set.flower, petals = set.petals, head = set.hero, animals = set.animals,
     doc_seed = tostring(set.seed or a.seed),
     dpi = set.dpi or 150,
@@ -261,54 +308,63 @@ function M.page(a)
     f:close()
   end
   if skip then return end
+  -- A --draftmode run writes no PDF, and the flora takes no room in the
+  -- layout, so there is nothing to draw.
+  if tex.draftmode and tex.draftmode > 0 then return end
+  if set.baked == true then
+    -- baked=true (opt-in): a page rasterised to a transparent PNG, found by the
+    -- hash of its seed and open space, or grown, rasterised and kept now.
+    local baked = M.find_baked(spec, set)
+    if not baked then
+      -- If shell escape is disabled, we cannot auto-rasterize with pdftocairo
+      if status and status.shell_escape ~= 1 then
+        local reason = "LuaLaTeX was run without --shell-escape. Re-run with 'lualatex --shell-escape " .. (tex.jobname or "document") .. ".tex'."
+        tex.error(string.format("tikzflora: unable to bake flora for page %d.\n%s\nNo pre-baked image matching this seed and open space was found.", a.page, reason))
+        return
+      end
 
-  -- If user explicitly asked for raw vectors via baked=false, typeset directly
-  if set.baked == false then
-    local pt = require("flora.compose").page(spec)
+      -- Not found: compute flowers and bake to cache
+      local hash = M.spec_hash(spec)
+      local layout = (spec.layout == "split") and ((spec.page % 2 == 1) and "right" or "left") or (spec.layout or "left")
+      local cache_dir = "flora-cache"
+      local target_png = string.format("%s/flora-%s-s%s-p%d-%s.png", cache_dir, layout, spec.doc_seed, spec.page, hash)
+      local ok, err = M.bake_page(spec, target_png, spec.dpi)
+      if ok then
+        baked = target_png
+      else
+        tex.error(string.format("tikzflora: unable to bake flora for page %d.\nFailed to rasterize flora. Please ensure 'pdftocairo' (poppler-utils) or 'gs' (Ghostscript) is installed and in your PATH.\n(%s)", a.page, tostring(err)))
+        return
+      end
+    end
     tex.sprint("\\begin{pgfpicture}")
     tex.sprint(string.format(
       "\\pgfpathrectangle{\\pgfpointorigin}{\\pgfqpoint{%.2fpt}{%.2fpt}}\\pgfusepath{use as bounding box}",
       spec.width, spec.height))
-    M.typeset(pt)
+    tex.sprint(string.format(
+      "\\pgftext[left,bottom,at=\\pgfpointorigin]{\\pgfimage[width=%.2fpt,height=%.2fpt]{%s}}",
+      spec.width, spec.height, baked:gsub("\\", "/")))
     tex.sprint("\\end{pgfpicture}")
-    texio.write_nl("log", string.format("flora: page %d coverage %.2f (vectors)", a.page, pt.coverage or 0))
+    texio.write_nl("log", string.format("flora: page %d (baked) %s", a.page, baked))
     return
   end
-
-  -- Default baked mode: look for existing pre-baked image matching exact seed and open space
-  local baked = M.find_baked(spec, set)
-  if not baked then
-    -- If shell escape is disabled, we cannot auto-rasterize with pdftocairo
-    if status and status.shell_escape ~= 1 then
-      local reason = "LuaLaTeX was run without --shell-escape. Re-run with 'lualatex --shell-escape " .. (tex.jobname or "document") .. ".tex'."
-      tex.error(string.format("tikzflora: unable to bake flora for page %d.\n%s\nNo pre-baked image matching this seed and open space was found.", a.page, reason))
-      return
-    end
-
-    -- Not found: compute flowers and bake to cache
-    local hash = M.spec_hash(spec)
-    local layout = (spec.layout == "split") and ((spec.page % 2 == 1) and "right" or "left") or (spec.layout or "left")
-    local cache_dir = "flora-cache"
-    local target_png = string.format("%s/flora-%s-s%s-p%d-%s.png", cache_dir, layout, spec.doc_seed, spec.page, hash)
-    local ok, err = M.bake_page(spec, target_png, spec.dpi)
-    if ok then
-      baked = target_png
-    else
-      tex.error(string.format("tikzflora: unable to bake flora for page %d.\nFailed to rasterize flora. Please ensure 'pdftocairo' (poppler-utils) or 'gs' (Ghostscript) is installed and in your PATH.\n(%s)", a.page, tostring(err)))
+  if set.cache ~= false and (os.getenv("FLORA_BACKEND") or "pdf") == "pdf" then
+    local file, e, hit = require("flora.cache").page(spec, set, pdf.getcompresslevel and pdf.getcompresslevel() or 6)
+    if file then
+      node.write(img.node(img.scan({ filename = file })))
+      texio.write_nl("log", string.format("flora: page %d %s", a.page, hit and "from the cache" or "grown and cached"))
+      texio.write_nl("log", string.format("flora: %d painted objects", e.count))
+      texio.write_nl("log", string.format("flora: page %d coverage %.2f", a.page, e.coverage))
       return
     end
   end
-
-  -- Embed the baked image
+  local pt = require("flora.compose").page(spec)
   tex.sprint("\\begin{pgfpicture}")
   tex.sprint(string.format(
     "\\pgfpathrectangle{\\pgfpointorigin}{\\pgfqpoint{%.2fpt}{%.2fpt}}\\pgfusepath{use as bounding box}",
     spec.width, spec.height))
-  tex.sprint(string.format(
-    "\\pgftext[left,bottom,at=\\pgfpointorigin]{\\pgfimage[width=%.2fpt,height=%.2fpt]{%s}}",
-    spec.width, spec.height, baked:gsub("\\", "/")))
+  M.typeset(pt)
   tex.sprint("\\end{pgfpicture}")
-  texio.write_nl("log", string.format("flora: page %d (baked) %s", a.page, baked))
+  texio.write_nl("log", string.format("flora: page %d coverage %.2f", a.page, pt.coverage or 0))
 end
 
 return M
