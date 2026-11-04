@@ -101,6 +101,7 @@ compile with a message naming the key.
 | `spin` | a whole number | Picks other inks for parts set to `random`; the shapes stay |
 | `flower` | `fan`, `round`, `soft`, `obovate`, `wedge`, `cross`, `buttercup` | The bloom style of the hero and the blooms (below) |
 | `hero` | `bloom`, `raceme`, `corymb`, `panicle` | What crowns the main stem: the hero bloom, or a painted head of blooms (below) |
+| `animals` | `classic`, `painted` | How the bee and the songbird are drawn (below) |
 | `petals` | 3 to 12 | How many petals every bloom has; inflorescence florets follow it |
 | `ornaments` | `{kind=weight, ...}` | How often each ornament kind is picked for its place; 0 never |
 | `baked` | `true`, `false` | Bake procedural flowers to transparent images (default `true`; `false` forces raw vector output) |
@@ -208,7 +209,31 @@ floret is: its outward petal is tilted back toward the viewer, so the flower
 opens like a shallow cup (0 is flat, the default is 0.7).
 
 ```latex
-lorasetup{hero=raceme, flower=cross, palette={leaves=green, leaflets=green}}
+\florasetup{hero=raceme, flower=cross, palette={leaves=green, leaflets=green}}
+```
+
+### Painted animals
+
+`animals=painted` draws the bee and the songbird in a more modelled way;
+`classic` (the default) is unchanged, so a page that does not ask for it
+comes out exactly as before.
+
+- **Bird.** Head, neck and body are one smooth union of shapes (signed
+  distance fields, `sdf.lua`). The tail is individual feathers behind the
+  body, darker, with round or pointed tips; the wing is one merged shape of
+  coverts and primaries, with feather lines; the belly is its own colour.
+  Beak angle and shape, eye size and build vary per bird.
+- **Bee.** A stout, nearly round abdomen overlapped by the thorax and head,
+  with bands that run under the thorax. It has four wings, a forewing and a
+  smaller hindwing each side, rooted on the thorax and swept back; the near
+  pair is glassy over the body, the far pair a ghost. Antennae are elbowed.
+
+Both take their colour from the page's palette: the back (bird) or abdomen
+(bee) is the `blooms` ink, and the belly (bird) or the dark parts (bee) the
+`leaves` ink; when the palette gives none, the bee is honey gold.
+
+```latex
+\florasetup{animals=painted, palette={blooms=ama-iro, leaves=daikokuten+bright}}
 ```
 
 ### Layouts

@@ -17,6 +17,9 @@
 --             raceme, corymb or panicle of blooms (head.lua)
 --   petals    how many petals every bloom has, 3 to 12; florets of an
 --             inflorescence follow it too
+--   animals   how the bee and the songbird are drawn: classic (the default)
+--             or painted (shapes joined and washed, with separate wings,
+--             tail and belly; painted_bee.lua, painted_bird.lua)
 --   colourway a preset palette: rose, ember, or plum (or colorway)
 --   spin      a number that re-picks the random inks; the shapes stay
 --   ornaments weights per ornament kind, e.g. ornaments={moon=2, night=0}
@@ -31,6 +34,7 @@ local Mix = require("flora.mix")
 local Orn = require("flora.ornaments")
 local Flower = require("flora.flower")
 local Head = require("flora.head")
+local Visitor = require("flora.visitor")
 
 -- Key name -> function(value string) returning the parsed value, or nil
 -- and a message.
@@ -122,6 +126,13 @@ M.define("hero", function(v)
     if k == v then return v end
   end
   return nil, "hero must be one of " .. table.concat(Head.kinds, ", ")
+end)
+
+M.define("animals", function(v)
+  for _, k in ipairs(Visitor.styles) do
+    if k == v then return v end
+  end
+  return nil, "animals must be one of " .. table.concat(Visitor.styles, ", ")
 end)
 
 M.define("petals", function(v)

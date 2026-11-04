@@ -49,6 +49,7 @@ end
 
 -- A bee at (x, y) heading `ang`, about `L` pt long.
 function V.bee(pt, rng, x, y, ang, L)
+  if V.animals == "painted" then return require("flora.painted_bee")(pt, rng, x, y, ang, L) end
   local s = L / 13
   local function at(pts) return place(pts, x, y, ang, s) end
   -- Wings first, so the body lies over their roots: pale and glassy.
@@ -148,7 +149,24 @@ local BIRD = { { -17, -1 }, { -13, 1.5 }, { -6, 6.5 }, { 2, 8.5 }, { 8, 12 }, { 
   { 14.5, 6.5 }, { 11, 3 }, { 7, -2.5 }, { 0, -6 }, { -6, -5.5 }, { -12, -2.5 } }
 local WING = { { -11, 1 }, { -4, 6 }, { 4, 6.5 }, { 7, 2.5 }, { 0, -1.5 }, { -7, -1 } }
 
+-- How the bee and the bird are drawn: "classic" (the shapes below) or
+-- "painted" (painted_bee.lua, painted_bird.lua). Set per page by
+-- V.with_animals, from \florasetup{animals=...}.
+V.animals = "classic"
+V.styles = { "classic", "painted" }
+
+function V.with_animals(style, fn)
+  if not style or style == V.animals then return fn() end
+  local saved = V.animals
+  V.animals = style
+  local ok, res = pcall(fn)
+  V.animals = saved
+  if not ok then error(res, 0) end
+  return res
+end
+
 function V.bird(pt, rng, x, y, dir, L)
+  if V.animals == "painted" then return require("flora.painted_bird")(pt, rng, x, y, dir, L) end
   local s = L / 32
   local function at(pts)
     local out = {}

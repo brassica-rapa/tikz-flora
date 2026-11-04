@@ -115,6 +115,7 @@ function M.spec_hash(spec)
     spin = spec.spin,
     flower = spec.flower,
     petals = spec.petals,
+    animals = spec.animals ~= "classic" and spec.animals or nil,
     head = spec.head,
     dpi = spec.dpi or 150,
   }
@@ -245,7 +246,7 @@ function M.page(a)
     header_y = a.header_y and pt_of(a.header_y),
     seed = M.seed(set.seed or a.seed, a.page),
     lines = lines, layout = set.layout, page = a.page, mix = set.mix, ornaments = set.ornaments, palette = set.palette, spin = set.spin,
-    flower = set.flower, petals = set.petals, head = set.hero,
+    flower = set.flower, petals = set.petals, head = set.hero, animals = set.animals,
     doc_seed = tostring(set.seed or a.seed),
     dpi = set.dpi or 150,
   }

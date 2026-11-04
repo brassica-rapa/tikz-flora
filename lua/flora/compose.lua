@@ -329,8 +329,10 @@ function C.page(spec)
   if style and style.ink and not (palette and palette.sprays) and Tune.color.palette.sprays == "look" then
     palette = Mix.merge_palette(palette, { sprays = style.ink })
   end
-  return F.with_flower({ style = spec.flower, petals = spec.petals }, function()
-    return Mix.with_palette(palette, function() return C.frames(spec) end)
+  return Visitor.with_animals(spec.animals, function()
+    return F.with_flower({ style = spec.flower, petals = spec.petals }, function()
+      return Mix.with_palette(palette, function() return C.frames(spec) end)
+    end)
   end)
 end
 
