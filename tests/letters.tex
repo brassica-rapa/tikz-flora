@@ -1,0 +1,15 @@
+% Integration test for \floraletters (lua/flora/letters.lua): run with
+% `just test-tex`. Sets a word plainly and as lettering, straight and
+% arched, and checks the lettering keeps the word's width, takes its
+% outlines from the font, grows to hold its shadow and arch, and is
+% measured as ink (measure.lua).
+\documentclass{article}
+\usepackage{tikzflora}
+\def\florapages{0}
+\begin{document}
+\setbox0=\hbox{\Huge AVATAR}
+\setbox2=\hbox{\Huge\floraletters{AVATAR}}
+\setbox4=\hbox{\Huge\floraletters[style=engraved, arch=40]{AVATAR}}
+\setbox6=\vbox{\hsize=300pt\parindent=0pt \Huge\floraletters[style=outline]{AVATAR}\par}
+\directlua{dofile("tests/letters_check.lua")}
+\end{document}

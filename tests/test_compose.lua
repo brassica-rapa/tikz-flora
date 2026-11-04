@@ -166,4 +166,29 @@ do
   H.check(n >= 5, string.format("ghost bloom on only %d of 8 pages", n))
 end
 
+-- Every layout tells spec.progress how far the page has got: a rising
+-- list, by at least 0.01 a step, ending in exactly 1; the hook changes
+-- nothing painted.
+do
+  local Paint = require("flora.paint")
+  for _, layout in ipairs({ "left", "right", "centered", "split", "title", "surround", "flank", "wreath", "bouquet", "scrollwork" }) do
+    local spec = H.page(3)
+    spec.layout = layout
+    Paint.reset_resources()
+    local plain = Compose.page(spec):code()
+    local sent = {}
+    spec.progress = function(f) sent[#sent + 1] = f end
+    Paint.reset_resources()
+    local told = Compose.page(spec):code()
+    H.check(told == plain, layout .. ": the progress hook changes the page")
+    H.check(#sent >= 20, string.format("%s: only %d progress values", layout, #sent))
+    H.check(sent[#sent] == 1, string.format("%s: progress ends at %s", layout, tostring(sent[#sent])))
+    for k = 2, #sent do
+      local step = sent[k] - sent[k - 1]
+      H.check(step >= 0.01 - 1e-12 or (sent[k] == 1 and step > 0),
+        string.format("%s: progress %d goes %.4f -> %.4f", layout, k, sent[k - 1], sent[k]))
+    end
+  end
+end
+
 H.done("compose")

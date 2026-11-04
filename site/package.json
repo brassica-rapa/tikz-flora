@@ -9,6 +9,9 @@
     "deploy": "wrangler deploy"
   },
   "dependencies": {
+    "@alpaca-software/web-flora": "^0.1.0",
+    "dialkit": "^2.1.0",
+    "motion": "^14.9.0",
     "pdfjs-dist": "6.4.299",
     "svelte": "5.57.3",
     "wasmoon": "1.16.0"

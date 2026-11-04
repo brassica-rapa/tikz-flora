@@ -1,0 +1,2433 @@
+% A long benchmark document for tikzflora: about fifty pages of text with
+% the flora on every page, for timing compiles (`just bench`).
+%
+% The text is in the public domain: Henrietta Dumont, The Language of
+% Flowers: The Floral Offering (Philadelphia, 1851), from the Project
+% Gutenberg edition (eBook #71779), its first entries, with the
+% illustrations left out.
+\documentclass[11pt,twoside]{article}
+\usepackage[a4paper,inner=2cm,outer=5.6cm,top=4.2cm,bottom=3.5cm,
+  headheight=14pt,headsep=18pt]{geometry}
+\usepackage{fancyhdr}
+\usepackage{tikzflora}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\small\textsc{The Floral Offering}}
+\fancyfoot[LE,RO]{\small\thepage}
+\renewcommand\headrulewidth{0pt}
+
+\florasetup{layout=split, seed=7, visitors=0.4}
+
+% Each flower's entry: its name and the sentiment it stands for.
+\newcommand\flower[2]{\section*{#1}\addcontentsline{toc}{section}{#1}%
+  \noindent\textit{#2.}\par\medskip}
+\newcommand\stars{\begin{center}*\quad*\quad*\end{center}}
+\newcommand\by[1]{\par\hfill\textit{#1}\par}
+
+\begin{document}
+
+\newgeometry{left=3.2cm,right=3.2cm,top=5cm,bottom=4cm}
+\thispagestyle{empty}
+\florathispage{layout=title}
+\begin{floratitle}
+\centering
+{\Huge\scshape The Language of Flowers\par}
+\vspace{1.2em}
+{\large The Floral Offering\par}
+\end{floratitle}
+\vspace{5cm}
+\begin{center}
+{\large Henrietta Dumont\par}
+\vspace{1em}
+Philadelphia, 1851
+\end{center}
+\clearpage
+\restoregeometry
+
+\flower{Mezereon}{Coquetry---Desire to please}
+
+This shrub, clothed in its showy garb, appears amidst the snow, like an imprudent and coquettish female, who, though shivering with cold, wears her spring attire in the depth of winter. The stalk of this shrub is covered with a dry bark, which gives it the appearance of dead wood. Nature, to hide this deformity, has encircled each of its sprays with a wreath of red flowers, terminating in a tuft of leaves. These flowers give out a peculiar and offensive smell.
+
+\begin{verse}
+\quad You oftentimes can mark upon the street\\
+\quad The gilded toy whom fashion idolizes;\\
+\quad Heartless and fickle, swelled with self-conceit,\\
+\quad Avoiding alway what good sense advises.\\
+Who flutters like the butterfly while burns his sun,\\
+Nor afterwards is missed when life is done.
+\end{verse}
+
+\by{W. H. C.}
+
+\stars
+
+\begin{verse}
+Clouds turn with every wind about;\\
+They keep us in suspense and doubt;\\
+Yet oft perverse, like woman-kind,\\
+Are seen to scud against the wind.\\
+Is not this lady just the same?\\
+For who can tell what is her aim?
+\end{verse}
+
+\by{Swift.}
+
+\stars
+
+\begin{verse}
+Thou delightest the cold world’s gaze,\\
+\quad When crowned with the flower and the gem,\\
+But thy lover’s smile should be dearer praise\\
+\quad Than the incense thou prizest from them.\\
+And gay is the playful tone,\\
+\quad As to the flattering voice thou respondest;\\
+But what is the praise of the cold and unknown\\
+\quad To the tender blame of the fondest?
+\end{verse}
+
+\by{John Everett.}
+
+\stars
+
+\begin{verse}
+Know, Celia, (since thou art so proud,)\\
+\quad ’Twas I that gave thee thy renown:\\
+Thou hadst, in the forgotten crowd\\
+\quad Of common beauties, lived unknown,\\
+Had not my verse exhaled thy name,\\
+And with it impt the wings of Fame.\\
+That killing power is none of thine,\\
+\quad I gave it to thy voice and eyes:\\
+Thy sweets, thy graces, all are mine;\\
+\quad Thou art my star, shin’st in my skies!\\
+Then dart not from thy borrowed sphere\\
+Lightning on him that fixed thee there.
+\end{verse}
+
+\by{Thomas Carew.}
+
+\flower{Snowdrop}{Hope}
+
+The Snowdrop is looked upon as the herald of the approach of flower-wreathed Spring. The north winds howl; the naked branches of the trees are white with frost; the earth is carpeted with the virgin snow; the feathered musicians are silent; and stern Winter’s icy hand chills the rivulet till it ceases to murmur. At this season, a tender flower springs up amid the snow, expands its blossoms, and leads thought to the verdant hours to come. This beautiful sign of awakening Nature may aptly be considered as the emblem of Hope.
+
+\stars
+
+\begin{verse}
+The Snowdrop, winter’s timid child,\\
+\quad Awakes to life bedewed with tears,\\
+And flings around its fragrance mild;\\
+And, where no rival flowerets bloom,\\
+Amidst the bare and chilling gloom\\
+\quad A beauteous gem appears.\\
+All weak and wan, with head inclined,\\
+\quad Its parent breast the drifted snow,\\
+It trembles, while the ruthless wind\\
+Bends its slim form; the tempest lowers,\\
+Its emerald eye drops crystal showers\\
+\quad On its cold bed below.\\
+Where’er I find thee, gentle flower,\\
+\quad Thou still art sweet and dear to me;\\
+For I have known the cheerless hour,\\
+Have seen the sunbeams cold and pale,\\
+Have felt the chilling wintry gale,\\
+\quad And wept and shrunk, like thee!
+\end{verse}
+
+\by{Mary Robinson.}
+
+\stars
+
+\begin{verse}
+No one is so accursed by fate,\\
+No one so utterly desolate,\\
+\quad But some heart, though unknown,\\
+\quad Responds unto his own;\\
+Responds, as if with unseen wings\\
+An angel touched its quivering strings,\\
+\quad And whispers in its song,\\
+\quad “Where hast thou stayed so long?”
+\end{verse}
+
+\by{Longfellow.}
+
+\stars
+
+\begin{verse}
+The star of Hope will beam in Sorrow’s night,\\
+And smile the phantoms of Despair to flight.
+\end{verse}
+
+\by{Anon.}
+
+\stars
+
+\begin{verse}
+“Why do you call the Snowdrop pale,\\
+\quad Our first of flowerets bright?\\
+For the Christmas Rose came long before,\\
+\quad So did the Aconite.”\\
+I know the yellow Aconite;\\
+\quad I know the Christmas Rose:\\
+But neither one nor other e’er\\
+\quad Within my garden grows.\\
+They seem to me presumptuous things,\\
+\quad That rudely hurry on,\\
+And struggle for the precedence\\
+\quad A fairer flower hath won.\\
+When I was but a wee, wee thing,\\
+\quad A young Snowdrop I nursed,\\
+And I loved it when they told me how\\
+\quad It always blossomed first.\\
+I marked its tiny, trembling stem,\\
+\quad And dainty little bell,\\
+And, oh! so tenderly enjoyed\\
+\quad Its faint, delicious smell.\\
+It was not only fair and sweet,\\
+\quad ’Twas the first flower that came;\\
+So said they then, and there is none\\
+\quad I could love now the same.\\
+The Aconite may deck with gold\\
+\quad Its merry little face---\\
+The Christmas Rose at Christmas bloom,\\
+\quad But none can fill \emph{her} place.\\
+Within my garden’s small domain\\
+\quad The Snowdrop still shall find\\
+Herself the earliest flower. She leads,\\
+\quad The others come behind.\\
+And, lo! above the heaving mould\\
+\quad The clustering bells hang here;\\
+Like foam upon the storm-black wave,\\
+\quad Or pearls in Ethiop’s ear.\\
+And I know where they’re crowding thick,\\
+\quad With none their wealth to note;---\\
+All o’er that woody isle, that lies\\
+\quad Girt by the ancient moat.\\
+There, under tall, dark crested firs,\\
+\quad The Snowdrops spring each year;\\
+And shed about that gloomy place\\
+\quad A lightness pale and clear.\\
+A grand old Manor House once stood\\
+\quad On that dim moated isle;\\
+But long years since have floated by,\\
+\quad And its story died the while.\\
+Yet roses, cultured ones, run wild,\\
+\quad And fruits, grown rough and sour,\\
+That linger still around, tell tales\\
+\quad Of garden and of bower.\\
+And so the Snowdrops may have dwelt\\
+\quad In borders neat and trim,\\
+And gentle beings tended them,\\
+\quad Though now all’s drear and dim.\\
+The brave and beautiful have died,\\
+\quad Not e’en a name is known:---\\
+Time hath laid low the stately house,---\\
+\quad Ye cannot find a stone.\\
+But still there runneth brightly there\\
+\quad The little sedgy stream\\
+Into the moat, that lieth still\\
+\quad And shadowy as a dream.\\
+And still there groweth plenteously\\
+\quad The fragile Snowdrop’s bell:---\\
+Oh, human pride! that thou wouldst list\\
+\quad The tale these small things tell!
+\end{verse}
+
+\by{Louisa A. Twamley.}
+
+\stars
+
+\begin{verse}
+As Hope, with bowed head, silent stood,\\
+\quad And on her golden anchor leant,\\
+Watching below the angry flood,\\
+\quad While Winter, mid the dreariment\\
+Half-buried in the drifted snow,\\
+\quad Lay sleeping on the frozen ground,\\
+Not heeding how the wind did blow,\\
+\quad Bitter and bleak on all around:\\
+She gazed on Spring, who at her feet\\
+Was looking on the snow and sleet.\\
+Spring sighed, and through the driving gale\\
+\quad Her warm breath caught the falling snow,\\
+And from the flakes a flower as pale\\
+\quad Did into spotless whiteness blow.\\
+Hope, smiling, saw the blossom fall,\\
+\quad And watched its root strike in the earth:\\
+“I will that flower the Snowdrop call,”\\
+\quad Said Hope, “in memory of its birth:\\
+And through all ages it shall be\\
+In reverence held, for love of me.”\\
+“And ever from my hidden bowers,”\\
+\quad Said Spring, “it first of all shall go,\\
+And be the herald of the flowers,\\
+\quad To warn away the sheeted snow.\\
+Its mission done, then by thy side\\
+\quad All summer long it shall remain.\\
+While other flowers I scatter wide,\\
+\quad O’er every hill, and wood, and plain,\\
+This shall return, and ever be\\
+A sweet companion, Hope, for thee.”\\
+Hope stooped and kissed her sister Spring,\\
+\quad And said, “For hours, when thou art gone,\\
+I’m left alone without a thing\\
+\quad That I can fix my heart upon:\\
+’Twill cheer me many a lonely hour,\\
+\quad And in the future I shall see\\
+Those who would sink raised by that flower;\\
+\quad They’ll look on it, then think of thee:\\
+And many a sadful heart shall sing,\\
+The Snowdrop bringeth Hope and Spring.”
+\end{verse}
+
+\by{Miller.}
+
+\flower{Primrose}{Early Grief}
+
+The Primrose is one of the earliest flowers of spring. It was anciently called Paralisos, the name of a beautiful youth, who died of grief for the loss of his betrothed Melicerta, and was metamorphosed by his parents into this flower, which has since been a favourite of the poets.
+
+\stars
+
+\begin{verse}
+\quad With fairest flowers,\\
+Whilst summer last, and I live here, Fidele,\\
+I’ll sweeten thy sad grave: thou shalt not lack\\
+The flower that’s like thy face, pale Primrose.
+\end{verse}
+
+\by{Cymbeline.}
+
+\stars
+
+\begin{verse}
+The Primrose pale is Nature’s meek and modest child.
+\end{verse}
+
+\by{Balfour.}
+
+\stars
+
+\begin{verse}
+Nay, weep not while thy sun shines bright,\\
+\quad And cloudless is thy day,\\
+While past and present joys unite\\
+\quad To cheer thee on thy way;\\
+While fond companions round thee move,\\
+\quad To youth and nature true,\\
+And friends whose looks of anxious love\\
+\quad Thy every step pursue.
+\end{verse}
+
+\by{Common-Place Book of Poetry.}
+
+\stars
+
+\begin{verse}
+The Primrose, tenant of the glade,\\
+Emblem of virtue in the shade.
+\end{verse}
+
+\by{John Mayne.}
+
+\stars
+
+\begin{verse}
+Ask me why I send you here\\
+This firstling of the infant year;\\
+Ask me why I send to you\\
+This Primrose all bepearled with dew:\\
+I straight will whisper in your ears,\\
+The sweets of love are washed with tears.\\
+Ask me why this flower doth show\\
+So yellow, green, and sickly too;\\
+Ask me why the stalk is weak\\
+And bending, yet it doth not break:\\
+I must tell you these discover\\
+What doubts and fears are in a lover.
+\end{verse}
+
+\by{Thomas Carew.}
+
+\stars
+
+\begin{verse}
+By the soft green light in the woody glade,\\
+On the banks of moss where thy childhood played,\\
+By the household tree through which thine eye\\
+First looked in love to the summer sky;\\
+By the dewy gleam, by the very breath\\
+Of the Primrose-tufts in the grass beneath,\\
+Upon thy heart there is laid a spell,\\
+Holy and precious---oh, guard it well!\\
+Yes! when thy heart in its pride would stray\\
+From the first pure loves of its youth away;\\
+When the sullying breath of the world would come\\
+O’er the flowers it brought from its native home;\\
+Think thou again of the woody glade,\\
+Of the sound by the rustling ivy made;\\
+Think of the tree at thy father’s door,\\
+And the kindly spell shall have power once more.
+\end{verse}
+
+\by{Mrs. Hemans.}
+
+\flower{Almond Blossom}{Indiscretion}
+
+The Almond tree is the first of the trees to put forth its blossoms, when spring breathes the breath of life through nature. It has been made the emblem of indiscretion, from flowering so early that frosts too often give a death-chill to the precocious germs of its fruit. In ancient times, the abundance of blossoms upon the Almond tree was considered to promise a fruitful season. The following is the fabulous account of the origin of this tree:---Demophoon, son of Theseus and Phædra, in returning from the siege of Troy, was thrown by a storm on the shores of Thrace, where then reigned the beautiful Phyllis. The young queen graciously received the prince, fell in love with him, and became his wife. When recalled to Athens by his father’s death, Demophoon promised to return in a month, and fixed the day. The loving Phyllis counted the hours of his absence, and, at last, the appointed day arrived. Nine times she repaired to the shore; but, losing all hope of his return, she died of grief, and was converted into an Almond tree. Soon afterwards, Demophoon returned. Overwhelmed with sorrow, he offered a sacrifice at the sea-side, to appease the manes of his bride. The Almond tree instantly put forth its blossoms, and seemed to sympathize with his repentance.
+
+\stars
+
+\begin{verse}
+Oh! had I nursed when I was young\\
+The lessons of my father’s tongue,\\
+(The deep laborious thoughts he drew\\
+From all he saw, and others knew,)\\
+I might have been,---ah, me!\\
+Thrice sager than I e’er shall be.\\
+\quad For what says Time?\\
+Alas! he only shows the truth\\
+Of all that I was told in youth.
+\end{verse}
+
+\by{Barry Cornwall.}
+
+\flower{Crocus}{Youth}
+
+The Crocus is one of the earliest of the spring flowers, and, therefore, a fit emblem of the spring of life. It is a small flower, of variegated hues; the principal being purple, yellow, and white. The \emph{Crocus Vernus}, or Spring Crocus, is a wild flower now in various parts of England, though not considered to be really a native of the country. We learn from the favourite writers, Mr. and Mrs. Howitt, that they are plentiful about Nottingham, “gleaming at a distance like a perfect flood of lilac, and tempting very many little hearts, and many graver ones too, to go out and gather.”
+
+\stars
+
+\begin{verse}
+Oh! many a glorious flower there grows\\
+\quad In far and richer lands;\\
+But high in my affection e’er\\
+\quad The beautiful Crocus stands.\\
+I love their faces, when by one\\
+\quad And two they’re looking out;\\
+I love them when the spreading field\\
+\quad Is purple all about.\\
+I loved them in the by-gone years\\
+\quad Of childhood’s thoughtless laughter,\\
+When I marvelled why the flowers came first,\\
+\quad And the leaves the season after.\\
+I loved them then, I love them now---\\
+\quad The gentle and the bright;\\
+I love them for the thoughts they bring\\
+\quad Of spring’s returning light;\\
+When, first-born of the waking earth,\\
+\quad Their kindred gay appear,\\
+And, with the Snowdrop, usher in\\
+\quad The hope-invested year.
+\end{verse}
+
+\by{Louisa A. Twamley.}
+
+\stars
+
+\begin{verse}
+\quad You’re glad\\
+Because your little tiny nose,\\
+\quad Turns up so pert and funny;\\
+Because I know you choose your beaux\\
+\quad More for their mirth than money;\\
+Because your eyes are deep and blue,---\\
+\quad Your fingers long and rosy;\\
+Because a little maid like you\\
+\quad Would make one’s home so cozy;\\
+Because, I think, (I’m just so weak,)\\
+\quad That some of these fine morrows\\
+You’ll listen while you hear me speak\\
+\quad \emph{My} story, and \emph{my} sorrows!
+\end{verse}
+
+\by{Anon.}
+
+\stars
+
+\begin{verse}
+Gay hope is theirs, by fancy fed,\\
+Less pleasing when possest;\\
+The tear forgot as soon as shed,\\
+The sunshine of the breast;\\
+Theirs buxom health, of rosy hue;\\
+Wild wit, invention ever new,\\
+And lively cheer of vigour born;\\
+The thoughtless day, the easy night,\\
+The spirits pure, the slumbers light,\\
+That fly the approach of morn.\\
+Alas, regardless of their doom,\\
+The little victims play!\\
+No sense have they of ills to come,\\
+No care beyond to-day.\\
+Yet see how all around them wait,\\
+The ministers of human fate,\\
+And black misfortune’s baleful train,\\
+Ah! show them where in ambush stand,\\
+To seize their prey, the murderous band!\\
+Ah, tell them they are men!
+\end{verse}
+
+\by{Gray’s Eton College.}
+
+\begin{verse}
+\quad Life went a Maying\\
+With Nature, Hope, and Poesy,\\
+\quad When I was young!
+\end{verse}
+
+\by{Coleridge.}
+
+\flower{Ice-Plant}{Frigidity}
+
+\begin{verse}
+Canst thou no kindly ray impart,\\
+\quad Thou strangely beauteous one?\\
+Fairer than fairest work of art,\\
+\quad Yet cold as sculptured stone!\\
+Thou art in Friendship’s bright domain\\
+\quad A flower that yields no fruit;\\
+And Love declares thy beauty vain;---\\
+\quad Of fragrance destitute!
+\end{verse}
+
+\by{O. S. M. Ordway.}
+
+\begin{verse}
+With pellucid studs the Ice-Flower gems\\
+His rimy foliage, and his candied stems.
+\end{verse}
+
+\by{Darwin.}
+
+\begin{verse}
+As water fluid is, till it do grow\\
+\quad Solid and fixed by cold,\\
+So in warm seasons love doth loosely flow;\\
+\quad Frost only can it hold;\\
+\quad Your coldness and disdain\\
+\quad Does the sweet course restrain.
+\end{verse}
+
+\by{Cowley.}
+
+\flower{Cactus}{Ardent Love}
+
+The flower of the Cactus is chosen to signify ardent love, because of the glowing hues of the flower itself, and the heat of the climate in which the plant grows to the greatest size. The gorgeousness of the flower of the Cactus needs no eulogy. No fitter emblem could have been selected to represent the passion of love in its full flame.
+
+\begin{verse}
+I think of thee, when soft and wide\\
+\quad The evening spreads her robes of light,\\
+And, like a young and timid bride,\\
+\quad Sits blushing in the arms of night:\\
+And when the moon’s sweet crescent springs\\
+\quad In light o’er heaven’s deep waveless sea,\\
+And stars are forth like blessed things,\\
+\quad I think of thee---I think of thee.
+\end{verse}
+
+\by{G. W. Prentice.}
+
+\begin{verse}
+Thou’rt like a star; for when my way was cheerless and forlorn,\\
+And all was blackness like the sky before a coming storm,\\
+Thy beaming smile and words of love, thy heart of kindness free,\\
+Illumed my path, then cheered my soul, and bade its sorrows flee.\\
+Thou’rt like a star---when sad and lone I wander forth to view\\
+The lamps of night, beneath their rays my spirit’s nerved anew,\\
+And thus I love to gaze on thee, and then I think thou’st power\\
+To mix the cup of joy for me, even in life’s darkest hour.\\
+Thou’rt like a star---whene’er my eye is upward turned to gaze\\
+Upon those orbs, I mark with awe their clear celestial blaze;\\
+And then thou seem’st so pure, so high, so beautifully bright,\\
+I almost feel as if it were an angel met my sight.
+\end{verse}
+
+\by{American Ladies’ Magazine.}
+
+\stars
+
+\begin{verse}
+Could genius sink in dull decay,\\
+And wisdom cease to lend her ray;\\
+Should all that I have worshipped change,\\
+Even this could not my heart estrange;\\
+Thou still wouldst be the first, the first\\
+That taught the love sad tears have nursed.
+\end{verse}
+
+\by{Mrs. Embury.}
+
+\stars
+
+\begin{verse}
+\quad The sick soul\\
+That burns with love’s delusions, ever dreams,\\
+Dreading its losses. It for ever makes\\
+A gloomy shadow gather in the skies,\\
+And clouds the day; and looking far beyond\\
+The glory in its gaze, it sadly sees\\
+Countless privations, and far-coming storms,\\
+Shrinking from what it conjures.
+\end{verse}
+
+\by{Simms’s Poems.}
+
+\stars
+
+\begin{verse}
+The rolling wheel, that runneth often round,\\
+The hardest steel in tract of time doth tear;\\
+And drizzling drops, that often do redound,\\
+Firmest flint doth in continuance wear:\\
+Yet cannot I, with many a dropping tear,\\
+And long entreaty, soften her hard heart,\\
+That she will once vouchsafe my plaint to hear,\\
+Or look with pity on my painful smart:\\
+But when I plead, she bids me play my part;\\
+And when I weep, she says tears are but water;\\
+And when I sigh, she says I know the art;\\
+And when I wail, she turns herself to laughter;\\
+So do I weep and wail, and plead in vain,\\
+While she as steel and flint doth still remain.
+\end{verse}
+
+\by{Spenser.}
+
+\flower{Aloe}{Grief}
+
+The Aloe is attached to the soil by very feeble roots; it delights to grow in the wilderness, and its taste is extremely bitter. Thus grief separates us from earthly things, and fills the heart with bitterness. These magnificent and monstrous plants are found in barbarous Africa: they grow upon rocks, in dry sand under a burning atmosphere. Some have leaves six feet long, and armed with long spires. From the centre of these leaves shoots up a slender stem covered with flowers.
+
+\begin{verse}
+Sister Sorrow! sit beside me,\\
+Or, if I must wander, guide me:\\
+Let me take thy hand in mine,\\
+Cold alike are mine and thine.\\
+Think not, Sorrow, that I hate thee,---\\
+Think not I am frightened at thee,---\\
+Thou art come for some good end;\\
+I will treat thee as a friend.
+\end{verse}
+
+\by{R. M. Milnes.}
+
+\stars
+
+\begin{verse}
+And this is all I have left now,\\
+\quad Silence and solitude and tears;\\
+The memory of a broken vow,\\
+\quad My blighted hopes, my wasted years!
+\end{verse}
+
+\by{Anon.}
+
+\stars
+
+\begin{verse}
+It may be that I shall forget my grief;\\
+\quad It may be time has good in store for me;\\
+It may be that my heart will find relief\\
+\quad From sources now unknown. Futurity\\
+May bear within its folds some hidden spring\\
+\quad From which will issue blessed streams; and yet\\
+Whate’er of joy the coming year may bring,\\
+\quad The past---the past---I never can forget.
+\end{verse}
+
+\by{Mrs. Hale.}
+
+\stars
+
+\begin{verse}
+\quad Of comfort no man speak:\\
+Let’s talk of graves, of worms, of epitaphs:\\
+Make dust our paper, and with rainy eyes\\
+Write sorrow on the bosom of the earth.\\
+Let’s choose executors, and talk of wills;\\
+And yet not so---for what can we bequeath,\\
+Save our deposed bodies in the ground?
+\end{verse}
+
+\by{Shakspeare.}
+
+\flower{Wormwood}{Absence}
+
+Wormwood is the bitterest of plants; and absence, according to La Fontaine, is the worst of evils. Those in whose anxious breasts the “flame divine” is burning, will agree with the French author in his assertion. To be absent from one we love is to carry a vacant chamber in the heart, which naught else can fill.
+
+\begin{verse}
+When thou shalt yield to memory’s power,\\
+And let her fondly lead thee o’er\\
+The scenes that thou hast past before,\\
+To absent friends and days gone by,---\\
+Then should these meet thy pensive eye,\\
+A true memento may they be\\
+Of one whose bosom owes to thee\\
+So many hours enjoyed in gladness,\\
+That else perhaps had passed in sadness,\\
+And many a golden dream of joy,\\
+Untarnished and without alloy.\\
+Oh, still my fervent prayer will be,\\
+“Heaven’s choicest blessings rest on thee.”
+\end{verse}
+
+\by{Miss Gould.}
+
+\stars
+
+\begin{verse}
+How can the glintin sun shine bright?\\
+How can the wimplin burnie glide?\\
+Or flowers adorn the ingle side?\\
+\quad Or birdies deign\\
+The woods, and streams, and vales to chide?\\
+\quad Eliza’s gane!
+\end{verse}
+
+\by{J. W. H.}
+
+\stars
+
+\begin{verse}
+If she be gone, the world, in my esteem,\\
+Is all bare walls; nothing remains in it\\
+But dust and feathers.
+\end{verse}
+
+\by{John Crown.}
+
+\stars
+
+\begin{verse}
+Thus absence dies, and dying proves\\
+No absence can subsist with loves\\
+\quad That do partake of fair perfection;\\
+Since, in the darkest night, they may,\\
+By love’s quick motion, find a way\\
+\quad To see each other in reflection.
+\end{verse}
+
+\by{Suckling.}
+
+\flower{Violet}{Modest Worth}
+
+The Violet has always been a favourite theme of admiration among visitors of Parnassus. Its quiet beauty and love of retired spots have ever made it the emblem of true worth that shrinks from parade. It is one of the first children of spring, and awakens pleasing emotions in the breast of the lover of the beautiful, as he strolls through the meadows in the season of joy. Ion, the Greek name of this flower, is traced by some etymologists to Ia, the daughter of Midas, who was betrothed to Atys, and changed by Diana into a Violet, to hide her from Apollo.
+
+\stars
+
+\begin{verse}
+A woman’s love, deep in the heart,\\
+\quad Is like the Violet flower,\\
+That lifts its modest head apart\\
+\quad In some sequestered bower.
+\end{verse}
+
+\by{Anon.}
+
+\stars
+
+\begin{verse}
+The maid whose manners are retired,\\
+Who, patient, waits to be admired,\\
+Though overlooked, perhaps, a while\\
+Her modest worth, her modest smile,---\\
+Oh, she will find, or soon, or late,\\
+A noble, fond, and faithful mate,\\
+Who, when the spring of life is gone,\\
+And all its blooming flowers are flown,\\
+Will bless old Time, who left behind\\
+The graces of a virtuous mind.
+\end{verse}
+
+\by{Paulding.}
+
+\stars
+
+\begin{verse}
+Pansies, Lilies, Kingcups, Daisies,\\
+Let them live upon their praises;\\
+Long as there’s a sun that sets,\\
+\quad Primroses will have their glory;\\
+Long as there are Violets,\\
+\quad They will have a place in story:\\
+There’s a flower that shall be mine,\\
+’Tis the little Celandine.\\
+Eyes of some men travel far\\
+For the finding of a star;\\
+Up and down the heavens they go,\\
+\quad Men that keep a mighty rout!\\
+I’m as great as they, I trow,\\
+\quad Since the day I found thee out,\\
+Little flower!---I’ll make a stir,\\
+Like a great astronomer.\\
+Modest, yet withal an elf,\\
+Bold, and lavish of thyself,\\
+Since we needs must first have met\\
+\quad I have seen thee, high and low,\\
+Thirty years or more, and yet\\
+\quad ’Twas a face I did not know:\\
+Thou hast now, go where I may,\\
+Fifty greetings in a day.\\
+Ere a leaf is on the bush,\\
+In the time before the thrush\\
+Has a thought about its nest,\\
+\quad Thou wilt come with half a call,\\
+Spreading out thy glossy breast\\
+\quad Like a careless prodigal;\\
+Telling tales about the sun,\\
+When there’s little warmth or none.
+\end{verse}
+
+\by{Wordsworth.}
+
+\stars
+
+Shakspeare regarded the Violet as the emblem of constancy, as the following occurs in one of his sonnets:---
+
+\begin{verse}
+Violet is for faithfulness,\\
+\quad Which in me shall abide;\\
+Hoping, likewise, that from your heart\\
+\quad You will not let it slide.
+\end{verse}
+
+\by{Shakspeare.}
+
+\stars
+
+\begin{verse}
+The Violet in her greenwood bower,\\
+\quad Where birchen boughs with hazles mingle,\\
+May boast herself the fairest flower,\\
+\quad In glen, or copse, or forest dingle.
+\end{verse}
+
+\by{Scott.}
+
+\stars
+
+\begin{verse}
+Under the hedge all safe and warm,\\
+Sheltered from boisterous wind and storm,\\
+\quad We Violets lie:\\
+\quad With each small eye\\
+Closely shut while the cold goes by.\\
+You look at the bank, mid the biting frost,\\
+And you sigh, and say that we’re dead and lost;\\
+\quad But, Lady stay\\
+\quad For a sunny day,\\
+And you’ll find us again, alive and gay.\\
+On mossy banks, under forest trees,\\
+You’ll find us crowding, in days like these;\\
+\quad Purple and blue,\\
+\quad And white ones too,\\
+Peep at the sun, and wait for you.\\
+By maids and matrons, by old and young,\\
+By rich and poor, our praise is sung;\\
+\quad And the blind man sighs\\
+\quad When his sightless eyes\\
+He turns to the spot where our perfumes rise.\\
+There is not a garden, the country through,\\
+Where they plant not Violets, white and blue;\\
+\quad By princely hall,\\
+\quad And cottage small---\\
+For we’re sought, and cherished, and culled by all.\\
+Yet grand parterres and stiff trimmed beds\\
+But ill become our modest heads;\\
+\quad We’d rather run,\\
+\quad In shadow and sun,\\
+O’er the banks where our merry lives first begun.\\
+There, where the Birken bough’s silvery shine\\
+Gleams over the hawthorn and frail woodbine,\\
+\quad Moss, deep and green,\\
+\quad Lies thick, between\\
+The plots where we Violet-flowers are seen.\\
+And the small gay Celandine’s stars of gold\\
+Rise sparkling beside our purple’s fold:---\\
+\quad Such a regal show\\
+\quad Is rare, I trow,\\
+Save on the banks where Violets grow.
+\end{verse}
+
+\by{Louisa A. Twamley.}
+
+\stars
+
+\begin{verse}
+I know where bloom some Violets in a bed\\
+\quad Half hidden in the grass; and crowds go by\\
+\quad And see them not, unless some curious eye\\
+Unto their hiding-place by chance is led.\\
+\quad I often pass that way, and look on them,\\
+And love them more and more. I know not why\\
+My heart doth love such humble things; but I\\
+\quad Esteem them more than robe or diadem\\
+Of haughty kings. A babe, or bird, or flower\\
+Hath o’er the soul a most despotic power.\\
+\quad The tearful eye of infancy oppressed---\\
+A flower down-trodden by the foot of spite---\\
+\quad Awaken sighs of sorrow in the breast,\\
+Or nerve the arm to vindicate their right.
+\end{verse}
+
+\by{MacKellar.}
+
+\flower{Lavender}{Distrust}
+
+It was anciently believed that the asp, a dangerous species of viper, made Lavender its habitual place of abode, for which reason that plant was approached with extreme caution. The Romans used it largely in their baths, from whence its name is derived.
+
+\stars
+
+\begin{verse}
+\quad Our doubts are traitors,\\
+And make us lose the good we oft might win,\\
+By fearing to attempt.
+\end{verse}
+
+\by{Shakspeare.}
+
+\stars
+
+\begin{verse}
+Who never doubted never half believed,\\
+Where doubt there truth is---’tis her shadow.
+\end{verse}
+
+\by{Bailey.}
+
+\stars
+
+\begin{verse}
+When first, with all a lover’s pride,\\
+I wooed and won thee for my bride,\\
+I little thought that thou couldst be\\
+Estranged as now thou art from me!
+\end{verse}
+
+\by{Anon.}
+
+\stars
+
+\begin{verse}
+Thy confidence is held from me,\\
+\quad In fear my love but shows,\\
+Like one, art thou, who fears the bee\\
+\quad May sting thee, through the rose.
+\end{verse}
+
+\by{Anon.}
+
+\flower{Pansy}{Think of me}
+
+The Pansy, or Heart’s-ease, is a beautiful variety of the Violet, differing from it in the diversity of its colours. In fragrance it is inferior to the Violet. Pansy is an old English corruption of the French Pensée.
+
+\stars
+
+\begin{verse}
+“And there are Pansies, that’s for thoughts.”
+\end{verse}
+
+\by{Shakspeare.}
+
+\stars
+
+\begin{verse}
+CHILDHOOD.
+\end{verse}
+
+\begin{verse}
+Sister, arise, the sun shines bright,\\
+\quad The bee is humming in the air,\\
+The stream is singing in the light,\\
+\quad The May-buds never looked more fair;\\
+Blue is the sky, no rain to-day:\\
+\quad Get up, it has been light for hours,\\
+And we have not begun to play,\\
+\quad Nor have we gathered any flowers.\\
+Time, who looked on, each accent caught,\\
+And said, “He is too young for thought.”
+\end{verse}
+
+\begin{verse}
+YOUTH.
+\end{verse}
+
+\begin{verse}
+To-night, beside the garden-gate?\\
+\quad Oh, what a while the night is coming!\\
+I never saw the sun so late,\\
+\quad No heard the bee at this time humming!\\
+I thought the flowers an hour ago\\
+\quad Had closed their bells and sunk to rest:\\
+How slowly flies that hooded crow!\\
+\quad How light it is along the west!\\
+Said Time, “He yet hath to be taught\\
+That I oft move too quick for thought.”
+\end{verse}
+
+\begin{verse}
+MANHOOD.
+\end{verse}
+
+\begin{verse}
+What thoughts wouldst thou in me awaken?\\
+\quad Not love? for that brings only tears---\\
+Nor friendship? no, I was forsaken!\\
+\quad Pleasure I have not known for years:\\
+The future I would not foresee,\\
+\quad I know too much from what is past,\\
+No happiness is there for me,\\
+\quad And troubles ever come too fast.\\
+Said Time, “No comfort have I brought,\\
+The past to him’s one painful thought.”
+\end{verse}
+
+\begin{verse}
+OLD AGE.
+\end{verse}
+
+\begin{verse}
+Somehow the flowers seem different now,\\
+\quad The Daisies dimmer than of old;\\
+There’s fewer blossoms on the bough,\\
+\quad The Hawthorn buds look gray and cold;\\
+The Pansies wore another dye\\
+\quad When I was young---when I was young!\\
+There’s not that blue about the sky\\
+\quad Which every way in those days hung.\\
+There’s nothing now looks as it “ought.”\\
+Said Time, “The change is in thy thought.”
+\end{verse}
+
+\by{Miller.}
+
+\stars
+
+\begin{verse}
+I think of thee at morn, when glisten\\
+\quad The tearful dew-drops on the grass;\\
+I think of thee at eve, and listen,\\
+\quad When the low, whispering breezes pass.
+\end{verse}
+
+\by{E. R. H.}
+
+\stars
+
+\begin{verse}
+And thou, so rich in gentle names, appealing\\
+\quad To hearts that own our nature’s common lot;\\
+Thou, styled by sportive Fancy’s better feeling\\
+\quad A Thought, the Heart’s-Ease, and Forget-me-not.
+\end{verse}
+
+\by{Barton.}
+
+\flower{Daisy}{Innocence}
+
+Shakspeare speaks of the Daisy as the flower
+
+\begin{verse}
+Whose white investments figure innocence;
+\end{verse}
+
+and succeeding poets have generally used it as the image of that pure quality. Fable informs us that the Daisy owes its origin to Belides, one of the Dryads, who were supposed to preside over meadows and pastures. While dancing on the turf with Ephigeus, whose suit she encouraged, she attracted the admiration of Vertumnus, the deity who presided over orchards; and, to escape from him, she was transformed into the humble flower, the Latin name of which is Bellis. The ancient English name of the flower was Day’s Eye, of which Daisy is a corruption. In Ossian’s poems, the Daisy is called the flower of the new-born---most expressive of innocence.
+
+\stars
+
+\begin{verse}
+When smitten by the morning ray,\\
+I see thee rise alert and gay,\\
+Then, cheerful flower! my spirits play\\
+\quad With kindred gladness:\\
+And when, at dark, by dews opprest,\\
+Thou sink’st, the image of thy rest\\
+Hath often eased my pensive breast\\
+\quad Of careful sadness.
+\end{verse}
+
+\by{Wordsworth.}
+
+\stars
+
+\begin{verse}
+She dwells amid the world’s dark ways,\\
+\quad Pure as in childhood’s hours;\\
+And all her thoughts are poetry,\\
+\quad And all her words are flowers.
+\end{verse}
+
+\by{Mrs. M. E. Hewitt.}
+
+\stars
+
+\begin{verse}
+’Twas when the world was in its prime,\\
+\quad When meadows green and woodlands wild\\
+Were strewn with flowers, in sweet spring-time,\\
+\quad And everywhere the Daisies smiled.\\
+When undisturbed the ring-doves cooed,\\
+\quad While lovers sang each other’s praises,\\
+As in embowered lanes they wooed,\\
+\quad Or on some bank white o’er with Daisies:\\
+While Love went by with muffled feet,\\
+Singing, “The Daisies they are sweet.”\\
+Unfettered then he roamed abroad,\\
+\quad And as he willed it past the hours---\\
+Now lingering idly by the road,\\
+\quad Now loitering by the wayside flowers;\\
+For what cared he about the morrow?\\
+\quad Too young to sigh, too old to fear---\\
+No time had he to think of sorrow,\\
+\quad Who found the Daisies everywhere;\\
+Still sang he, through each green retreat,\\
+“The Daisies they are very sweet.”\\
+With many a maiden did he dally,\\
+\quad Like a glad brook that turns away---\\
+Here in, there out, across the valley,\\
+\quad With every pebble stops to play;\\
+Taking no note of space nor time,\\
+\quad Through flowers, the banks adorning,\\
+Still rolling on, with silver chime,\\
+\quad In star-clad night and golden morning.\\
+So went Love on, through cold and heat,\\
+Singing, “The Daisy’s ever sweet.”\\
+’Twas then the flowers were haunted\\
+\quad With fairy forms and lovely things,\\
+Whose beauty elder bards have chanted,\\
+\quad And how they lived in crystal springs,\\
+And swang upon the honied bells;\\
+\quad In meadows danced round dark green mazes,\\
+Strewed flowers around the holy wells,\\
+\quad But never trampled on the Daisies.\\
+They spared the star that lit their feet,\\
+The Daisy was so very sweet.
+\end{verse}
+
+\by{Miller.}
+
+\stars
+
+\begin{verse}
+When soothed awhile by milder airs,\\
+Thee Winter in the garland wears\\
+That thinly shades his few gray hairs;\\
+\quad Spring cannot shun thee;\\
+Whole summer fields are thine by right,\\
+And autumn, melancholy wight,\\
+Doth in thy crimson head delight,\\
+\quad When rains are on thee.\\
+In shoals and bands, a morrice train,\\
+Thou greet’st the traveller in the lane;\\
+If welcomed once thou count’st it gain,\\
+\quad Thou art not daunted;\\
+Nor car’st if thou be set at naught:\\
+And oft alone in nooks remote\\
+We meet thee, like a pleasant thought,\\
+\quad When such are wanted.
+\end{verse}
+
+\by{Wordsworth.}
+
+\stars
+
+\begin{verse}
+I cannot gaze on aught that wears\\
+\quad The beauty of the skies,\\
+Or aught that in life’s valley bears\\
+\quad The hues of paradise;\\
+I cannot look upon a star,\\
+Or cloud that seems a seraph’s car,\\
+Or any form of purity---\\
+Unmingled with a dream of thee.
+\end{verse}
+
+\by{P. Benjamin.}
+
+\stars
+
+\begin{verse}
+The Daisy scattered on each meade and downe,\\
+A golden tuft within a silver crown;\\
+Faire fell that dainty flower! and may there be\\
+No shepherd graced that doth not honour thee.
+\end{verse}
+
+\by{Browne.}
+
+\stars
+
+\begin{verse}
+There is a flower, a little flower\\
+\quad With silver crest and golden eye,\\
+That welcomes every changing hour,\\
+\quad And weathers every sky.
+\end{verse}
+
+\by{Montgomery.}
+
+\stars
+
+\begin{verse}
+Heaven may awhile correct the virtuous,\\
+Yet it will wipe their eyes again, and make\\
+Their faces whiter with their tears. Innocence\\
+Concealed is the stolen pleasure of the gods,\\
+Which never ends in shame, as that of men\\
+Doth oftentimes do; but like the sun breaks forth,\\
+When it hath gratified another world;\\
+And to our unexpecting eyes appears\\
+More glorious through its late obscurity.
+\end{verse}
+
+\by{John Fountain.}
+
+\flower{Periwinkle}{Tender Recollections}
+
+In France, the Periwinkle has been adopted as the emblem of the pleasures of memory and sincere friendship, probably in allusion to Rousseau’s recollection of his friend, Madame de Warens, occasioned, after a lapse of thirty years, by the sight of this flower, which they together had admired. This plant is deeply rooted in the soil which it adorns. It throws out its shoots on all sides to clasp the earth, and covers it with flowers, which reflect the hue of heaven. Thus our first affections, warm, pure, and artless, seem to be of heavenly origin.
+
+\stars
+
+\begin{verse}
+Though the rock of my last hope is shivered,\\
+\quad And its fragments are sunk in the wave,\\
+Though I feel that my soul is delivered\\
+\quad To pain,---it shall not be its slave.\\
+There is many a pang to pursue me:\\
+\quad They may crush, but they shall not contemn;\\
+They may torture, but shall not subdue me,---\\
+\quad ’Tis of thee that I think, not of them.
+\end{verse}
+
+\by{Byron.}
+
+\stars
+
+\begin{verse}
+’Tis sweet, and yet ’tis sad, that gentle power,\\
+Which throws in winter’s lap the spring-tide flower:\\
+I love to dream of days my childhood knew,\\
+When, with the sister of my heart, time flew\\
+On wings of innocence and hope! dear hours,\\
+When joy sprang up about our path, like flowers!
+\end{verse}
+
+\by{Mrs. A. M. Wells.}
+
+\stars
+
+\begin{verse}
+The lesser Periwinkle’s bloom,\\
+Like carpet of Damascus’ loom,\\
+Pranks with bright blue the tissue wove\\
+Of verdant foliage: and above\\
+With milk-white flowers, whence soon shall swell\\
+Red fruitage, to the taste and smell\\
+Pleasant alike, the Strawberry weaves\\
+Its coronets of three-fold leaves\\
+In mazes through the sloping wood.
+\end{verse}
+
+\by{Mant.}
+
+\stars
+
+\begin{verse}
+Where captivates the sky-blue Periwinkle\\
+Under the cottage eaves.
+\end{verse}
+
+\by{Hurdis.}
+
+\stars
+
+\begin{verse}
+\quad Remember thee?\\
+Yea, from the table of my memory\\
+I’ll wipe away all trivial fond records,\\
+All saws of books, all forms, all pressures past,\\
+That youth and observation copied there;\\
+And thy commandment all alone shall live\\
+Within the book and volume of my brain,\\
+Unmixed with baser matter.
+\end{verse}
+
+\by{Shakspeare.}
+
+\stars
+
+\begin{verse}
+\quad Oh! only those\\
+Whose souls have felt this one idolatry\\
+Can tell how precious is the slightest thing\\
+Affection gives and hallows! A dead flower\\
+Will long be kept, remembrancer of looks\\
+That made each leaf a treasure.
+\end{verse}
+
+\by{Miss Landon.}
+
+\flower{Sweet-Brier, Or Eglantine}{Poetry}
+
+The Eglantine is the poet’s flower. In the floral games, it was the prize for the best composition on the charms of study and eloquence. Though its flowers are most beautiful in hue, their fragrance is their more valuable quality. In like manner, the charms of poetry and eloquence should be considered superior to those of appearance.
+
+\stars
+
+\begin{verse}
+And well the poet, at her shrine,\\
+\quad May bend and worship while he woos;\\
+To him she is a thing divine,\\
+The inspiration of his line,\\
+\quad His loved one, and his muse.\\
+If to his song the echo rings\\
+\quad Of fame---’tis woman’s voice he hears;\\
+If ever from his lyre’s proud strings\\
+Flow sounds, like rush of angel wings,\\
+’Tis that she listens, while he sings,\\
+\quad With blended smiles and tears.
+\end{verse}
+
+\by{Halleck.}
+
+\stars
+
+\begin{verse}
+\quad Give me the poet’s lyre!\\
+And as the seraph in his orbit sings,\\
+Oh, may I strike the heaven-attuned strings,\\
+\quad With a seraphic fire!\\
+With music fill the mighty dome of mind,\\
+And the rapt souls of men in music brightly bind!
+\end{verse}
+
+\by{J. W. H.}
+
+\stars
+
+\begin{verse}
+\quad Trace the young poet’s fate;\\
+Fresh from his solitude, the child of dreams,\\
+His heart upon his lips he seeks the world,\\
+To find him fame and fortune, as if life\\
+Were like a fairy tale. His song has led\\
+The way before him; flatteries fill his ear,\\
+His presence courted, and his words are caught;\\
+And he seems happy in so many friends.\\
+What marvel if he somewhat overrate\\
+His talents and his state? These scenes soon change.\\
+The vain, who sought to mix their name with his;\\
+The curious, who but live for some new sight;\\
+The idle---all these have been gratified,\\
+And now neglect stings even more than scorn.
+\end{verse}
+
+\by{Miss Landon.}
+
+\flower{Lilac}{First Emotions of Love}
+
+The freshness of the verdure of the Lilac; the flexibility of its branches; the profusion of its flowers; their transitory beauty and their soft hues,---all remind us of those emotions which embellish beauty, and throw such a light around our youthful hours. It is said that Van Spaendonc himself threw down his pencil on viewing a group of Lilacs. Nature seems to have delighted in creating its delicate clusters, which astonish by their beauty and variety. The fragrance of the flowers is even more gratifying than their beauty.
+
+\stars
+
+\begin{verse}
+\quad She had grown,\\
+In her unstained seclusion, bright and pure\\
+As a first opening Lilac, when it spreads\\
+Its clear leaves to the sweetest dawn of May.
+\end{verse}
+
+\by{Percival.}
+
+\stars
+
+\begin{verse}
+When first thou earnest, gentle, shy, and fond,\\
+\quad My purest, first-born love, and dearest treasure,\\
+My heart received thee with a joy beyond\\
+\quad All that it yet had felt of earthly pleasure;\\
+Nor thought that any love again might be\\
+So deep and strong, as that I felt for thee.
+\end{verse}
+
+\by{Mrs. Norton.}
+
+\stars
+
+\begin{verse}
+I love thee,---and I live! The moon,\\
+\quad Who sees me from her calm above,\\
+The wind, who weaves her dim, soft tune\\
+\quad About me, know how much I love!\\
+Naught else, save night, and the lonely hour,\\
+\quad E’er heard my passion wild and strong;\\
+Even \emph{thou} yet deem’st not of thy power,\\
+Unless thou read’st aright my song!
+\end{verse}
+
+\by{Barry Cornwall.}
+
+\stars
+
+\begin{verse}
+She loves---but knows not whom she loves,\\
+\quad Nor what his race, nor whence he came;---\\
+Like one who meets, in Indian groves,\\
+\quad Some beauteous bird without a name,\\
+Brought by the last ambrosial breeze,\\
+From isles in the undiscovered seas,\\
+To show his plumage for a day\\
+To wondering eyes, and wing away!
+\end{verse}
+
+\by{Moore.}
+
+\flower{Tulip}{Declaration of Love}
+
+The Tulip is an extraordinary favourite in many parts of Europe and Asia; and, in Holland and Turkey, the most extravagant prices are paid for fine specimens. On account of the elegance of its form, the beauty of its colours, and its want of fragrance and other useful qualities, this flower has been considered as an appropriate symbol of a female who possesses no recommendation but a beautiful appearance. In the East, the Tulip is employed as the emblem by which a lover makes known his passion to his mistress; as the Tulip expresses the idea that he has a face all fire and a heart all coal.
+
+\stars
+
+\begin{verse}
+Not one of Flora’s brilliant race\\
+\quad A form more perfect can display:\\
+Art could not feign more simple grace,\\
+\quad Nor Nature take a line away.\\
+Yet, rich as morn, of many a hue,\\
+\quad When flushing clouds through darkness strike,\\
+The Tulip’s petals shine in dew,\\
+\quad All beautiful, but none alike.
+\end{verse}
+
+\by{Montgomery.}
+
+\stars
+
+\begin{verse}
+My heart is sad and lonely,\\
+\quad With weariness I pine;\\
+Would thou wert here, mine only,---\\
+\quad Would I were wholly thine!
+\end{verse}
+
+\by{H. J. H.}
+
+\stars
+
+\begin{verse}
+If spirits, pure as those who kneel\\
+\quad Around the throne of light above,\\
+The power of beauty’s spell could feel,\\
+\quad And lose a heaven for woman’s love,---\\
+What marvel that a heart like mine\\
+\quad Enraptured by thy charms should be!\\
+Forget to bend at glory’s shrine,\\
+\quad And lose itself---ay, heaven---for thee!
+\end{verse}
+
+\by{Memorial.}
+
+\stars
+
+\begin{verse}
+Fain would I speak the thoughts I bear to thee,\\
+But they do choke and flutter in my throat,\\
+And make me like a child.
+\end{verse}
+
+\by{Joanna Baillie.}
+
+\flower{Cypress}{Mourning}
+
+The ancients consecrated the Cypress to the Fates, the Furies and Pluto. They placed it near tombs. The people of the East retain the same custom in the decoration of their cemeteries. The Turks plant the Cypress at the head and at the foot of the graves. According to Ovid, the Cypress derived its name from Cyparissos, an especial friend of Apollo’s, who, in grief at having inadvertently killed a favourite stag of his, prayed the gods that his mourning might be made perpetual, and was changed into a Cypress tree, the branches of which were thenceforward used at funerals.
+
+\stars
+
+\begin{verse}
+Lady dear! this history\\
+\quad Is thy fated lot,\\
+Ever such thy watching\\
+\quad For what cometh not,\\
+Till with anxious waiting dull,\\
+Round thee fades the beautiful;\\
+Still thou seekest on, though weary,\\
+\quad Seeking still in vain.
+\end{verse}
+
+\by{Miss Landon.}
+
+\stars
+
+\begin{verse}
+Thou art lost to me for ever,---I have lost thee, Isadore,\\
+Thy head will never rest upon my loyal bosom more.\\
+Thy tender eyes will never more gaze fondly into mine,\\
+Nor thine arms around me lovingly and trustingly entwine.\\
+Thou art dead and gone, loving wife,---thy heart is still and cold,---\\
+And I at one stride have become most comfortless and old;\\
+Of our whole world of love and song, thou wast the only light,\\
+A star, whose setting left behind, ah! me, how dark a night!\\
+\quad Thou art lost to me, for ever, Isadore.
+\end{verse}
+
+\by{Albert Pike.}
+
+\stars
+
+\begin{verse}
+The Cypress is the emblem of mourning.
+\end{verse}
+
+\by{Shakspeare.}
+
+\stars
+
+\begin{verse}
+Alas, for earthly joy, and hope, and love,\\
+\quad Thus stricken down, e’en in their holiest hour!\\
+What deep, heart-wringing anguish must they prove,\\
+\quad Who live to weep the blasted tree or flower!\\
+Oh, wo, deep wo to earthly love’s fond trust,\\
+When all it once has worshipped lies in dust!
+\end{verse}
+
+\by{Mrs. Embury.}
+
+\flower{Wall-Flower}{Fidelity in Adversity}
+
+This flower derives its name from the circumstance of its growing upon old walls, the casements and battlements of ancient castles, and among the ruins of abbeys. The troubadors were accustomed to wearing a bouquet of Wall-flowers, as the emblem of an affection which is proof against time and the frowns of fortune.
+
+\stars
+
+\begin{verse}
+\quad \emph{Adah.}---Alas! thou sinnest now, my Cain; thy words\\
+Sound impious in mine ears.
+\end{verse}
+
+\begin{verse}
+\emph{Cain.}---Then leave me!
+\end{verse}
+
+\begin{verse}
+\quad \emph{Adah.}---Never,\\
+Though thy God left thee!
+\end{verse}
+
+\by{Byron.}
+
+\stars
+
+\begin{verse}
+An emblem true thou art\\
+\quad Of love’s enduring lustre given\\
+To cheer a lonely heart.
+\end{verse}
+
+\by{Barton.}
+
+\stars
+
+\begin{verse}
+Flower of the solitary place!\\
+\quad Gray Ruin’s golden crown,\\
+That lendest melancholy grace\\
+\quad To haunts of old renown;\\
+Thou mantlest o’er the battlements\\
+\quad By strife or storm decayed;\\
+And fillest up each envious rent\\
+\quad Time’s canker-tooth hath made.
+\end{verse}
+
+\by{Moir.}
+
+\stars
+
+\begin{verse}
+Though human, thou didst not deceive me;\\
+\quad Though woman, thou didst not forsake;\\
+Though loved, thou forborest to grieve me;\\
+\quad Though slandered, thou never couldst shake;\\
+Though trusted, thou didst not disclaim me;\\
+\quad Though parted, it was not to fly;\\
+Though watchful, ’twas not to defame me;\\
+\quad Nor, mute, that the world might belie.
+\end{verse}
+
+\by{Byron.}
+
+\stars
+
+\begin{verse}
+Yes, love! my breast, at sorrow’s call,\\
+\quad Shall tremble like thine own;\\
+If from those eyes the tear-drops fall,\\
+\quad They shall not fall alone.\\
+Our souls, like heaven’s aerial bow,\\
+Blend every light within their glow,\\
+\quad Of joy or sorrow known;\\
+And grief, divided with thy heart,\\
+Were sweeter far than joy apart.
+\end{verse}
+
+\by{Anon.}
+
+\flower{Hawthorn}{Hope}
+
+Various significations have been given to the Hawthorn. Among the Turks, a branch of it expresses the wish of a lover to receive a kiss from the object of his affection. Among the ancient Greeks, the Hawthorn was a symbol of conjugal union; its blossomed boughs were carried about at their wedding festivities, and the newly-married couple were even lighted to their bridal chamber with torches made of its wood. In England, the Hawthorn is used in the sports of May-days, and is, therefore, frequently called May. There is a proverb among the rural inhabitants of that country, that a “store of haws portend cold winters.” Though the Hawthorn is quoted as the emblem of Hope, it must be considered more particularly as the lover’s hope.
+
+\stars
+
+\begin{verse}
+HOW MAY WAS FIRST MADE.
+\end{verse}
+
+\begin{verse}
+As Spring upon a silver cloud\\
+\quad Lay looking on the world below,\\
+Watching the breezes as they bowed\\
+\quad The buds and blossoms to and fro,\\
+She saw the fields with Hawthorns walled:\\
+\quad Said Spring, “New buds I will create.”\\
+She to a Flower-Spirit called,\\
+\quad Who on the month of May did wait,\\
+And bade her fetch a Hawthorn-spray,\\
+That she might make the buds of May.\\
+Said Spring, “The grass looks green and bright,\\
+\quad The Hawthorn-hedges too are green,\\
+I’ll sprinkle them with flowers of light,\\
+\quad Such stars as earth has never seen;\\
+And all through England’s girded vales,\\
+\quad Her steep hill-sides and haunted streams,\\
+Where woodlands dip into the dales,\\
+\quad Where’er the Hawthorn stands and dreams,\\
+Where thick-leaved trees make dark the day,\\
+I’ll light each nook with flowers of May.\\
+Like pearly dew-drops, white and round,\\
+\quad The shut-up buds shall first appear.\\
+And in them be such fragrance found,\\
+\quad As breeze before did never bear;\\
+Such as in Eden only dwelt,\\
+\quad When angels hovered round its bowers,\\
+And long-haired Eve at morning knelt\\
+\quad In innocence amid the flowers:\\
+While the whole air was, every way,\\
+Filled with a perfume sweet as May.\\
+And oft shall groups of children come,\\
+\quad Threading their way through shady places,\\
+From many a peaceful English home,\\
+\quad The sunshine falling on their faces;\\
+Starting with merry voice the thrush,\\
+\quad As through green lanes they wander singing,\\
+To gather the sweet Hawthorn bush;\\
+\quad Which, homeward in the evening bringing\\
+With smiling faces, they shall say,\\
+‘There’s nothing half so sweet as May.’\\
+And many a poet yet unborn\\
+\quad Shall link its name with some sweet lay,\\
+And lovers oft at early morn\\
+\quad Shall gather blossoms of the May;\\
+With eyes bright as the silver dews,\\
+\quad Which on the rounded May-buds sleep,\\
+And lips, whose parted smiles diffuse\\
+\quad A sunshine o’er the watch they keep,\\
+Shall open all their white array\\
+Of pearls, ranged like the buds of May.”\\
+Spring shook the cloud on which she lay,\\
+And silvered o’er the Hawthorn spray,\\
+Then showered down the buds of May.
+\end{verse}
+
+\by{Miller.}
+
+\stars
+
+\begin{verse}
+With hope all pleases, nothing comes amiss.
+\end{verse}
+
+\by{Rogers.}
+
+\stars
+
+\begin{verse}
+And Hawthorn’s early blooms appear,\\
+Like youthful hope upon life’s year.
+\end{verse}
+
+\by{Drayton.}
+
+\stars
+
+\begin{verse}
+Gay was the love of paradise he drew\\
+And pictured in his fancy; he did dwell\\
+Upon it till it had a life; he threw\\
+A tint of heaven athwart it---who can tell\\
+The yearnings of his heart, the charm, the spell,\\
+That bound him to that vision?
+\end{verse}
+
+\by{Percival.}
+
+\flower{Love-Lies-Bleeding}{Deserted Love}
+
+This beautiful emblem of love, wounded and bereaved by fate, is a species of Amaranthus. The flower is of a reddish-purple hue, which circumstance suggests its name.
+
+\stars
+
+\begin{verse}
+A single rose is shedding\\
+\quad Its lovely lustre meek and pale:\\
+It looks as planted by despair---\\
+\quad So white, so faint---the slightest gale\\
+Might whirl the leaves on high.
+\end{verse}
+
+\by{Byron.}
+
+\stars
+
+\begin{verse}
+And on with many a step of pain,\\
+\quad Our weary race is sadly run;\\
+And still, as on we plod our way,\\
+\quad We find, as life’s gay dreams depart,\\
+To close our being’s troubled day,\\
+\quad Naught left us but a broken heart.
+\end{verse}
+
+\by{Percival.}
+
+\stars
+
+\begin{verse}
+Nor would I change my buried love\\
+For any heart of living mould,\\
+No---for I am a hero’s child---\\
+I’ll hunt my quarry in the wild;\\
+And still my home this mansion make,\\
+Of all unheeded and unheeding,\\
+And cherish, for my warrior’s sake,\\
+The flower of Love-lies-bleeding.
+\end{verse}
+
+\by{Campbell.}
+
+\stars
+
+\begin{verse}
+Upon her face there was the tint of grief,\\
+The settled shadow of an inward strife,\\
+And an unquiet drooping of the eye,\\
+As if its lid were charged with unshed tears.
+\end{verse}
+
+\by{Byron.}
+
+\flower{Myrtle}{Love}
+
+The Myrtle has ever been consecrated to Venus. At Rome, the temple of the goddess was surrounded by a grove of Myrtles; and in Greece, she was adorned under the name of Myrtilla. It was observed by the ancients, that, wherever the Myrtle grew, it excluded all other plants. So love, wherever it is permitted to grow, excludes all other feelings. The ladies of modern Rome retain a strong affection for this plant, preferring its odour to that of the most fragrant essences.
+
+\stars
+
+\begin{verse}
+Our love came as the early dew\\
+\quad Comes unto drooping flowers;\\
+Dropping its first sweet freshness on\\
+\quad Our life’s dull, lonely hours.
+\end{verse}
+
+\by{Mrs. R. S. Nichols.}
+
+\stars
+
+\begin{verse}
+\quad Love is a celestial harmony\\
+Of likely hearts, composed of stars’ consent,\\
+Which join together in sweet sympathy,\\
+To work each other’s joy and true content,\\
+Which they have harboured since their first descent,\\
+Out of their heavenly bowers, where they did see\\
+And know each other here beloved to be.
+\end{verse}
+
+\by{Spenser.}
+
+\stars
+
+\begin{verse}
+I have done penance for contemning love;\\
+Whose high imperious thoughts have punished me\\
+With bitter fasts, with penitential groans,\\
+With nightly tears, and daily heart-sore sighs.
+\end{verse}
+
+\by{Shakspeare.}
+
+\stars
+
+\begin{verse}
+The Myrtle on thy breast or brow\\
+Would lively hope and love avow.
+\end{verse}
+
+\by{J. H. Wiffen.}
+
+\stars
+
+\begin{verse}
+\quad Comfort cannot soothe\\
+The heart whose life is centred in the thought\\
+Of happy loves, once known, and still in hope,\\
+Living with a consuming energy.
+\end{verse}
+
+\by{Percival.}
+
+\stars
+
+\begin{verse}
+\quad As in the sweetest bud\\
+The eating canker dwells, so eating love\\
+Inhabits in the finest wits of all.
+\end{verse}
+
+\by{Shakspeare.}
+
+\flower{Lily Of The Valley}{Modesty}
+
+The beautiful Lily of the Valley is the fit emblem of the union of beauty, simplicity, and love of retirement. It adds an indescribable charm to the spots where it blooms. Its snowy hues and general delicacy of appearance excite emotions of a kindred nature to those we experience in the company of one whose heart is free from guile, and whose manners are gentle and unpretending.
+
+\stars
+
+\begin{verse}
+Lilacs then, and daffodillies,\\
+And the nice-leaved, lesser Lilies,\\
+Shading, like detected light,\\
+Their little green-tipt lamps of white.
+\end{verse}
+
+\by{Hunt.}
+
+\stars
+
+\begin{verse}
+I had found out a sweet green spot,\\
+\quad Where a Lily was blooming fair;\\
+The din of the city disturbed it not,\\
+But the spirit that shades the quiet cot\\
+\quad With its wings of love was there.\\
+I found that Lily’s bloom,\\
+\quad When the day was dark and chill;\\
+It smiled like a star in a misty gloom,\\
+And it sent abroad a soft perfume,\\
+\quad Which is floating around me still.
+\end{verse}
+
+\by{Percival.}
+
+\stars
+
+\begin{verse}
+The Lily, in whose snow-white bells\\
+Simplicity delights and dwells.
+\end{verse}
+
+\by{Balfour.}
+
+\flower{Hyacinth}{Constancy}
+
+The blue Hyacinth is mentioned by several English writers as the emblem of constancy. There are many varieties found in Europe and America, but the variety known in Scotland as the “Blue Bell” is the most common and the most celebrated.
+
+\stars
+
+\begin{verse}
+When daisies blush, and wind-flowers wet with dew,\\
+When shady lanes with Hyacinth’s are blue,\\
+When the elm blossoms o’er the brooding bird,\\
+And, wild and wide, the plover’s wail is heard,\\
+Where melts the mist on mountains far away,\\
+Till morn is kindled into brightest day.
+\end{verse}
+
+\by{Elliott.}
+
+\stars
+
+\begin{verse}
+Then come the wild weather, come sleet, or come snow,\\
+We will stand by each other however it blow.\\
+Oppression and sickness, and sorrow, and pain,\\
+Shall be to our true love as links to the chain.
+\end{verse}
+
+\by{Longfellow.}
+
+\stars
+
+\begin{verse}
+\quad She loves him yet!\\
+The flower the false one gave her\\
+\quad When last he came,\\
+Is still with her wild tears wet.\\
+\quad She’ll ne’er forget,\\
+Howe’er his faith may waver,\\
+\quad Through grief and shame,\\
+Believe it,---she loves him yet!
+\end{verse}
+
+\by{Mrs. Osgood.}
+
+\stars
+
+\begin{verse}
+Over the moorland, over the lea,\\
+Dancing airily, there are we:\\
+Sometimes, mounted on stems aloft,\\
+\quad We wave o’er broom and heather,\\
+To meet the kiss of the zephyr soft;\\
+\quad Sometimes, close together,\\
+Tired of dancing, tired of peeping,\\
+Under the whin you’ll find us sleeping.\\
+Daintily bend we our honied bells,\\
+While the gossipping bee her story tells,\\
+And drowsily hums and murmurs on\\
+Of the wealth to her waxen storehouse gone;\\
+And though she gathers our sweets the while,\\
+We welcome her in with a nod and a smile.\\
+No rock is too high---no vale too low,\\
+For our fragile and tremulous forms to grow.\\
+\quad Sometimes we crown\\
+The castle’s dizziest tower, and look\\
+\quad Laughingly down\\
+On the pigmy men in the world below,\\
+\quad Wearily wandering to and fro.\\
+Sometimes we dwell on the cragged crest\\
+\quad Of mountain high,\\
+And the ruddy sun, from the blue sea’s breast,\\
+\quad Climbing the sky,\\
+Looks from his couch of glory up,\\
+And lights the dew in the bluebell’s cup.\\
+We are crowning the mountain\\
+\quad With azure bells,\\
+\quad Or decking the fountains\\
+\quad In forest dells,\\
+Or wreathing the ruin with clusters gray,\\
+\quad And nodding and laughing the livelong day;\\
+\quad Then chiming our lullaby, tired with play.\\
+\quad Are we not beautiful? Oh! are not we\\
+\quad The darlings of mountain and moorland and lea?\\
+\quad Plunge in the forest---are we not fair?\\
+\quad Go to the high-road---we’ll meet ye there.\\
+\quad Oh! where is the flower that content may tell,\\
+Like the laughing and nodding and dancing bluebell.
+\end{verse}
+
+\by{Louisa A. Twamley.}
+
+\stars
+
+\begin{verse}
+The Hyacinth’s for constancy,\\
+Wi’ its unchanging blue.
+\end{verse}
+
+\by{Burns.}
+
+\flower{Orchis}{A Belle}
+
+The Butterfly Orchis is rather rare except where there is a chalky soil. The Spider Orchis has gained its name from the great resemblance it bears to one of those large, fat-bodied garden spiders, which are often noticed for the singular beauty of the markings on their backs. Another is so very like a fly, that it is named the Fly Orchis; another is like a lizard, or some strange reptile, and the flowers being yellow, green, and purple, and twisted in and about one another in a very odd way, it really looks like some horrible group of queer living creatures. One, from being fancied like a man, is called Man Orchis; another, very gayly spotted, and ornamented with a helmet-like appendage, is the Military Orchis; another is called Bee Orchis. Bishop Mant thus alludes to some of these:
+
+\begin{verse}
+Well boots it the thick-mantled leas\\
+To traverse: if boon nature grant,\\
+To crop the insect-seeming plant,\\
+The vegetable Bee; or nigh\\
+Of kin, the long-horned Butterfly,\\
+White, or his brother purple pale,\\
+Scenting alike the evening gale;\\
+The Satyr flower, the pride of Kent,\\
+Of Lizard form, and goat-like scent.
+\end{verse}
+
+\stars
+
+\begin{verse}
+No wonder that cheek in its beauty transcendent,\\
+\quad Excelleth the beauty of others by far;\\
+No wonder that eye is so richly resplendent,\\
+\quad For your heart is a rose and your soul is a star.
+\end{verse}
+
+\by{Mrs. Osgood.}
+
+\stars
+
+\begin{verse}
+What right have you, madam, gazing in your shining mirror daily,\\
+Getting so by heart your beauty, which all others must adore;\\
+While you draw the golden ringlets down your fingers, to vow gayly,\\
+You will wed no man that’s only good to God,---and nothing more.
+\end{verse}
+
+\by{Miss Barrett.}
+
+\flower{Box}{Stoicism}
+
+The common Box, of which our hedge is formed, is indigenous in England, preferring the chalky hills of Surrey and Kent for its residence, but flourishing well on other soils. It is one of the most useful evergreen shrubs we possess, and especially as it will grow under the drip and shadow of other trees, as you know is the case with our hedge. It is found in most European countries, from Britain southwards, also about Mount Caucasus, Persia, China, Cochin China, and America. It was formerly much more common in England than now, having disappeared under the spread of agriculture. Box-hill, in Surrey, is named from this tree, and is a conical elevation covered with a wood of Box-trees, some of large size. Boxley in Kent, and Boxwell in Gloucestershire, are also named from it. The leaf and general appearance of the tree are too familiar to require any description. The scent of the spring blossoms is rather powerful, and to some persons unpleasant. The timber is very valuable, it is sold by weight, and, being very hard and smooth, and not apt to warp, is well adapted for many nice and delicate purposes. In the days of good old Evelyn, it appears to have been as much used as at present, for he says, “It is good for the turner, engraver, carver, mathematical instrument maker, comb and pipe, or flute-maker, and the roots for the inlayer and cabinet-maker. Of box are made wheels, sheaves, pins, pegs for musical instruments, nut-crackers, button-moulds, weavers’ shuttles, hollar-sticks, bump-sticks, and dressers for the shoemaker, rulers, rolling-pins, pestles, mall-balls, beetles, tops, chessmen, tables, screws, bobbins for bone-lace, spoons, knife-handles, but especially combs.” Most of those engravings in books, called wood-cuts, are done upon Box wood, and for that purpose English Box is superior to any other, though a great portion of what is used in this country comes from the Levant. The ancients used combs made of Box-wood, and also instruments to be played on with the mouth. The Romans used to adorn their gardens with it, clipped into form, as we find from mention being made of clipped Box-trees by their writers. It was formerly much cut in this manner here, and was ranked next to the Yew for its capabilities of taking artificial and grotesque forms; but except a few ancient hedges of Box, like our own, and those at Castle Bromwich Hall, where the Yew hedges are also preserved, there are not many vestiges of its former garden-glory remaining. A dwarf kind is used for making a neat and firm edging to flower borders, for which nothing answers so well, or produces so proper an effect.
+
+\stars
+
+\begin{verse}
+Though youth be past, and beauty fled,\\
+\quad The constant heart its pledge redeems,\\
+Like Box, that guards the flowerless bed,\\
+\quad And brighter from the contrast seems.
+\end{verse}
+
+\by{Mrs. Hale.}
+
+\flower{Narcissus And Daffodil}{Self-Love}
+
+There are several species of the Narcissus. The Yellow Narcissus is better known as the Daffodil, and bears much resemblance to the Yellow Lily. The Poetic Narcissus is the largest of the species, and may be distinguished by the crimson border of the very shallow and almost flat cup of the nectary. Shakspeare, in his Winter’s Tale, speaks of
+
+\begin{verse}
+\quad Daffodils,\\
+That come before the swallow dares, and taste\\
+The winds of March with beauty.
+\end{verse}
+
+The ancients attributed the origin of the Narcissus to the metamorphosis of a beautiful youth of that name, who, having slighted the love of the nymph Echo, became enamoured of his own image, which he beheld in a fountain, and pined to death in consequence.
+
+\stars
+
+\begin{verse}
+I wandered lonely, as a cloud\\
+\quad That floats on high o’er vales and hills\\
+When all at once I saw a crowd,\\
+\quad A host of golden Daffodils;\\
+Beside the lake, beneath the trees,\\
+Fluttering and dancing in the breeze.\\
+Continuous as the stars that shine\\
+\quad And twinkle on the milky way,\\
+They stretched in never-ending line\\
+\quad Along the margin of the bay;\\
+Ten thousand saw I at a glance,\\
+Tossing their heads in sprightly dance.
+\end{verse}
+
+\begin{verse}
+The waves beside them danced, but they\\
+\quad Outdid the sparkling waves in glee;\\
+A poet could not but be gay\\
+\quad In such a joyful company:\\
+I gazed---and gazed---but little thought\\
+What wealth to me the show had brought.\\
+For oft when on my couch I lie,\\
+\quad In vacant or in pensive mood,\\
+They flash upon that inward eye\\
+\quad Which is the bliss of solitude.\\
+And then my heart with pleasure fills,\\
+And dances with the Daffodils.
+\end{verse}
+
+\by{Wordsworth.}
+
+\stars
+
+\begin{verse}
+Nature’s laws must be obeyed,\\
+And this is one she strictly laid\\
+On every soul which she has made,\\
+\quad Down from our earliest mother:\\
+Be \emph{self} your first and greatest care,\\
+From all reproach the darling spare,\\
+And any blame that she should bear,\\
+\quad Put off upon another.
+\end{verse}
+
+\by{Miss Gould.}
+
+\stars
+
+\begin{verse}
+\quad The pale Narcissus\\
+Still feeds upon itself; but, newly blown,\\
+The nymphs will pluck it from its tender stalk,\\
+And say, “Go, fool, and to thy image talk.”
+\end{verse}
+
+\by{Lord Thurlow.}
+
+\flower{Lily}{Majesty}
+
+The Lily’s height and beauty speak command. The Jews imitated its form in the decorations of their first magnificent temple; and Christ described it as more splendid than King Solomon in his most gorgeous apparel. According to ancient mythology, there was originally but one species of Lily, and that was orange-coloured; and the white was produced by the following circumstance:---Jupiter, wishing to render Hercules immortal, prevailed on Juno to take a deep draught of nectar, which threw the queen into a profound sleep. Jupiter then placed the infant Hercules at her breast, so that the divine milk might ensure immortality. Hercules drew the milk faster than he could swallow it, and some drops fell to the earth, from which immediately sprang the White Lily.
+
+\stars
+
+\begin{verse}
+\quad Flowers of the fairest,\\
+\quad And gems of the rarest,\\
+I find and I gather in country or town;\\
+\quad But one is still wanting,\\
+\quad Oh! where is it haunting?\\
+The bud and the jewel must make up my crown.\\
+\quad Thou pearl of the deep sea\\
+\quad That flows in my heart free,\\
+Thou rock-planted Lily, come hither, or send;\\
+\quad Mid flowers of the fairest,\\
+\quad And gems of the rarest,\\
+I miss thee, I seek thee, my own parted friend!
+\end{verse}
+
+\by{M. J. Jewsbury.}
+
+\stars
+
+\begin{verse}
+Ye well arrayed------\\
+Queen Lilies---and ye painted populace,\\
+Who dwell in fields, and lead ambrosial lives.
+\end{verse}
+
+\by{Young.}
+
+\stars
+
+\begin{verse}
+The wand-like Lily, which lifted up,\\
+As a Mœnad, its radiant-coloured cup,\\
+Till the fiery star, which is in its eye,\\
+Gazed through clear dew on the tender sky.
+\end{verse}
+
+\by{Shelley.}
+
+\stars
+
+\begin{verse}
+Her glossy hair is clustered o’er a brow\\
+\quad Bright with intelligence, and fair and smooth;\\
+Her eyebrow’s shape is like the aerial bow,\\
+\quad Her cheek all purple with the beam of youth,\\
+Mounting at times to a transparent glow,\\
+\quad As if her veins run lightning; she, in sooth,\\
+Has a proud air, and grace by no means common,\\
+Her stature tall,---I hate a dumpy woman.
+\end{verse}
+
+\by{Byron.}
+
+\stars
+
+\begin{verse}
+Oh, he is all made up of love and charms,\\
+Whatever maid could wish or man admire;\\
+Delight of every eye! when he appears,\\
+A secret pleasure gladdens all that see him;\\
+And when he talks, the proudest men will blush\\
+To hear his virtues and his glory!
+\end{verse}
+
+\by{Addison.}
+
+\flower{Moss Rose}{Confession of Love}
+
+The origin of this exquisitely beautiful variety of the Rose is thus fancifully accounted for:---
+
+\stars
+
+\begin{verse}
+The Angel of the Flowers one day,\\
+Beneath a Rose-tree sleeping lay,\\
+That spirit to whose charge is given\\
+To bathe young buds in dews from heaven.\\
+Awaking from his light repose,\\
+The angel whispered to the Rose,\\
+“O fondest object of my care,\\
+Still fairest found where all are fair,\\
+For the sweet shade thou hast given to me,\\
+Ask what thou wilt, ’tis granted thee.”\\
+Then said the Rose, with deepening glow,\\
+“On me another grace bestow.”\\
+The spirit paused in silent thought---\\
+What grace was there that flower had not?\\
+’Twas but a moment---o’er the Rose\\
+A veil of moss the angel throws;\\
+And, robed in nature’s simplest weed,\\
+Could there a flower that Rose exceed?
+\end{verse}
+
+\by{Anon.}
+
+\stars
+
+\begin{verse}
+They gather gems with sunbeams bright,\\
+\quad From floating clouds and falling showers;\\
+They rob Aurora’s locks of light,\\
+\quad To grace their own fair queen of flowers.\\
+Thus, thus adorned, the speaking rose\\
+\quad Becomes a \emph{token} fit to tell\\
+Of things that words can ne’er disclose,\\
+\quad And naught but this reveal so well.\\
+Then take my flower, and let its leaves\\
+\quad Beside thy heart be cherished near,\\
+While that confiding heart receives\\
+\quad The thought it whispers to thine ear.
+\end{verse}
+
+\by{Token, 1830.}
+
+\flower{White Water-Lily}{Purity}
+
+The White Water-Lily is the Queen of the Waves, and reigns sole sovereign over the streams; and it was a species of Water-Lily which the old Egyptians and ancient Indians worshipped---the most beautiful object that was held sacred in their superstitious creed, and one which we cannot look upon even now without feeling a delight mingled with reverence. No flower looks more lovely than this “Lady of the Lake,” resting her crowned head on a green throne of velvet, and looking down into the depths of her own sky-reflecting realms, watching the dance, as her attendant water-nymphs keep time to the rocking of the ripples, and the dreamy swaying of the trailing water streams.
+
+\by{Miller.}
+
+\stars
+
+\begin{verse}
+Thine is a face to look upon and pray\\
+That a pure spirit keep thee---I would meet\\
+With one so gentle by the streams away,\\
+Living with nature; keeping thy pure feet\\
+For the unfingered moss, and for the grass\\
+Which leaneth where the gentle waters pass.\\
+The autumn leaves should sigh thee to thy sleep;\\
+And the capricious April, coming on,\\
+Awake thee like a flower; and stars should keep\\
+A vigil o’er thee like Endymion;\\
+And thou for very gentleness shouldst weep\\
+As dews of the night’s quietness come down.
+\end{verse}
+
+\by{Willis.}
+
+\stars
+
+\begin{verse}
+Oh, come to the river’s rim, come with us there,\\
+For the White Water-Lily is wondrous fair,\\
+With her large broad leaves on the stream afloat,\\
+Each one a capacious fairy-boat.\\
+The swan among flowers! How stately ride\\
+Her snow-white leaves on the glittering tide!\\
+And the Dragon-fly gallantly stays to sip\\
+A kiss of dew from her goblet’s lip.
+\end{verse}
+
+\by{Anon.}
+
+\stars
+
+\begin{verse}
+The Lily on the water sleeping,\\
+\quad Enwreathed with pearl, and bossed with gold,\\
+\quad An emblem is, my love, of thee:\\
+But when she like a nymph is peeping,\\
+\quad To watch her sister-buds unfold,\\
+\quad White shouldered on the flowery lea,\\
+\quad Gazing about in sweet amazement,\\
+\quad Thy image, from the vine-clad casement,\\
+\quad Seems looking out, my love, on me.
+\end{verse}
+
+\by{Miller.}
+
+\stars
+
+\begin{verse}
+Little streams have flowers a many,\\
+Beautiful and fair as any;\\
+Typha strong, and green bur reed,\\
+Willow herb with cotton seed,\\
+Arrow head with eye of jet,\\
+And the Water-Violet;\\
+There the flowering Rush you meet,\\
+And the plumy meadow sweet,\\
+And in places deep and stilly\\
+Marble-like, the Water-Lily.
+\end{verse}
+
+\by{Mrs. Howitt.}
+
+\flower{Marigold}{Grief}
+
+The Marigold is the conventional emblem of distress of mind. It is distinguished by many singular properties. It blossoms the whole year, and on that account, the Romans termed it the flower of the calends, or of all the months. Its flowers are open only from nine in the morning till three in the afternoon. They always follow the course of the sun, by turning from east to west as he proceeds upon his daily journey. In July and August these flowers emit, during the night, small luminous sparks. Alone, the Marigold expresses grief; interwoven with other flowers, the varied events of life; the cloud and sunshine of ill and good.
+
+\stars
+
+\begin{verse}
+And see the flaunting Marigold,\\
+Gay from its marshy bed unfold\\
+Mid minor lights its disks that shine\\
+Like suns for brightness.
+\end{verse}
+
+\by{Anon.}
+
+\stars
+
+\begin{verse}
+Open afresh your round of starry folds,\\
+Ye ardent Marigolds!\\
+Dry up the moisture of your golden lids.
+\end{verse}
+
+\by{Keats.}
+
+\stars
+
+\begin{verse}
+When, with a serious musing, I behold\\
+The grateful and obsequious Marigold,\\
+How duly, every morning, she displays\\
+Her open breast when Phœbus spreads his rays;\\
+How she observes him in his daily walk\\
+Still bending towards him her small slender stalk;\\
+How, when he down declines, she droops and mourns,\\
+Bedewed as ’twere with tears till he returns.
+\end{verse}
+
+\by{Withers.}
+
+\stars
+
+\begin{verse}
+I need not say how, one by one,\\
+\quad Love’s flowers have dropped from off love’s chain,\\
+Enough to say that they are gone,\\
+\quad And that they cannot bloom again.
+\end{verse}
+
+\by{Miss Landon.}
+
+\stars
+
+\begin{verse}
+We sometimes see a shadow swiftly skim\\
+\quad In summer o’er the hills and vales of earth:\\
+\quad So transient shades steal o’er the face of mirth,\\
+And frequent tears the brightest eyes bedim.
+\end{verse}
+
+\by{MacKellar.}
+
+\stars
+
+\begin{verse}
+Thine is a grief that wastes the heart,\\
+\quad Like mildew on a tulip’s dyes---\\
+When hope, deferred but to depart,\\
+\quad Loses its smiles but keeps its sighs.
+\end{verse}
+
+\by{Miss Landon.}
+
+\flower{White Rose}{I would be single}
+
+\begin{verse}
+How uneasy is his life\\
+Who is troubled with a wife!\\
+Be she ne’er so fair or comely,\\
+Be she foul or be she homely,\\
+Be she blithe or melancholy,\\
+Have she wit, or have she folly,\\
+Be she prudent, be she squandering,\\
+Be she staid, or be she wandering,\\
+Yet uneasy is his life\\
+Who is married to a wife.
+\end{verse}
+
+\by{Cotton.}
+
+The White Rose became celebrated in English history as the badge of the house of York, in the War of the Roses. Among the ancients, who considered the Rose as the queen of flowers, it was the custom to crown new-married persons with a chaplet of Red and White Roses; and in the procession of the Corybantes, the goddess Cybele, the protectress of cities, was pelted with White Roses.
+
+\stars
+
+\begin{verse}
+A single Rose is shedding\\
+Its lovely lustre meek and pale:\\
+It looks as planted by despair---\\
+So white, so faint---the slightest gale\\
+Might whirl the leaves on high.
+\end{verse}
+
+\by{Byron.}
+
+\flower{Yellow Rose}{Jealousy}
+
+Pfeffel, a German poet, has pleasingly accounted for the origin of the Yellow Rose, the emblem of envy and jealousy, in the following manner:
+
+\begin{verse}
+Once a White Rose-bud reared her head,\\
+And peevishly to Flora said,\\
+“Look at my sister’s blushing hue---\\
+Pray, mother, let me have it too.”\\
+“Nay, child,” was Flora’s mild reply,\\
+“Be thankful for such gifts as I\\
+Have deemed befitting to dispense---\\
+Thy dower the hue of innocence.”\\
+When did Persuasion’s voice impart\\
+Content and peace to female heart\\
+Where baleful Jealousy bears sway,\\
+And scares each gentler guest away?\\
+The Rose still grumbled and complained,\\
+Her mother’s bounties still disdained.\\
+“Well, then,” said angered Flora---“take”---\\
+She breathed upon her as she spake---\\
+“Henceforth no more in simple vest\\
+Of innocence shalt thou be drest---\\
+Take that which better suits thy mind,\\
+The hue for Jealousy designed!”\\
+The Yellow Rose has from that hour\\
+Borne evidence of Envy’s power.
+\end{verse}
+
+\begin{verse}
+\quad Is whispering nothing?\\
+Is leaning cheek to cheek?---is meeting noses?\\
+Kissing with inside lip?---stopping the career\\
+Of laughter with a sigh?---(a note infallible\\
+Of breaking honesty:)---horsing foot to foot?---\\
+Skulking in corners?---wishing clocks more swift?---\\
+Hours, minutes?---noon, midnight? and all eyes\\
+Blind with the pin and web, but theirs,---theirs only,\\
+That would unseen be wicked?---is this nothing?\\
+Why, then the world, and all that’s in it, is nothing.
+\end{verse}
+
+\by{Shakspeare.}
+
+\stars
+
+\begin{verse}
+Thou wondrous yellow fiend!\\
+Temper an antidote with antimony,\\
+And ’tis infectious: Mix jealousy with marriage,\\
+It poisons virtue.
+\end{verse}
+
+\by{Davenport.}
+
+\stars
+
+\begin{verse}
+O jealousy! thou bane of pleasing friendship,\\
+Thou worst invader of our tender bosoms;\\
+How does thy rancour poison all our softness,\\
+And turn our gentle natures into bitterness!
+\end{verse}
+
+\by{Rowe.}
+
+\stars
+
+\begin{verse}
+Ah! poor unconscious rival maid,\\
+How drearily must thou sicken and fade,\\
+’Neath jealousy’s dark Upas shade!
+\end{verse}
+
+\by{Tupper.}
+
+\end{document}

@@ -2,6 +2,11 @@
 
 package.path = "./lua/?.lua;" .. package.path
 
+-- Raster gilt (the default) at screen resolution: tests check where gold
+-- goes and what it does, which no pixel count changes; test_raster.lua
+-- sets its own resolutions.
+require("flora.tune").gilt_dpi = 100
+
 local H = { failures = 0 }
 
 function H.check(cond, msg)

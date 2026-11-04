@@ -2,7 +2,9 @@
 -- and traced from dense to pale by madoromi (https://madoromi.moonwit.ch/,
 -- precomputed/summary.json). Each ramp is eight OKLab {L, a, b} stops from
 -- the densest stroke to the palest wash. `groups` gathers them by hue for
--- tune.color.palette; `order` lists every ink as the site does.
+-- tune.color.palette; `order` lists every ink as the site does;
+-- `colourways` are whole palettes, one ink per part, named for
+-- colourway=NAME.
 
 local M = {}
 
@@ -103,5 +105,28 @@ function M.valid(choice)
 end
 
 M.group_order = { "blue", "blue-grey", "teal", "green", "violet", "warm", "earth", "gold" }
+
+-- Whole palettes. The seasons are chosen by the inks' names as much as
+-- their colours: azalea and cherry petals in spring, hydrangea and
+-- fireflies in summer, maple and rice ears in autumn, moonlit night and
+-- winter persimmon in winter. "original" is tune.lua's own palette.
+M.colourways = {
+  ember = { hero = "yu-yake", blooms = "momiji", leaves = "green", leaflets = "hotaru-bi",
+    stems = "yama-guri", sprays = "to-ro", ghost = "benzaiten", cartouche = "fuyu-gaki" },
+  plum = { hero = "murasaki-shikibu", blooms = "yama-budo", leaves = "teal", leaflets = "chiku-rin",
+    stems = "yama-guri", sprays = "edo-murasaki", ghost = "rikka", cartouche = "ku-jaku" },
+  rose = { hero = "tsutsuji", blooms = "hana-ikada", leaves = "blue-grey", leaflets = "fukagawa-nezu",
+    stems = "take-sumi", sprays = "kosumosu", ghost = "hana-ikada", cartouche = "tsuki-yo" },
+  spring = { hero = "hana-ikada", blooms = "tsutsuji", leaves = "fukurokuju", leaflets = "chiku-rin",
+    stems = "tsukushi", sprays = "ebisu", ghost = "rikka", cartouche = "ama-iro" },
+  summer = { hero = "ajisai", blooms = "daikokuten", leaves = "shin-ryoku", leaflets = "hotaru-bi",
+    stems = "chiku-rin", sprays = "tsuyu-kusa", ghost = "shimbashi-iro", cartouche = "kon-peki" },
+  autumn = { hero = "momiji", blooms = "yu-yake", leaves = "ina-ho", leaflets = "syun-gyo",
+    stems = "yama-guri", sprays = "yama-budo", ghost = "kiri-same", cartouche = "tsuki-yo" },
+  winter = { hero = "tsuki-yo", blooms = "fuyu-gaki", leaves = "blue-grey", leaflets = "syo-ro",
+    stems = "take-sumi", sprays = "kiri-same", ghost = "fukagawa-nezu", cartouche = "shin-kai" },
+}
+M.colourway_order = { "original", "spring", "summer", "autumn", "winter", "ember", "plum", "rose" }
+M.colourway_alias = { fall = "autumn" }
 
 return M

@@ -18,8 +18,9 @@ M.cells = {
 -- Lay the sheet out: rows of kinds, `seeds` columns per kind, top to
 -- bottom. Returns the cells {name, label, slot, seed, box, o, lift (room
 -- the label leaves for the kind's reach)} and the sheet's
--- width and height.
-function M.layout(seeds, width)
+-- width and height. `only` (a set of slot and kind names) keeps just
+-- those kinds.
+function M.layout(seeds, width, only)
   seeds, width = seeds or 3, width or 560
   local cells, y = {}, 0
   local pad, gap, label = 14, 18, 16
@@ -30,9 +31,11 @@ function M.layout(seeds, width)
     -- wraps onto the next.
     local per = math.max(1, math.min(seeds, math.floor((width + pad) / (c[1] + pad))))
     for _, k in ipairs(Orn.of(slot)) do
-      for first = 1, seeds, per do
+      for first = 1, (not only or only[slot] or only[k.name]) and seeds or 0, per do
         local n = math.min(per, seeds - first + 1)
-        local block = n * c[1] + (n - 1) * pad
+        -- The label (\footnotesize label and name, about 4.6pt a
+        -- character) sets the least width a kind takes.
+        local block = math.max(n * c[1] + (n - 1) * pad, (#k.label + #k.name + 1) * 4.6)
         local row = rows[#rows]
         if not row or row.slot ~= slot or row.x + block > width then
           row = { slot = slot, x = 0, h = c[2], kinds = {}, lift = 0 }
@@ -62,10 +65,11 @@ function M.layout(seeds, width)
 end
 
 -- Paint every cell onto `pt` (a new painter if nil); `base` shifts every
--- cell's seed. Returns pt, cells, width, height.
-function M.sheet(pt, seeds, width, base)
+-- cell's seed and `only` limits the kinds (see layout). Returns pt, cells,
+-- width, height.
+function M.sheet(pt, seeds, width, base, only)
   pt = pt or Paint.new({ backend = os.getenv("FLORA_BACKEND") })
-  local cells, w, h = M.layout(seeds, width)
+  local cells, w, h = M.layout(seeds, width, only)
   for _, c in ipairs(cells) do
     local o = {}
     for k, v in pairs(c.o or {}) do o[k] = v end

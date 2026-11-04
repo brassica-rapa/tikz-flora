@@ -1,43 +1,86 @@
-/* Paper and ink in neutral tones, so the artwork carries the colour. Page
-   renders stay paper-white in both themes, as printed pages are. */
+@import "./fonts.css";
+/* A book page: warm paper, near-black ink and one rubric red for labels,
+   numerals and links, so the artwork carries the colour. Plates (page
+   renders) stay paper-white in both themes, as printed pages are. */
 :root {
-  --paper: #f5f2eb;
-  --ink: #292824;
-  --muted: #625e55;
-  --accent: #74502e;
-  --rule: #dcd6c8;
-  --control: #8b8578;
-  --code-bg: #ece8de;
+  --paper: oklch(96.4% 0.011 84);
+  --ink: oklch(24.5% 0.012 70);
+  --muted: oklch(45% 0.015 70);
+  --rubric: oklch(47% 0.135 32);
+  --rule: oklch(86% 0.018 80);
+  --control: oklch(62% 0.018 75);
+  --code-bg: oklch(92.5% 0.014 82);
+  --plate: oklch(99.4% 0.004 90);
   --display: "IM Fell English", "Iowan Old Style", Georgia, serif;
-  --body: "STIX Two Text", "Iowan Old Style", Georgia, serif;
+  --body: "EB Garamond", "Iowan Old Style", Garamond, Georgia, serif;
   --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  --bar: 48px;
+  --bar: 52px;
+  /* The book grid: a text measure, a margin column for notes, and outer
+     margins that take what is left. */
+  --measure: 35rem;
+  --margin: 17rem;
+  --gutter: 2.75rem;
+  --side: max(16px, env(safe-area-inset-left));
   color-scheme: light;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #191a19; --ink: #e9e6de; --muted: #b5b0a4; --accent: #dfb986;
-    --rule: #2f302d; --control: #777368; --code-bg: #232421;
-    color-scheme: dark;
-  }
-}
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: var(--bar); }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+html { scroll-padding-top: 1rem; -webkit-text-size-adjust: 100%; }
 body {
   margin: 0; background: var(--paper); color: var(--ink);
-  font-family: var(--body); font-size: 1.05rem; line-height: 1.6;
+  font-family: var(--body); font-size: 1.22rem; line-height: 1.55;
+  font-variant-numeric: oldstyle-nums proportional-nums;
+  font-kerning: normal; text-rendering: optimizeLegibility;
 }
-a { color: var(--accent); }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.15; }
-h2 { font-size: 1.7rem; margin: 0 0 .8rem; }
-h3 { font-size: 1.2rem; margin: 1.8rem 0 .4rem; }
-code, pre { font-family: var(--mono); font-size: .85em; }
-code { background: var(--code-bg); padding: .05em .3em; border-radius: 2px; }
-pre { background: var(--code-bg); padding: .8rem 1rem; overflow-x: auto; line-height: 1.45; }
-pre code { background: none; padding: 0; }
-.wrap { max-width: 1180px; margin: 0 auto; padding: 0 max(16px, env(safe-area-inset-left)); }
-.col { max-width: 66ch; }
+a { color: inherit; text-decoration-color: color-mix(in oklch, var(--rubric) 70%, transparent); text-decoration-thickness: 1px; text-underline-offset: .18em; }
+a:hover { color: var(--rubric); }
+:focus-visible { outline: 2px solid var(--rubric); outline-offset: 2px; }
+h1, h2, h3, h4 { font-family: var(--display); font-weight: 400; line-height: 1.12; text-wrap: balance; }
+h2 { font-size: clamp(1.8rem, 3.2vw, 2.4rem); margin: 0 0 .9rem; }
+h3 { font-size: 1.45rem; margin: 2.4rem 0 .5rem; }
+p { margin: 0 0 .9rem; text-wrap: pretty; }
+code, pre { font-family: var(--mono); font-size: .74em; font-variant-numeric: normal; }
+code { background: var(--code-bg); padding: .08em .3em; border-radius: 2px; }
+pre { background: var(--code-bg); padding: .9rem 1.1rem; overflow-x: auto; line-height: 1.5; margin: .4rem 0 1.2rem; }
+pre code { background: none; padding: 0; font-size: 1em; }
 button, select, input { font: inherit; color: inherit; }
-.paper { background: #fff; }
+/* Small capitals for labels, running heads and plate numbers. */
+.sc { font-variant-caps: all-small-caps; letter-spacing: .07em; font-variant-numeric: lining-nums; }
+.rubric { color: var(--rubric); }
+.muted { color: var(--muted); }
+.paper { background: var(--plate); }
+/* A plain bordered button; .primary is filled with ink. */
+.button {
+  display: inline-flex; align-items: center; min-height: 42px; padding: .3rem 1rem;
+  border: 1px solid var(--control); border-radius: 0; color: var(--ink); background: transparent;
+  text-decoration: none; cursor: pointer; font-variant-caps: all-small-caps; letter-spacing: .07em; font-size: 1.05rem;
+}
+.button:hover { border-color: var(--ink); color: var(--ink); }
+.button.primary { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+/* The book grid: [full | text | margin | full]. Children sit in the text
+   column; .wide spans text and margin; .note sits in the margin. Below
+   60rem the margin folds under the text. */
+.book {
+  display: grid;
+  grid-template-columns:
+    [full-start] minmax(var(--side), 1fr)
+    [text-start] minmax(0, var(--measure))
+    [text-end] var(--gutter)
+    [note-start] minmax(0, var(--margin))
+    [note-end] minmax(var(--side), 1fr) [full-end];
+}
+.book > * { grid-column: text; }
+.book > .wide { grid-column: text-start / note-end; }
+.book > .full { grid-column: full; }
+.book > .note { grid-column: note; }
+.caption { font-size: .95rem; line-height: 1.45; color: var(--muted); }
+.caption .sc { color: var(--rubric); }
+@media (max-width: 60rem) {
+  .book { grid-template-columns: [full-start] var(--side) [text-start note-start] minmax(0, 1fr) [text-end note-end] var(--side) [full-end]; }
+  .book > .wide { grid-column: text; }
+  .book > .note { grid-column: text; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rise { animation: rise .9s cubic-bezier(.16, 1, .3, 1) both; }
+  .rise.late { animation-delay: .12s; }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+}

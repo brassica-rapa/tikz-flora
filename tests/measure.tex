@@ -1,10 +1,16 @@
 % Integration test for lua/flora/measure.lua: run with `just test-tex`.
-% Typesets two lines, one indented by 50pt, and checks the measured boxes.
+% Typesets two lines, one indented by 50pt, between two named marks (as
+% the floratitle environment leaves), then an empty 40pt box marked as
+% ink (as \floraletters leaves), and checks the measured boxes and the
+% marks' heights.
 \documentclass{article}
 \directlua{dofile(kpse.find_file("tikzflora-boot.lua", "tex"))}
 \begin{document}
 \setbox0=\vbox{\hsize=200pt\parindent=0pt
+  \directlua{require("flora.measure").mark("title-start")}%
   Hello world\par
-  \hspace*{50pt}Indented line\par}
+  \directlua{require("flora.measure").mark("title-end")}%
+  \hspace*{50pt}Indented line\par
+  \noindent\hbox to 40pt{\directlua{require("flora.measure").mark("ink")}\vrule width 0pt height 12pt depth 3pt\hss}\par}
 \directlua{dofile("tests/measure_check.lua")}
 \end{document}

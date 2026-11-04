@@ -89,8 +89,43 @@ do
   H.check(p.palette.leaves == "green" and p.palette.hero == "kon-peki", "palette settings lost")
   H.check(Settings.parse("palette={leaves=random}, spin=3").spin == 3, "spin lost")
   for _, bad in ipairs({ "spin=1.5", "mix={rose=1}", "mix={lily=-1}", "mix={lily=many}", "density=11",
-      "palette={leaves=plaid}", "palette={petals=green}", "visitors=lots" }) do
+      "palette={leaves=plaid}", "palette={petals=green}", "visitors=lots", "colourway=plaid" }) do
     H.check(not pcall(Settings.parse, bad), "accepted bad settings \"" .. bad .. "\"")
+  end
+end
+
+-- A colourway sets every part at once, in order with palette={...}: a
+-- palette after it changes one part, a colourway after a palette replaces
+-- it. Every colourway names a real ink or group for every part, and no two
+-- are the same.
+do
+  local Inks = require("flora.inks")
+  local w = Settings.parse("colourway=winter, palette={hero=momiji}").palette
+  H.check(w.hero == "momiji" and w.blooms == "fuyu-gaki" and w.cartouche == "shin-kai", "palette after a colourway lost a part")
+  local o = Settings.parse("palette={hero=momiji}, colourway=winter").palette
+  H.check(o.hero == "tsuki-yo", "a colourway after a palette left its hero")
+  local fall, autumn = Settings.parse("colourway=fall").palette, Settings.parse("colourway=autumn").palette
+  local orig = Settings.parse("palette={leaves=teal}, colourway=original").palette
+  local seen = {}
+  for _, name in ipairs(Inks.colourway_order) do
+    local pal = Settings.parse("colourway=" .. name).palette
+    local parts = {}
+    for part, def in pairs(Tune.color.palette) do
+      local ink = pal[part]
+      if name == "original" then H.check(ink == def and orig[part] == def, "original is not tune.lua's palette at " .. part) end
+      H.check(ink == "look" or Inks.groups[ink] or Inks.ramps[ink], name .. " paints " .. part .. " with unknown ink " .. tostring(ink))
+      if name == "autumn" then H.check(fall[part] == ink, "fall is not autumn at " .. part) end
+      parts[#parts + 1] = part .. "=" .. tostring(ink)
+    end
+    table.sort(parts)
+    local key = table.concat(parts, ",")
+    H.check(not seen[key], name .. " repeats " .. tostring(seen[key]))
+    seen[key] = name
+  end
+  for name in pairs(Inks.colourways) do
+    local listed = false
+    for _, n in ipairs(Inks.colourway_order) do listed = listed or n == name end
+    H.check(listed, "colourway " .. name .. " is missing from colourway_order")
   end
 end
 
@@ -156,6 +191,54 @@ do
   local p = Settings.parse("palette={sprays=warm, ghost=random, cartouche=yu-yake}")
   H.check(p.palette.sprays == "warm" and p.palette.ghost == "random" and p.palette.cartouche == "yu-yake",
     "new palette parts lost")
+end
+
+-- Leaf shapes and bloom styles: the mix weighs them on a page. Drawn under
+-- a mix that zeroes the others, every large leaf takes the one shape left
+-- and every small bloom the one style left; small leaves stay lance.
+do
+  local L = require("flora.leaf")
+  local F = require("flora.flower")
+  local Rng = require("flora.rng")
+  local margins = { feather = "feather", acanthus = "acanthus", lance = "entire" }
+  for shape, margin in pairs(margins) do
+    local only = { feather = 0, acanthus = 0, lance = 0 }
+    only[shape] = 1
+    Mix.with_mix(only, function()
+      local r = Rng.new(11)
+      for _ = 1, 60 do
+        local o = L.options(r, 100, 0.4)
+        H.check(o.margin == margin, string.format("mix leaving only %s drew a %s leaf", shape, o.margin))
+      end
+      H.check(L.options(r, 30, 0.4).margin == "entire", "a small leaf was not a lance leaf")
+    end)
+  end
+  local seen = {}
+  Mix.with_mix({ fan = 0 }, function()
+    local r = Rng.new(5)
+    for _ = 1, 40 do seen[F.pick_style(r, { "fan", "round" })] = true end
+  end)
+  H.check(seen.round and not seen.fan, "fan=0 still picked fan blooms")
+  H.check(Mix.active == nil, "with_mix left its mix active")
+  -- Outside a page the defaults hold: both shapes turn up.
+  local any = {}
+  local r = Rng.new(2)
+  for _ = 1, 80 do any[L.options(r, 100, 0.4).margin] = true end
+  H.check(any.feather and any.acanthus and any.entire, "default odds never drew some leaf shape")
+  -- A real page grows its leaves under the page's mix.
+  local drawn = {}
+  local options = L.options
+  L.options = function(rr, len, ang)
+    local o = options(rr, len, ang)
+    drawn[o.margin] = (drawn[o.margin] or 0) + 1
+    return o
+  end
+  page(3, { feather = 0, acanthus = 0 })
+  L.options = options
+  H.check((drawn.entire or 0) > 0 and not drawn.feather and not drawn.acanthus,
+    "a page with feather=0, acanthus=0 still grew lobed leaves")
+  local p = Settings.parse("mix={feather=2, acanthus=0, lance=1, fan=0.5, round=3}")
+  H.check(p.mix.feather == 2 and p.mix.acanthus == 0 and p.mix.round == 3, "leaf and bloom weights not parsed")
 end
 
 H.done("mix")

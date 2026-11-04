@@ -1,44 +1,9 @@
 [
-  {
-    "name": "Ember and moss",
-    "seed": 11,
-    "palette": {
-      "hero": "yu-yake",
-      "blooms": "momiji",
-      "leaves": "green",
-      "leaflets": "hotaru-bi",
-      "stems": "yama-guri",
-      "sprays": "to-ro",
-      "ghost": "benzaiten",
-      "cartouche": "fuyu-gaki"
-    }
-  },
-  {
-    "name": "Plum and jade",
-    "seed": 23,
-    "palette": {
-      "hero": "murasaki-shikibu",
-      "blooms": "yama-budo",
-      "leaves": "teal",
-      "leaflets": "chiku-rin",
-      "stems": "yama-guri",
-      "sprays": "edo-murasaki",
-      "ghost": "rikka",
-      "cartouche": "ku-jaku"
-    }
-  },
-  {
-    "name": "Rose and slate",
-    "seed": 37,
-    "palette": {
-      "hero": "tsutsuji",
-      "blooms": "hana-ikada",
-      "leaves": "blue-grey",
-      "leaflets": "fukagawa-nezu",
-      "stems": "take-sumi",
-      "sprays": "kosumosu",
-      "ghost": "hana-ikada",
-      "cartouche": "tsuki-yo"
-    }
-  }
+  { "key": "ember", "name": "Ember and moss", "seed": 11 },
+  { "key": "plum", "name": "Plum and jade", "seed": 23 },
+  { "key": "rose", "name": "Rose and slate", "seed": 37 },
+  { "key": "spring", "name": "Spring", "seed": 47, "season": true },
+  { "key": "summer", "name": "Summer", "seed": 83, "season": true },
+  { "key": "autumn", "name": "Autumn", "seed": 5, "season": true },
+  { "key": "winter", "name": "Winter", "seed": 61, "season": true }
 ]

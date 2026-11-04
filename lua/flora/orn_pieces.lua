@@ -1,7 +1,8 @@
 -- Pieces for a title page, after the printed book's ornaments: flourishes
--- to set under a title (a pen swash, a fleuron rule, a headpiece band of
--- printers' flowers), tailpieces to close it (a cul-de-lampe, a hedera
--- leaf, a garland) and corner pieces.
+-- to set under a title (a fleuron rule, a headpiece band of printers'
+-- flowers; pen and rule flourishes are in orn_flourish.lua), tailpieces to
+-- close it (a cul-de-lampe, a hedera leaf, a garland) and corner pieces
+-- (more are in orn_corner.lua).
 
 local Orn = require("flora.ornaments")
 local K = require("flora.orn_kit")
@@ -12,35 +13,7 @@ local Scroll = require("flora.orn_scroll")
 local pal = Paint.palette
 local pi = math.pi
 
--- Points of a smooth path through `ctl`, mirrored left-right about x = cx
--- when `d` is -1.
-local function side(ctl, cx, d)
-  local out = {}
-  for i, p in ipairs(ctl) do out[i] = { cx + d * (p[1] - cx), p[2] } end
-  return G.spline_points(out, 8)
-end
-
 -- Flourishes ---------------------------------------------------------------
-
-Orn.register({
-  name = "swash", slot = "flourish", label = "Pen swash",
-  draw = function(pt, rng, b)
-    local cx, cy, w, h = K.measure(b)
-    local u, v = w / 2, h / 2
-    local lift = rng:range(0.75, 1)
-    for _, d in ipairs({ -1, 1 }) do
-      -- An S from the centre out, ending in a curl.
-      local pts = side({ { cx, cy }, { cx + u * 0.15, cy + v * 0.5 * lift }, { cx + u * 0.38, cy - v * 0.35 },
-        { cx + u * 0.62, cy + v * 0.25 * lift }, { cx + u * 0.8, cy } }, cx, d)
-      local tail = K.scroll(pts[#pts], d > 0 and -0.4 or pi + 0.4, h * 0.95, d)
-      for i = 2, #tail do pts[#pts + 1] = tail[i] end
-      pt:fill(G.smooth(G.ribbon(pts, function(t) return (0.25 + 1.6 * math.sin(pi * math.min(1, t * 1.3)) ^ 2) * h * 0.022 end), true),
-        pal.ink, 0.88, { blend = "multiply" })
-    end
-    pt:fill(G.polyline({ { cx, cy + v * 0.3 }, { cx + v * 0.18, cy }, { cx, cy - v * 0.3 }, { cx - v * 0.18, cy } }, true), pal.ink, 0.9)
-    pt:fill({ K.dot(cx - u * 0.94, cy, h * 0.04), K.dot(cx + u * 0.94, cy, h * 0.04) }, pal.ink, 0.85, { many = true })
-  end,
-})
 
 Orn.register({
   name = "fleuron_rule", slot = "flourish", label = "Fleuron rule",
@@ -181,20 +154,7 @@ Orn.register({
 
 -- Corners ------------------------------------------------------------------
 
--- Run draw(x0, y0, s) for the lower-left corner of box b, mirrored into
--- another corner by o.flip = {fx, fy} (each 1 or -1).
-local function corner(pt, b, o, draw)
-  local cx, cy, _, _, s = K.measure(b)
-  local fx, fy = (o.flip or {})[1] or 1, (o.flip or {})[2] or 1
-  local base = pt.frame_fn
-  pt:frame(function(x, y)
-    x, y = cx + fx * (x - cx), cy + fy * (y - cy)
-    if base then return base(x, y) end
-    return x, y
-  end)
-  draw(cx - s / 2, cy - s / 2, s)
-  pt:frame(base)
-end
+local corner = K.corner
 
 Orn.register({
   name = "bracket", slot = "corner", label = "Scrolled bracket",
@@ -207,32 +167,6 @@ Orn.register({
       Scroll.scroll(pt, { x0 + s * 0.08, y0 + s * 0.6 }, 0, s * 0.32, -1, w * 0.8)
       require("flora.orn_roundel").rosette(pt, x0 + s * 0.08, y0 + s * 0.08, s * 0.08, 8)
       pt:fill({ K.dot(x0 + s * 0.93, y0 + s * 0.08, s * 0.025), K.dot(x0 + s * 0.08, y0 + s * 0.93, s * 0.025) }, pal.gold, 0.9, { many = true })
-    end)
-  end,
-})
-
-Orn.register({
-  name = "fan", slot = "corner", label = "Quarter fan",
-  draw = function(pt, _, b, o)
-    corner(pt, b, o, function(x0, y0, s)
-      local c = { x0 + s * 0.05, y0 + s * 0.05 }
-      local lit, shade = {}, {}
-      for k = 0, 8 do
-        local a = k * pi / 16
-        local len = s * (k % 2 == 0 and 0.78 or 0.56)
-        local tip = G.polar(c, a, len)
-        lit[#lit + 1] = G.polyline({ c, tip, G.polar(c, a + 0.06, len * 0.3) }, true)
-        shade[#shade + 1] = G.polyline({ c, tip, G.polar(c, a - 0.06, len * 0.3) }, true)
-      end
-      K.gilt(pt, lit, shade)
-      local arcs = {}
-      for _, r in ipairs({ 0.88, 0.94 }) do
-        local pts = {}
-        for k = 0, 16 do pts[#pts + 1] = G.polar(c, k / 16 * pi / 2, s * r) end
-        arcs[#arcs + 1] = G.smooth(pts)
-      end
-      pt:stroke(arcs, pal.gold, 0.35, 0.9, { many = true })
-      pt:fill(K.dot(c[1], c[2], s * 0.07), pal.copper, 0.95)
     end)
   end,
 })

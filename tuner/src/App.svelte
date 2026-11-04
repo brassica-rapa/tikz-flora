@@ -10,7 +10,7 @@
   import Curve from "./lib/Curve.svelte";
   import Specimen from "./lib/Specimen.svelte";
   import Swatches from "./lib/Swatches.svelte";
-  import { buildPanel, applyDials, curvesIn, describe, clone, getPath, setPath, docFor, isCurve, setChoices } from "./lib/tune.js";
+  import { buildPanel, applyDials, curvesIn, describe, clone, getPath, setPath, docFor, isCurve, setChoices, setBounds } from "./lib/tune.js";
 
   const STORE = "flora-tune";
 
@@ -55,8 +55,9 @@
   }
 
   async function loadDefaults() {
-    const { _doc, _choices, ...shape } = await (await fetch("/api/tune")).json();
+    const { _doc, _choices, _bounds, ...shape } = await (await fetch("/api/tune")).json();
     setChoices(_choices);
+    setBounds(_bounds);
     defaults = shape;
     doc = _doc || {};
     return shape;

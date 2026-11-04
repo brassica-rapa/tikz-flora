@@ -9,7 +9,8 @@
 -- own pages. SEED "doc" takes the seed the document itself set. With T
 -- (0-1) the flora is drawn as grown at that time (clock.lua), for "watch it
 -- grow" frames; "-" or 1 draws the finished page. SETTINGS is a
--- \florasetup key list (mix, palette, spin, density, visitors, layout),
+-- \florasetup key list (mix, palette, spin, density, visitors, layout,
+-- gilt, giltdpi, giltenv, giltlook, backdrop),
 -- applied over the page's own. Two words in it are not settings: "fresh"
 -- drops the page's own mix and palette first, as the site's mixer does, and
 -- "noheader" drops the running-head rule, for a picture of the flora alone. FLORA_TUNE applies as usual. Run
@@ -36,13 +37,16 @@ if extra then
   for _, word in ipairs({ "noheader", "fresh" }) do
     extra = extra:gsub("%f[%w]" .. word .. "%f[%W],?%s*", function() flags[word] = true return "" end)
   end
-  local own = flags.fresh and { layout = spec.layout }
-    or { layout = spec.layout, mix = spec.mix, palette = spec.palette, spin = spec.spin,
-      flower = spec.flower, petals = spec.petals, hero = spec.head }
+  local own = flags.fresh and { layout = spec.layout, gilt = spec.gilt, giltdpi = spec.gilt_dpi, giltenv = spec.gilt_env, giltlook = spec.gilt_look,
+      backdrop = spec.backdrop, animals = spec.animals }
+    or { layout = spec.layout, mix = spec.mix, palette = spec.palette, spin = spec.spin, gilt = spec.gilt, giltdpi = spec.gilt_dpi, giltenv = spec.gilt_env,
+      giltlook = spec.gilt_look, backdrop = spec.backdrop, flower = spec.flower, petals = spec.petals, hero = spec.head, animals = spec.animals }
   local set = Settings.merge(own, Settings.parse(extra))
   local noheader = flags.noheader
   spec.layout, spec.mix, spec.palette, spec.spin = set.layout, set.mix, set.palette, set.spin
-  spec.flower, spec.petals, spec.head = set.flower, set.petals, set.hero
+  spec.flower, spec.petals, spec.head, spec.animals = set.flower, set.petals, set.hero, set.animals
+  spec.gilt, spec.gilt_dpi, spec.gilt_env, spec.gilt_look = set.gilt, set.giltdpi, set.giltenv, set.giltlook
+  spec.backdrop = set.backdrop
   if noheader then spec.header_y = nil end
 end
 

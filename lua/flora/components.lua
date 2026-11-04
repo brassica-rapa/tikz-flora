@@ -222,6 +222,23 @@ M.list = {
     end,
   },
   {
+    id = "gilt_look", label = "Gilt look",
+    desc = "Raster gilt in each look: a compass rose, a wreath and a fan, in the studio look above and the mirror look below. The page's gilt takes the look gilt_env names.",
+    paths = { "gilt_env", "gilt_looks" }, w = 320, h = 236,
+    draw = function(pt, rng)
+      local Orn = require("flora.ornaments")
+      -- Gold at the specimen's own resolution, twice the tuner's 110 dpi.
+      pt.gilt_dpi = 220
+      for row, look in ipairs({ "studio", "mirror" }) do
+        pt.gilt_env = look
+        local y = 236 - row * 118
+        Orn.draw("compass_rose", pt, rng:fork("compass"), { 0, y + 4, 110, y + 114 })
+        Orn.draw("wreath", pt, rng:fork("wreath"), { 110, y + 4, 220, y + 114 })
+        Orn.draw("fan", pt, rng:fork("fan"), { 236, y + 22, 308, y + 94 })
+      end
+    end,
+  },
+  {
     id = "ornaments", label = "Ornaments",
     desc = "Every ornament kind (ornaments.lua), two seeds each. The weights pick one kind per place on the page; the page shows them in place.",
     paths = { "ornaments" }, w = select(2, Gallery.layout(2, 560)), h = select(3, Gallery.layout(2, 560)),

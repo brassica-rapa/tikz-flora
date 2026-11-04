@@ -126,7 +126,7 @@
   }
   .current:hover { border-color: var(--ink); }
   .text { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
-  .text span { font-size: .9rem; }
+  .text span { font-size: .98rem; }
   .text code { background: none; padding: 0; color: var(--muted); font-size: .72rem; }
   /* Swatches sit on white, as the inks do on the page. */
   .well { flex: none; display: inline-flex; padding: 2px; background: #fff; border: 1px solid #b8b2a5; }
@@ -137,11 +137,11 @@
   .chip.original { background: linear-gradient(90deg, oklab(0.40 -0.01 -0.19), oklab(0.62 -0.08 -0.12), oklab(0.90 -0.03 -0.04)); }
   .ramp { display: block; width: 100%; height: 1.4rem; }
   .panel { margin-top: .35rem; padding: .55rem; border: 1px solid var(--ink); background: var(--paper); }
-  .head { margin: .7rem 0 .3rem; font-size: .76rem; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+  .head { margin: .7rem 0 .3rem; font-size: .95rem; color: var(--rubric); letter-spacing: .07em; font-variant-caps: all-small-caps; }
   .plain, .groups, .inks { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; }
   .plain button, .groups button {
     display: flex; align-items: center; gap: .45rem; padding: .3rem .4rem; min-height: 36px;
-    border: 1px solid transparent; background: transparent; font-size: .88rem;
+    border: 1px solid transparent; background: transparent; font-size: .95rem;
   }
   .inks button { display: flex; flex-direction: column; gap: .3rem; padding: .3rem; border: 1px solid transparent; background: transparent; }
   [role="option"]:hover { border-color: var(--control); }

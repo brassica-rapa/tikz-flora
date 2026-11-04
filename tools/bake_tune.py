@@ -45,6 +45,7 @@ def read_tune(path):
     data = json.loads(out.stdout)
     data.pop("_doc", None)
     data.pop("_choices", None)
+    data.pop("_bounds", None)
     return data
 
 
